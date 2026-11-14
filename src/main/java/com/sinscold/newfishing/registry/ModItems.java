@@ -33,7 +33,12 @@ public final class ModItems {
     public static final DeferredItem<Item> NETHERITE_LINE = ITEMS.registerSimpleItem("netherite_line",
             new Item.Properties().fireResistant().rarity(Rarity.UNCOMMON));
 
-    // --- Кейсы (открытие по ПКМ — этап 5) ---
+    // --- Материалы для лески (рецепты в recipe/ и data/newfishing/recipe/) ---
+    public static final DeferredItem<Item> GOLD_THREAD = ITEMS.registerSimpleItem("gold_thread");
+    public static final DeferredItem<Item> NETHERITE_DUST = ITEMS.registerSimpleItem("netherite_dust",
+            new Item.Properties().fireResistant());
+
+    // --- Ящики (открытие по ПКМ — этап 5) ---
     public static final DeferredItem<Item> WATER_CRATE = ITEMS.registerSimpleItem("water_crate",
             new Item.Properties().stacksTo(16));
     public static final DeferredItem<Item> LAVA_CRATE = ITEMS.registerSimpleItem("lava_crate",

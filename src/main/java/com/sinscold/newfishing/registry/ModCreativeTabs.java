@@ -22,6 +22,8 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.FISHING_HOOK.get());
                         output.accept(ModItems.NETHERITE_HOOK.get());
                         output.accept(ModItems.NETHERITE_LINE.get());
+                        output.accept(ModItems.GOLD_THREAD.get());
+                        output.accept(ModItems.NETHERITE_DUST.get());
                         output.accept(ModItems.LAVACARP.get());
                         output.accept(ModItems.OBSIDIAN_CATFISH.get());
                         output.accept(ModItems.OBSIDIAN_CATFISH_FILLET.get());

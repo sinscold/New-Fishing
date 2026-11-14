@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import com.sinscold.newfishing.registry.ModCreativeTabs;
 import com.sinscold.newfishing.registry.ModItems;
+import com.sinscold.newfishing.registry.ModRecipeSerializers;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
@@ -17,5 +18,6 @@ public class NewFishing {
     public NewFishing(IEventBus modEventBus) {
         ModItems.ITEMS.register(modEventBus);
         ModCreativeTabs.TABS.register(modEventBus);
+        ModRecipeSerializers.SERIALIZERS.register(modEventBus);
     }
 }
