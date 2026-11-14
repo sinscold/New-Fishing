@@ -1,0 +1,13 @@
+{
+  "itemGroup.newfishing": "New Fishing",
+  "block.newfishing.example_block": "Example Block",
+  "item.newfishing.example_item": "Example Item",
+
+  "newfishing.configuration.title": "New Fishing Configs",
+  "newfishing.configuration.section.newfishing.common.toml": "New Fishing Configs",
+  "newfishing.configuration.section.newfishing.common.toml.title": "New Fishing Configs",
+  "newfishing.configuration.items": "Item List",
+  "newfishing.configuration.logDirtBlock": "Log Dirt Block",
+  "newfishing.configuration.magicNumberIntroduction": "Magic Number Text",
+  "newfishing.configuration.magicNumber": "Magic Number"
+}
