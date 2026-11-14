@@ -1,13 +1,12 @@
 {
   "itemGroup.newfishing": "New Fishing",
-  "block.newfishing.example_block": "Example Block",
-  "item.newfishing.example_item": "Example Item",
-
-  "newfishing.configuration.title": "New Fishing Configs",
-  "newfishing.configuration.section.newfishing.common.toml": "New Fishing Configs",
-  "newfishing.configuration.section.newfishing.common.toml.title": "New Fishing Configs",
-  "newfishing.configuration.items": "Item List",
-  "newfishing.configuration.logDirtBlock": "Log Dirt Block",
-  "newfishing.configuration.magicNumberIntroduction": "Magic Number Text",
-  "newfishing.configuration.magicNumber": "Magic Number"
+  "item.newfishing.lavacarp": "Lavacarp",
+  "item.newfishing.obsidian_catfish": "Obsidian Catfish",
+  "item.newfishing.obsidian_catfish_fillet": "Obsidian Catfish Fillet",
+  "item.newfishing.cooked_obsidian_catfish_fillet": "Cooked Obsidian Catfish Fillet",
+  "item.newfishing.fishing_hook": "Fishing Hook",
+  "item.newfishing.netherite_hook": "Netherite Hook",
+  "item.newfishing.netherite_line": "Netherite Line",
+  "item.newfishing.water_crate": "Water Crate",
+  "item.newfishing.lava_crate": "Lava Crate"
 }
