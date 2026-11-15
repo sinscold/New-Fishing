@@ -10,5 +10,9 @@
   "item.newfishing.water_crate": "Водяной ящик",
   "item.newfishing.lava_crate": "Лавовый ящик",
   "item.newfishing.gold_thread": "Золотая нить",
-  "item.newfishing.netherite_dust": "Незеритовая пыль"
+  "item.newfishing.netherite_dust": "Незеритовая пыль",
+  "item.newfishing.fishing_line": "Рыболовная леска",
+  "message.newfishing.rod_missing_both": "Отсутствует леска и крючок",
+  "message.newfishing.rod_missing_line": "Отсутствует леска",
+  "message.newfishing.rod_missing_hook": "Отсутствует крючок"
 }

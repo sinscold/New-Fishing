@@ -1,0 +1,50 @@
+{
+    "parent": "item/handheld_rod",
+    "textures": {
+        "layer0": "item/fishing_rod"
+    },
+    "display": {
+        "firstperson_righthand": {
+            "rotation": [
+                0,
+                90,
+                25
+            ],
+            "translation": [
+                -3.5,
+                1.6,
+                0.8
+            ],
+            "scale": [
+                0.68,
+                0.68,
+                0.68
+            ]
+        },
+        "firstperson_lefthand": {
+            "rotation": [
+                0,
+                -90,
+                -25
+            ],
+            "translation": [
+                3.5,
+                1.6,
+                0.8
+            ],
+            "scale": [
+                0.68,
+                0.68,
+                0.68
+            ]
+        }
+    },
+    "overrides": [
+        {
+            "predicate": {
+                "cast": 1
+            },
+            "model": "item/fishing_rod_cast"
+        }
+    ]
+}

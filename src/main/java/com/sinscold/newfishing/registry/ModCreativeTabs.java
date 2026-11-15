@@ -19,6 +19,7 @@ public final class ModCreativeTabs {
                     .withTabsBefore(CreativeModeTabs.COMBAT)
                     .icon(() -> ModItems.LAVACARP.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
+                        output.accept(ModItems.FISHING_LINE.get());
                         output.accept(ModItems.FISHING_HOOK.get());
                         output.accept(ModItems.NETHERITE_HOOK.get());
                         output.accept(ModItems.NETHERITE_LINE.get());

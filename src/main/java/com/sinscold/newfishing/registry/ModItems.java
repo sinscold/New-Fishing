@@ -27,6 +27,7 @@ public final class ModItems {
                     .food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.8f).build()));
 
     // --- Детали удочки (механика установки — этап 2) ---
+    public static final DeferredItem<Item> FISHING_LINE = ITEMS.registerSimpleItem("fishing_line");
     public static final DeferredItem<Item> FISHING_HOOK = ITEMS.registerSimpleItem("fishing_hook");
     public static final DeferredItem<Item> NETHERITE_HOOK = ITEMS.registerSimpleItem("netherite_hook",
             new Item.Properties().fireResistant().rarity(Rarity.UNCOMMON));

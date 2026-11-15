@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 import com.sinscold.newfishing.registry.ModCreativeTabs;
+import com.sinscold.newfishing.registry.ModDataComponents;
 import com.sinscold.newfishing.registry.ModItems;
 import com.sinscold.newfishing.registry.ModRecipeSerializers;
 
@@ -16,6 +17,7 @@ public class NewFishing {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public NewFishing(IEventBus modEventBus) {
+        ModDataComponents.COMPONENTS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModCreativeTabs.TABS.register(modEventBus);
         ModRecipeSerializers.SERIALIZERS.register(modEventBus);

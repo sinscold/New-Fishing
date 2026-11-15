@@ -10,5 +10,9 @@
   "item.newfishing.water_crate": "Water Crate",
   "item.newfishing.lava_crate": "Lava Crate",
   "item.newfishing.gold_thread": "Gold Thread",
-  "item.newfishing.netherite_dust": "Netherite Dust"
+  "item.newfishing.netherite_dust": "Netherite Dust",
+  "item.newfishing.fishing_line": "Fishing Line",
+  "message.newfishing.rod_missing_both": "Missing line and hook",
+  "message.newfishing.rod_missing_line": "Missing line",
+  "message.newfishing.rod_missing_hook": "Missing hook"
 }
