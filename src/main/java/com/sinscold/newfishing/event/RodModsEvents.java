@@ -37,6 +37,7 @@ public final class RodModsEvents {
 
         ItemStack carried = event.getCarriedItem();
         RodMods mods = RodMods.get(rod);
+        NewFishing.LOGGER.debug("Удочка: курсор={}, леска={}, крючок={}, слот-крючка={}", carried, mods.line(), mods.hook(), RodMods.isHookSlotItem(carried));
 
         if (carried.isEmpty()) {
             // достать: сначала крючок, потом леску

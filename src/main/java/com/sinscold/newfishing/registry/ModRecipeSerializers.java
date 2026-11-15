@@ -1,7 +1,9 @@
 package com.sinscold.newfishing.registry;
 
 import com.sinscold.newfishing.NewFishing;
+import com.sinscold.newfishing.recipe.CatfishCutRecipe;
 import com.sinscold.newfishing.recipe.GoldStringRecipe;
+import com.sinscold.newfishing.recipe.NetheriteDustRecipe;
 import com.sinscold.newfishing.recipe.NetheriteLineRecipe;
 
 import net.minecraft.core.registries.Registries;
@@ -18,6 +20,10 @@ public final class ModRecipeSerializers {
             SERIALIZERS.register("gold_string", () -> new SimpleCraftingRecipeSerializer<>(GoldStringRecipe::new));
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<NetheriteLineRecipe>> NETHERITE_LINE =
             SERIALIZERS.register("netherite_line", () -> new SimpleCraftingRecipeSerializer<>(NetheriteLineRecipe::new));
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<NetheriteDustRecipe>> NETHERITE_DUST =
+            SERIALIZERS.register("netherite_dust", () -> new SimpleCraftingRecipeSerializer<>(NetheriteDustRecipe::new));
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<CatfishCutRecipe>> CATFISH_CUT =
+            SERIALIZERS.register("catfish_cut", () -> new SimpleCraftingRecipeSerializer<>(CatfishCutRecipe::new));
 
     private ModRecipeSerializers() {}
 }

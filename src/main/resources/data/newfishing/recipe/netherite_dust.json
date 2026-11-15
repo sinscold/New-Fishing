@@ -1,16 +1,4 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "item": "minecraft:netherite_scrap"
-    },
-    {
-      "item": "minecraft:diamond"
-    }
-  ],
-  "result": {
-    "id": "newfishing:netherite_dust",
-    "count": 1
-  }
+  "type": "newfishing:netherite_dust",
+  "category": "misc"
 }
