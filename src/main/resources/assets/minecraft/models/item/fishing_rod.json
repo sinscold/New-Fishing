@@ -67,6 +67,30 @@
     },
     {
       "predicate": {
+        "newfishing:rod_state": 7
+      },
+      "model": "newfishing:item/fishing_rod_with_carrot"
+    },
+    {
+      "predicate": {
+        "newfishing:rod_state": 8
+      },
+      "model": "newfishing:item/fishing_rod_with_warped_fungus"
+    },
+    {
+      "predicate": {
+        "newfishing:rod_state": 9
+      },
+      "model": "newfishing:item/fishing_rod_netherite_with_carrot"
+    },
+    {
+      "predicate": {
+        "newfishing:rod_state": 10
+      },
+      "model": "newfishing:item/fishing_rod_netherite_with_warped_fungus"
+    },
+    {
+      "predicate": {
         "cast": 1,
         "newfishing:rod_state": 1
       },

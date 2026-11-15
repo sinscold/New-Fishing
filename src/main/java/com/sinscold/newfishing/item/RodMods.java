@@ -10,6 +10,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 /** Модификации внутри удочки: по одному предмету в слотах «леска» и «крючок» (пустой стек = слот пуст). */
 public record RodMods(ItemStack line, ItemStack hook) implements TooltipComponent {
@@ -60,12 +61,14 @@ public record RodMods(ItemStack line, ItemStack hook) implements TooltipComponen
      * Номер вида удочки для модели (предикат `newfishing:rod_state`):
      * 0 пустая, 1 леска, 2 леска+крючок, 3 леска+незеритовый крючок,
      * 4 незеритовая леска, 5 незеритовая леска+крючок, 6 незеритовая леска+незеритовый крючок.
-     * Морковка/гриб на палке в слоте крючка вид не меняют.
+     * С морковкой на палке: 7 (обычная леска), 9 (незеритовая); с грибом на палке: 8 и 10.
      */
     public int visualState() {
         if (!hasLine()) return 0;
         boolean netherLine = line.is(ModItems.NETHERITE_LINE.get());
         int base = netherLine ? 4 : 1;
+        if (hook.is(Items.CARROT_ON_A_STICK)) return netherLine ? 9 : 7;
+        if (hook.is(Items.WARPED_FUNGUS_ON_A_STICK)) return netherLine ? 10 : 8;
         if (hook.is(ModItems.NETHERITE_HOOK.get())) return base + 2;
         if (hook.is(ModTags.ROD_HOOKS)) return base + 1;
         return base;
