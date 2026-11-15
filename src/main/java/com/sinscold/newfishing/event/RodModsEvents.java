@@ -51,7 +51,7 @@ public final class RodModsEvents {
         } else if (RodMods.isLine(carried) && !mods.hasLine()) {
             rod.set(ModDataComponents.ROD_MODS.get(), mods.withLine(carried.split(1)));
             player.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 0.8F + player.level().getRandom().nextFloat() * 0.4F);
-        } else if (RodMods.isHook(carried) && !mods.hasHook()) {
+        } else if (RodMods.isHookSlotItem(carried) && !mods.hasHook()) {
             rod.set(ModDataComponents.ROD_MODS.get(), mods.withHook(carried.split(1)));
             player.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 0.8F + player.level().getRandom().nextFloat() * 0.4F);
         } else {
@@ -69,12 +69,12 @@ public final class RodModsEvents {
         if (player.fishing != null) return;
 
         RodMods mods = RodMods.get(stack);
-        if (mods.isComplete()) return;
+        if (mods.canFish()) return;
 
         event.setCanceled(true);
         event.setCancellationResult(InteractionResult.FAIL);
         if (!event.getLevel().isClientSide) {
-            String key = !mods.hasLine() && !mods.hasHook() ? "both" : !mods.hasLine() ? "line" : "hook";
+            String key = !mods.hasLine() && !mods.hasFishingHook() ? "both" : !mods.hasLine() ? "line" : "hook";
             player.displayClientMessage(Component.translatable("message.newfishing.rod_missing_" + key), true);
         }
     }

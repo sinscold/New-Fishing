@@ -32,8 +32,9 @@ public record RodMods(ItemStack line, ItemStack hook) implements TooltipComponen
         return stack.is(ModTags.ROD_LINES);
     }
 
-    public static boolean isHook(ItemStack stack) {
-        return stack.is(ModTags.ROD_HOOKS);
+    /** Подходит ли предмет для слота крючка: крючок или морковка/гриб на палке. */
+    public static boolean isHookSlotItem(ItemStack stack) {
+        return stack.is(ModTags.ROD_HOOKS) || stack.is(ModTags.ROD_RIDING_STICKS);
     }
 
     public boolean hasLine() {
@@ -44,8 +45,14 @@ public record RodMods(ItemStack line, ItemStack hook) implements TooltipComponen
         return !hook.isEmpty();
     }
 
-    public boolean isComplete() {
-        return hasLine() && hasHook();
+    /** В слоте именно рыболовный крючок (а не морковка/гриб на палке). */
+    public boolean hasFishingHook() {
+        return hook.is(ModTags.ROD_HOOKS);
+    }
+
+    /** Можно ли закидывать: есть леска и настоящий крючок. */
+    public boolean canFish() {
+        return hasLine() && hasFishingHook();
     }
 
     public RodMods withLine(ItemStack newLine) {

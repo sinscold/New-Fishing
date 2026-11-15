@@ -17,8 +17,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 /** Золотой слиток + топор (железный или лучше) = 4 золотые нити; топор теряет 1 прочность и остаётся. */
-public class GoldThreadRecipe extends CustomRecipe {
-    public GoldThreadRecipe(CraftingBookCategory category) {
+public class GoldStringRecipe extends CustomRecipe {
+    public GoldStringRecipe(CraftingBookCategory category) {
         super(category);
     }
 
@@ -42,7 +42,7 @@ public class GoldThreadRecipe extends CustomRecipe {
 
     @Override
     public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
-        return new ItemStack(ModItems.GOLD_THREAD.get(), 4);
+        return new ItemStack(ModItems.GOLD_STRING.get(), 4);
     }
 
     @Override
@@ -67,6 +67,6 @@ public class GoldThreadRecipe extends CustomRecipe {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return ModRecipeSerializers.GOLD_THREAD.get();
+        return ModRecipeSerializers.GOLD_STRING.get();
     }
 }

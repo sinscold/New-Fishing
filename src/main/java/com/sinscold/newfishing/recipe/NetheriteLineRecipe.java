@@ -21,15 +21,15 @@ public class NetheriteLineRecipe extends CustomRecipe {
     public boolean matches(CraftingInput input, Level level) {
         if (input.width() != 3 || input.height() != 3) return false;
         if (!input.getItem(4).is(ModItems.NETHERITE_DUST.get())) return false;
-        int threads = 0;
+        int strings = 0;
         for (int i = 0; i < 9; i++) {
             if (i == 4) continue;
             ItemStack stack = input.getItem(i);
             if (stack.isEmpty()) continue;
-            if (stack.is(ModItems.GOLD_THREAD.get())) threads++;
+            if (stack.is(ModItems.GOLD_STRING.get())) strings++;
             else return false;
         }
-        return threads == 4;
+        return strings == 4;
     }
 
     @Override

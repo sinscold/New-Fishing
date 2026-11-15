@@ -35,7 +35,7 @@
 | `item/obsidian_catfish_fillet.png`, `item/cooked_obsidian_catfish_fillet.png` | 16×16 | заглушка |
 | `item/fishing_hook.png`, `item/netherite_hook.png`, `item/netherite_line.png` | 16×16 | заглушка |
 | `item/water_crate.png`, `item/lava_crate.png` | 16×16 | заглушка |
-| `item/gold_thread.png`, `item/netherite_dust.png`, `item/fishing_line.png` | 16×16 | заглушка |
+| `item/gold_string.png`, `item/netherite_dust.png`, `item/fishing_line.png` | 16×16 | заглушка |
 | `gui/rod_slot_line.png`, `gui/rod_slot_hook.png` (слоты в подсказке удочки) | 18×18 | заглушка |
 | удочка (инвентарь, в руке, закинута, варианты с модификациями), слоты крючка и лески | 32×32 / 16×16 | этап 2в |
 | модель лавового поплавка (3D, Blockbench) | — | этап 3 |

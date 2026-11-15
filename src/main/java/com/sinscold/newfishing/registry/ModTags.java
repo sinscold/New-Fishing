@@ -10,8 +10,11 @@ import net.minecraft.world.item.Item;
 public final class ModTags {
     /** Что можно вставить в слот «леска». */
     public static final TagKey<Item> ROD_LINES = item("rod_lines");
-    /** Что можно вставить в слот «крючок». */
+    /** Настоящие рыболовные крючки: с ними удочку можно закинуть. */
     public static final TagKey<Item> ROD_HOOKS = item("rod_hooks");
+
+    /** Морковка и гриб на палке: вставляются в слот крючка вместо него (рыбачить с ними нельзя). */
+    public static final TagKey<Item> ROD_RIDING_STICKS = item("rod_riding_sticks");
 
     private static TagKey<Item> item(String name) {
         return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, name));

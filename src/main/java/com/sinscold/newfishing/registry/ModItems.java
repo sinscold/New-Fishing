@@ -35,7 +35,7 @@ public final class ModItems {
             new Item.Properties().fireResistant().rarity(Rarity.UNCOMMON));
 
     // --- Материалы для лески (рецепты в recipe/ и data/newfishing/recipe/) ---
-    public static final DeferredItem<Item> GOLD_THREAD = ITEMS.registerSimpleItem("gold_thread");
+    public static final DeferredItem<Item> GOLD_STRING = ITEMS.registerSimpleItem("gold_string");
     public static final DeferredItem<Item> NETHERITE_DUST = ITEMS.registerSimpleItem("netherite_dust",
             new Item.Properties().fireResistant());
 
