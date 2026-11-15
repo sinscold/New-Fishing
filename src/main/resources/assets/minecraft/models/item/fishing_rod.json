@@ -1,50 +1,83 @@
 {
-    "parent": "item/handheld_rod",
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "base": {
+    "parent": "newfishing:item/rod_hand",
     "textures": {
-        "layer0": "item/fishing_rod"
+      "layer0": "newfishing:item/fishing_rod_empty-model",
+      "particle": "newfishing:item/fishing_rod_empty-sprite"
+    }
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "newfishing:item/fishing_rod_empty-sprite"
+      }
     },
-    "display": {
-        "firstperson_righthand": {
-            "rotation": [
-                0,
-                90,
-                25
-            ],
-            "translation": [
-                -3.5,
-                1.6,
-                0.8
-            ],
-            "scale": [
-                0.68,
-                0.68,
-                0.68
-            ]
-        },
-        "firstperson_lefthand": {
-            "rotation": [
-                0,
-                -90,
-                -25
-            ],
-            "translation": [
-                3.5,
-                1.6,
-                0.8
-            ],
-            "scale": [
-                0.68,
-                0.68,
-                0.68
-            ]
-        }
+    "ground": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "newfishing:item/fishing_rod_empty-sprite"
+      }
     },
-    "overrides": [
-        {
-            "predicate": {
-                "cast": 1
-            },
-            "model": "item/fishing_rod_cast"
-        }
-    ]
+    "fixed": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "newfishing:item/fishing_rod_empty-sprite"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "newfishing:rod_state": 1
+      },
+      "model": "newfishing:item/fishing_rod_line"
+    },
+    {
+      "predicate": {
+        "newfishing:rod_state": 2
+      },
+      "model": "newfishing:item/fishing_rod_full"
+    },
+    {
+      "predicate": {
+        "newfishing:rod_state": 3
+      },
+      "model": "newfishing:item/fishing_rod_lava_float"
+    },
+    {
+      "predicate": {
+        "newfishing:rod_state": 4
+      },
+      "model": "newfishing:item/fishing_rod_netherite_line"
+    },
+    {
+      "predicate": {
+        "newfishing:rod_state": 5
+      },
+      "model": "newfishing:item/fishing_rod_netherite_line_float"
+    },
+    {
+      "predicate": {
+        "newfishing:rod_state": 6
+      },
+      "model": "newfishing:item/fishing_rod_netherite_full"
+    },
+    {
+      "predicate": {
+        "cast": 1,
+        "newfishing:rod_state": 1
+      },
+      "model": "newfishing:item/fishing_rod_used"
+    },
+    {
+      "predicate": {
+        "cast": 1,
+        "newfishing:rod_state": 4
+      },
+      "model": "newfishing:item/fishing_rod_netherite_used"
+    }
+  ]
 }

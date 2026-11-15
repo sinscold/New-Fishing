@@ -3,6 +3,7 @@ package com.sinscold.newfishing.item;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.sinscold.newfishing.registry.ModDataComponents;
+import com.sinscold.newfishing.registry.ModItems;
 import com.sinscold.newfishing.registry.ModTags;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -53,6 +54,21 @@ public record RodMods(ItemStack line, ItemStack hook) implements TooltipComponen
     /** Можно ли закидывать: есть леска и настоящий крючок. */
     public boolean canFish() {
         return hasLine() && hasFishingHook();
+    }
+
+    /**
+     * Номер вида удочки для модели (предикат `newfishing:rod_state`):
+     * 0 пустая, 1 леска, 2 леска+крючок, 3 леска+незеритовый крючок,
+     * 4 незеритовая леска, 5 незеритовая леска+крючок, 6 незеритовая леска+незеритовый крючок.
+     * Морковка/гриб на палке в слоте крючка вид не меняют.
+     */
+    public int visualState() {
+        if (!hasLine()) return 0;
+        boolean netherLine = line.is(ModItems.NETHERITE_LINE.get());
+        int base = netherLine ? 4 : 1;
+        if (hook.is(ModItems.NETHERITE_HOOK.get())) return base + 2;
+        if (hook.is(ModTags.ROD_HOOKS)) return base + 1;
+        return base;
     }
 
     public RodMods withLine(ItemStack newLine) {

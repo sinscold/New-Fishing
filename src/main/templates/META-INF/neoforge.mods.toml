@@ -91,3 +91,6 @@ Reworked fishing: biome-based loot, lava fishing in the Nether, new fish and loo
 # stop your mod loading on the server for example.
 #[features.${mod_id}]
 #openGLVersion="[3.2,)"
+
+[[mixins]]
+config="newfishing.mixins.json"
