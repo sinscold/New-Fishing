@@ -7,6 +7,10 @@ import com.sinscold.newfishing.registry.ModDataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.ItemSteerable;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Pig;
+import net.minecraft.world.entity.monster.Strider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.item.ItemStack;
@@ -51,7 +55,7 @@ public final class RodModsEvents {
         } else if (RodMods.isLine(carried) && !mods.hasLine()) {
             rod.set(ModDataComponents.ROD_MODS.get(), mods.withLine(carried.split(1)));
             player.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 0.8F + player.level().getRandom().nextFloat() * 0.4F);
-        } else if (RodMods.isHookSlotItem(carried) && !mods.hasHook()) {
+        } else if (RodMods.isHookSlotItem(carried) && mods.hasLine() && !mods.hasHook()) {
             rod.set(ModDataComponents.ROD_MODS.get(), mods.withHook(carried.split(1)));
             player.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 0.8F + player.level().getRandom().nextFloat() * 0.4F);
         } else {
@@ -67,6 +71,21 @@ public final class RodModsEvents {
         if (!stack.is(Items.FISHING_ROD)) return;
         Player player = event.getEntity();
         if (player.fishing != null) return;
+
+        // морковка/гриб на палке в слоте крючка: ускорение свиньи/лавохода вместо заброса
+        if (player.getVehicle() instanceof ItemSteerable steerable) {
+            ItemStack stick = RodMods.get(stack).hook();
+            int damage = player.getVehicle() instanceof Pig && stick.is(Items.CARROT_ON_A_STICK) ? 7
+                    : player.getVehicle() instanceof Strider && stick.is(Items.WARPED_FUNGUS_ON_A_STICK) ? 1 : 0;
+            if (damage > 0) {
+                if (!event.getLevel().isClientSide && steerable.boost()) {
+                    stack.hurtAndBreak(damage, player, LivingEntity.getSlotForHand(event.getHand()));
+                }
+                event.setCanceled(true);
+                event.setCancellationResult(InteractionResult.SUCCESS);
+                return;
+            }
+        }
 
         RodMods mods = RodMods.get(stack);
         if (mods.canFish()) return;
