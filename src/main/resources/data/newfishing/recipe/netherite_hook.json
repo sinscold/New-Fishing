@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "newfishing:netherite_dust"
+    },
+    {
+      "item": "newfishing:fishing_hook"
+    }
+  ],
+  "result": {
+    "id": "newfishing:netherite_hook",
+    "count": 1
+  }
+}
