@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:fishing",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "newfishing:lavacarp",
+          "weight": 40
+        },
+        {
+          "type": "minecraft:item",
+          "name": "newfishing:obsidian_catfish",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:obsidian",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:netherite_scrap",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "newfishing:lava_crate",
+          "weight": 5
+        }
+      ]
+    }
+  ]
+}

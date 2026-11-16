@@ -14,5 +14,6 @@
   "item.newfishing.fishing_line": "Рыболовная леска",
   "message.newfishing.rod_missing_both": "Отсутствует леска и крючок",
   "message.newfishing.rod_missing_line": "Отсутствует леска",
-  "message.newfishing.rod_missing_hook": "Отсутствует крючок"
+  "message.newfishing.rod_missing_hook": "Отсутствует крючок",
+  "entity.newfishing.lava_fishing_hook": "Лавовый поплавок"
 }

@@ -4,7 +4,15 @@ import com.sinscold.newfishing.NewFishing;
 import com.sinscold.newfishing.item.RodMods;
 import com.sinscold.newfishing.registry.ModDataComponents;
 
+import com.sinscold.newfishing.entity.LavaFishingHook;
+
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.ItemSteerable;
@@ -89,7 +97,23 @@ public final class RodModsEvents {
         }
 
         RodMods mods = RodMods.get(stack);
-        if (mods.canFish()) return;
+        if (mods.canFish()) {
+            // Незер + незеритовые леска и крючок: бросаем лавовый поплавок вместо ванильного
+            if (mods.isLavaKit() && player.level().dimension() == Level.NETHER) {
+                event.setCanceled(true);
+                event.setCancellationResult(InteractionResult.SUCCESS);
+                if (player.level() instanceof ServerLevel serverLevel) {
+                    int lureSpeed = (int) (EnchantmentHelper.getFishingTimeReduction(serverLevel, stack, player) * 20.0F);
+                    int luck = EnchantmentHelper.getFishingLuckBonus(serverLevel, stack, player);
+                    serverLevel.addFreshEntity(LavaFishingHook.cast(player, serverLevel, luck, lureSpeed));
+                    serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.FISHING_BOBBER_THROW,
+                            SoundSource.NEUTRAL, 0.5F, 0.4F / (serverLevel.getRandom().nextFloat() * 0.4F + 0.8F));
+                    player.awardStat(Stats.ITEM_USED.get(Items.FISHING_ROD));
+                    player.gameEvent(GameEvent.ITEM_INTERACT_START);
+                }
+            }
+            return;
+        }
 
         event.setCanceled(true);
         event.setCancellationResult(InteractionResult.FAIL);

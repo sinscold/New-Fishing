@@ -14,5 +14,6 @@
   "item.newfishing.fishing_line": "Fishing Line",
   "message.newfishing.rod_missing_both": "Missing line and hook",
   "message.newfishing.rod_missing_line": "Missing line",
-  "message.newfishing.rod_missing_hook": "Missing hook"
+  "message.newfishing.rod_missing_hook": "Missing hook",
+  "entity.newfishing.lava_fishing_hook": "Lava Bobber"
 }

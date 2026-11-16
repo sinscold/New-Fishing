@@ -16,6 +16,9 @@ public final class ModTags {
     /** Приманки для езды: морковка и искажённый гриб вставляются в слот крючка вместо него (рыбачить с ними нельзя). */
     public static final TagKey<Item> ROD_RIDING_STICKS = item("rod_riding_sticks");
 
+    /** Рыба из Незера (для статистики улова и будущей торговли). */
+    public static final TagKey<Item> NETHER_FISH = item("nether_fish");
+
     private static TagKey<Item> item(String name) {
         return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, name));
     }
