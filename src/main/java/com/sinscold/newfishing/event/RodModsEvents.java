@@ -73,11 +73,11 @@ public final class RodModsEvents {
         Player player = event.getEntity();
         if (player.fishing != null) return;
 
-        // морковка/гриб на палке в слоте крючка: ускорение свиньи/лавохода вместо заброса
+        // морковка/искажённый гриб (приманка) в слоте крючка: ускорение свиньи/лавохода вместо заброса
         if (player.getVehicle() instanceof ItemSteerable steerable) {
             ItemStack stick = RodMods.get(stack).hook();
-            int damage = player.getVehicle() instanceof Pig && stick.is(Items.CARROT_ON_A_STICK) ? 7
-                    : player.getVehicle() instanceof Strider && stick.is(Items.WARPED_FUNGUS_ON_A_STICK) ? 1 : 0;
+            int damage = player.getVehicle() instanceof Pig && stick.is(Items.CARROT) ? 7
+                    : player.getVehicle() instanceof Strider && stick.is(Items.WARPED_FUNGUS) ? 1 : 0;
             if (damage > 0) {
                 if (!event.getLevel().isClientSide && steerable.boost()) {
                     stack.hurtAndBreak(damage, player, LivingEntity.getSlotForHand(event.getHand()));

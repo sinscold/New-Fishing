@@ -11,11 +11,16 @@ import net.minecraft.world.item.ItemStack;
 
 /** Два слота под подсказкой удочки (как содержимое мешка): леска и крючок. Слот 18×18 в стиле инвентаря, иконка пустого слота 16×16. */
 public class ClientRodModsTooltip implements ClientTooltipComponent {
+    private static final ResourceLocation FRAME = ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "textures/gui/rod_tooltip_modification_slots.png");
     private static final ResourceLocation LINE_SLOT = ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "textures/gui/rod_slot_line.png");
     private static final ResourceLocation HOOK_SLOT = ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "textures/gui/rod_slot_hook.png");
-    private static final int SLOT = 18;
+    /** Размер рамки (rod_tooltip_modification_slots.png) и позиции внутренних областей слотов 16×16. */
+    private static final int FRAME_W = 38;
+    private static final int FRAME_H = 22;
     private static final int ICON = 16;
-    private static final int GAP = 2;
+    private static final int LINE_X = 2;
+    private static final int HOOK_X = 20;
+    private static final int SLOT_Y = 2;
 
     private final RodMods mods;
 
@@ -25,29 +30,26 @@ public class ClientRodModsTooltip implements ClientTooltipComponent {
 
     @Override
     public int getHeight() {
-        return SLOT + 4;
+        return FRAME_H + 2;
     }
 
     @Override
     public int getWidth(Font font) {
-        return SLOT * 2 + GAP;
+        return FRAME_W;
     }
 
     @Override
     public void renderImage(Font font, int x, int y, GuiGraphics graphics) {
-        drawSlot(graphics, LINE_SLOT, mods.line(), x, y + 2);
-        drawSlot(graphics, HOOK_SLOT, mods.hook(), x + SLOT + GAP, y + 2);
+        graphics.blit(FRAME, x, y + 1, 0, 0, FRAME_W, FRAME_H, FRAME_W, FRAME_H);
+        drawSlot(graphics, LINE_SLOT, mods.line(), x + LINE_X, y + 1 + SLOT_Y);
+        drawSlot(graphics, HOOK_SLOT, mods.hook(), x + HOOK_X, y + 1 + SLOT_Y);
     }
 
     private static void drawSlot(GuiGraphics graphics, ResourceLocation emptyIcon, ItemStack stack, int x, int y) {
-        // фон слота как в инвентаре: тёмная рамка сверху/слева, светлая снизу/справа, серая заливка
-        graphics.fill(x, y, x + SLOT, y + SLOT, 0xFF373737);
-        graphics.fill(x + 1, y + 1, x + SLOT, y + SLOT, 0xFFFFFFFF);
-        graphics.fill(x + 1, y + 1, x + SLOT - 1, y + SLOT - 1, 0xFF8B8B8B);
         if (stack.isEmpty()) {
-            graphics.blit(emptyIcon, x + 1, y + 1, 0, 0, ICON, ICON, ICON, ICON);
+            graphics.blit(emptyIcon, x, y, 0, 0, ICON, ICON, ICON, ICON);
         } else {
-            graphics.renderItem(stack, x + 1, y + 1);
+            graphics.renderItem(stack, x, y);
         }
     }
 }

@@ -19,7 +19,7 @@ public abstract class PigMixin {
     private void newfishing$rodSteering(CallbackInfoReturnable<LivingEntity> cir) {
         Pig self = (Pig) (Object) this;
         if (self.isSaddled() && self.getFirstPassenger() instanceof Player player
-                && RodRiding.holdsRidingStick(player, Items.CARROT_ON_A_STICK)) {
+                && RodRiding.holdsRidingStick(player, Items.CARROT)) {
             cir.setReturnValue(player);
         }
     }

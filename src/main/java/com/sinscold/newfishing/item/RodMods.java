@@ -67,8 +67,8 @@ public record RodMods(ItemStack line, ItemStack hook) implements TooltipComponen
         if (!hasLine()) return 0;
         boolean netherLine = line.is(ModItems.NETHERITE_LINE.get());
         int base = netherLine ? 4 : 1;
-        if (hook.is(Items.CARROT_ON_A_STICK)) return netherLine ? 9 : 7;
-        if (hook.is(Items.WARPED_FUNGUS_ON_A_STICK)) return netherLine ? 10 : 8;
+        if (hook.is(Items.CARROT)) return netherLine ? 9 : 7;
+        if (hook.is(Items.WARPED_FUNGUS)) return netherLine ? 10 : 8;
         if (hook.is(ModItems.NETHERITE_HOOK.get())) return base + 2;
         if (hook.is(ModTags.ROD_HOOKS)) return base + 1;
         return base;

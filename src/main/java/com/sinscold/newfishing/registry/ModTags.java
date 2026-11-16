@@ -13,7 +13,7 @@ public final class ModTags {
     /** Настоящие рыболовные крючки: с ними удочку можно закинуть. */
     public static final TagKey<Item> ROD_HOOKS = item("rod_hooks");
 
-    /** Морковка и гриб на палке: вставляются в слот крючка вместо него (рыбачить с ними нельзя). */
+    /** Приманки для езды: морковка и искажённый гриб вставляются в слот крючка вместо него (рыбачить с ними нельзя). */
     public static final TagKey<Item> ROD_RIDING_STICKS = item("rod_riding_sticks");
 
     private static TagKey<Item> item(String name) {

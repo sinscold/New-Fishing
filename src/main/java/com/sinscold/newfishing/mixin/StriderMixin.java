@@ -19,7 +19,7 @@ public abstract class StriderMixin {
     private void newfishing$rodSteering(CallbackInfoReturnable<LivingEntity> cir) {
         Strider self = (Strider) (Object) this;
         if (self.isSaddled() && self.getFirstPassenger() instanceof Player player
-                && RodRiding.holdsRidingStick(player, Items.WARPED_FUNGUS_ON_A_STICK)) {
+                && RodRiding.holdsRidingStick(player, Items.WARPED_FUNGUS)) {
             cir.setReturnValue(player);
         }
     }
