@@ -30,7 +30,7 @@ public class ClientRodModsTooltip implements ClientTooltipComponent {
 
     @Override
     public int getHeight() {
-        return FRAME_H + 2;
+        return FRAME_H + 7; // отступ под рамкой до строк зачарований
     }
 
     @Override
