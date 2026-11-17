@@ -25,5 +25,10 @@
   "item.newfishing.phantom_ray": "Фантомный скат",
   "item.newfishing.void_pike": "Пустотная щука",
   "item.newfishing.void_pike_fillet": "Филе пустотной щуки",
-  "item.newfishing.void_pike_guts": "Потроха пустотной щуки"
+  "item.newfishing.void_pike_guts": "Потроха пустотной щуки",
+  "item.newfishing.blind_eye": "Слепое око",
+  "item.newfishing.ender_hook": "Эндер-поплавок",
+  "entity.newfishing.blind_eye": "Слепое око",
+  "message.newfishing.line_burned": "Леска сгорела!",
+  "message.newfishing.hook_burned": "Поплавок сгорел!"
 }

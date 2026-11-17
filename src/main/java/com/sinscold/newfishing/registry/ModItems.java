@@ -1,6 +1,7 @@
 package com.sinscold.newfishing.registry;
 
 import com.sinscold.newfishing.NewFishing;
+import com.sinscold.newfishing.item.BlindEyeItem;
 import com.sinscold.newfishing.item.VoidPikeFilletItem;
 
 import net.minecraft.world.food.FoodProperties;
@@ -34,6 +35,11 @@ public final class ModItems {
     public static final DeferredItem<Item> VOID_PIKE_FILLET = ITEMS.register("void_pike_fillet",
             () -> new VoidPikeFilletItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.4f).alwaysEdible().build())));
     public static final DeferredItem<Item> VOID_PIKE_GUTS = ITEMS.registerSimpleItem("void_pike_guts");
+
+    // --- Край ---
+    public static final DeferredItem<Item> BLIND_EYE = ITEMS.register("blind_eye", () -> new BlindEyeItem(new Item.Properties()));
+    /** Эндер-поплавок (слепое око + обычный крючок). Назначение уточняется (вопрос 26). */
+    public static final DeferredItem<Item> ENDER_HOOK = ITEMS.registerSimpleItem("ender_hook");
 
     // --- Детали удочки (механика установки — этап 2) ---
     public static final DeferredItem<Item> FISHING_LINE = ITEMS.registerSimpleItem("fishing_line");

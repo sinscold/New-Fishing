@@ -138,7 +138,7 @@
         "cast": 1,
         "newfishing:rod_state": 11
       },
-      "model": "newfishing:item/fishing_rod_used"
+      "model": "newfishing:item/fishing_rod_phantom_used"
     }
   ]
 }

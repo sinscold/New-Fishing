@@ -25,5 +25,10 @@
   "item.newfishing.phantom_ray": "Phantom Ray",
   "item.newfishing.void_pike": "Void Pike",
   "item.newfishing.void_pike_fillet": "Void Pike Fillet",
-  "item.newfishing.void_pike_guts": "Void Pike Guts"
+  "item.newfishing.void_pike_guts": "Void Pike Guts",
+  "item.newfishing.blind_eye": "Blind Eye",
+  "item.newfishing.ender_hook": "Ender Bobber",
+  "entity.newfishing.blind_eye": "Blind Eye",
+  "message.newfishing.line_burned": "The line burned up!",
+  "message.newfishing.hook_burned": "The bobber burned up!"
 }

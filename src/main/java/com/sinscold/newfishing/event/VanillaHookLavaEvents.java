@@ -18,10 +18,14 @@ public final class VanillaHookLavaEvents {
     static void onEntityTick(EntityTickEvent.Post event) {
         if (event.getEntity() instanceof FishingHook hook && !(hook instanceof NetheriteFishingHook)
                 && hook.level() instanceof ServerLevel level && hook.isInLava()) {
-            level.playSound(null, hook.getX(), hook.getY(), hook.getZ(), SoundEvents.GENERIC_BURN, hook.getSoundSource(), 0.4F, 2.0F);
-            level.sendParticles(ParticleTypes.LARGE_SMOKE, hook.getX(), hook.getY() + 0.2, hook.getZ(), 6, 0.1, 0.1, 0.1, 0.02);
-            hook.discard();
+            com.sinscold.newfishing.item.LineBreak.burn(hook.getPlayerOwner(), hook, !hasNetheriteLine(hook.getPlayerOwner()));
         }
+    }
+
+    private static boolean hasNetheriteLine(net.minecraft.world.entity.player.Player player) {
+        if (player == null) return false;
+        net.minecraft.world.item.ItemStack rod = player.getMainHandItem().is(net.minecraft.world.item.Items.FISHING_ROD) ? player.getMainHandItem() : player.getOffhandItem();
+        return rod.is(net.minecraft.world.item.Items.FISHING_ROD) && com.sinscold.newfishing.item.RodMods.get(rod).hasNetheriteLine();
     }
 
     private VanillaHookLavaEvents() {}

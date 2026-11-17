@@ -13,7 +13,12 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import com.sinscold.newfishing.registry.ModItems;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 
 /** Клиентские события мод-шины. */
@@ -24,10 +29,27 @@ public final class ClientModEvents {
         event.register(RodMods.class, ClientRodModsTooltip::new);
     }
 
+    /** Ящики в инвентаре и в руке рисуются моделью, а не спрайтом. */
+    @SubscribeEvent
+    static void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
+        event.registerItem(new IClientItemExtensions() {
+            private CrateItemRenderer renderer;
+
+            @Override
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                if (renderer == null) {
+                    renderer = new CrateItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModelSet());
+                }
+                return renderer;
+            }
+        }, ModItems.WATER_CRATE.get(), ModItems.LAVA_CRATE.get());
+    }
+
     /** Лавовый поплавок рисуется ванильным рендерером (своя 3D-модель — позже). */
     @SubscribeEvent
     static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.NETHERITE_FISHING_HOOK.get(), FishingHookRenderer::new);
+        event.registerEntityRenderer(ModEntities.BLIND_EYE.get(), net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.CRATE.get(), CrateRenderer::new);
     }
 
