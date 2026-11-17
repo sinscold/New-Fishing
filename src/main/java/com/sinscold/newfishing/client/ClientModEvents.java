@@ -38,7 +38,7 @@ public final class ClientModEvents {
             @Override
             public BlockEntityWithoutLevelRenderer getCustomRenderer() {
                 if (renderer == null) {
-                    renderer = new CrateItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModelSet());
+                    renderer = new CrateItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(), new net.minecraft.client.model.geom.EntityModelSet());
                 }
                 return renderer;
             }
