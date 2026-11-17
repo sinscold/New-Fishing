@@ -97,14 +97,14 @@ public final class RodModsEvents {
 
         RodMods mods = RodMods.get(stack);
         if (mods.canFish()) {
-            // незеритовый крючок: бросаем лавовый поплавок (в воде он сам станет обычным, ловит в лаве только в Незере)
+            // незеритовый крючок работает только в лаве: бросаем лавовый поплавок (клюёт только в Незере на незеритовой леске)
             if (mods.hasLavaHook()) {
                 event.setCanceled(true);
                 event.setCancellationResult(InteractionResult.SUCCESS);
                 if (player.level() instanceof ServerLevel serverLevel) {
                     int lureSpeed = (int) (EnchantmentHelper.getFishingTimeReduction(serverLevel, stack, player) * 20.0F);
                     int luck = EnchantmentHelper.getFishingLuckBonus(serverLevel, stack, player);
-                    serverLevel.addFreshEntity(LavaFishingHook.cast(player, serverLevel, luck, lureSpeed));
+                    serverLevel.addFreshEntity(LavaFishingHook.cast(player, serverLevel, luck, lureSpeed, mods.hasNetheriteLine()));
                     serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.FISHING_BOBBER_THROW,
                             SoundSource.NEUTRAL, 0.5F, 0.4F / (serverLevel.getRandom().nextFloat() * 0.4F + 0.8F));
                     player.awardStat(Stats.ITEM_USED.get(Items.FISHING_ROD));

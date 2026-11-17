@@ -46,7 +46,7 @@ import net.minecraft.world.phys.Vec3;
 /**
  * Лавовый поплавок: то же, что ванильный, но «плавает» в лаве и ловит по таблице {@code newfishing:gameplay/lava_fishing}.
  * Наследует FishingHook, чтобы игрок (player.fishing) и рендерер работали как с обычным. Не горит (см. ModEntities).
- * Забрасывается с незеритовым крючком в любом измерении; ловит только в Незере. Попав в воду, превращается в обычный поплавок.
+ * Забрасывается с незеритовым крючком в любом измерении; клюёт только в Незере и только на незеритовой леске. В воде не работает.
  * Обычная леска рвётся с шансом 1 к 7 при вытаскивании поклёвки (LineBreak), незеритовая нет. Незеритовый крючок: добыча держится втрое дольше.
  */
 public class LavaFishingHook extends FishingHook {
@@ -76,16 +76,18 @@ public class LavaFishingHook extends FishingHook {
     private float fishAngle;
     private int lootLuck;
     private int lureTicks;
+    private boolean netheriteLine;
 
     public LavaFishingHook(EntityType<LavaFishingHook> type, Level level) {
         super(type, level);
     }
 
     /** Создаёт поплавок и «бросает» его от игрока (повторяет бросок ванильного). */
-    public static LavaFishingHook cast(Player player, Level level, int luck, int lureSpeed) {
+    public static LavaFishingHook cast(Player player, Level level, int luck, int lureSpeed, boolean netheriteLine) {
         LavaFishingHook hook = new LavaFishingHook(ModEntities.LAVA_FISHING_HOOK.get(), level);
         hook.lootLuck = Math.max(0, luck);
         hook.lureTicks = Math.max(0, lureSpeed);
+        hook.netheriteLine = netheriteLine;
         hook.setOwner(player);
         player.fishing = hook;
 
@@ -166,10 +168,6 @@ public class LavaFishingHook extends FishingHook {
         float height = inLava ? fluid.getHeight(this.level(), pos) : 0.0F;
 
         if (this.state == State.FLYING) {
-            if (fluid.is(FluidTags.WATER)) {
-                this.switchToWaterHook(player);
-                return;
-            }
             if (inLava) {
                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.3, 0.2, 0.3));
                 this.state = State.BOBBING;
@@ -193,8 +191,8 @@ public class LavaFishingHook extends FishingHook {
                 if (this.isBiting()) {
                     this.setDeltaMovement(this.getDeltaMovement().add(0.0, -0.1 * this.random.nextFloat() * this.random.nextFloat(), 0.0));
                 }
-                // ловит только в Незере; в других измерениях поплавок просто плавает в лаве
-                if (!this.level().isClientSide && this.level().dimension() == Level.NETHER) {
+                // клюёт только в Незере и только на незеритовой леске; иначе поплавок просто плавает в лаве
+                if (!this.level().isClientSide && this.netheriteLine && this.level().dimension() == Level.NETHER) {
                     this.catchingFish(pos);
                 }
             } else {
@@ -212,16 +210,6 @@ public class LavaFishingHook extends FishingHook {
         }
         this.setDeltaMovement(this.getDeltaMovement().scale(0.92));
         this.reapplyPosition();
-    }
-
-    /** Лавовый поплавок попал в воду: заменяем его обычным, дальше ловит ванильная логика. */
-    private void switchToWaterHook(Player player) {
-        if (this.level().isClientSide) return;
-        FishingHook water = new FishingHook(player, this.level(), this.lootLuck, this.lureTicks);
-        water.moveTo(this.getX(), this.getY(), this.getZ());
-        water.setDeltaMovement(this.getDeltaMovement().multiply(0.3, 0.2, 0.3));
-        this.level().addFreshEntity(water);
-        this.discard();
     }
 
     private void catchingFish(BlockPos pos) {
