@@ -8,17 +8,12 @@
         {
           "type": "minecraft:item",
           "name": "newfishing:lavacarp",
-          "weight": 40
+          "weight": 42.5
         },
         {
           "type": "minecraft:item",
           "name": "newfishing:obsidian_catfish",
-          "weight": 25
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:obsidian",
-          "weight": 25
+          "weight": 42.5
         },
         {
           "type": "minecraft:item",
@@ -28,7 +23,7 @@
         {
           "type": "minecraft:item",
           "name": "newfishing:lava_crate",
-          "weight": 5
+          "weight": 10
         }
       ]
     }
