@@ -3,11 +3,13 @@ package com.sinscold.newfishing.entity;
 import java.util.List;
 
 import com.sinscold.newfishing.NewFishing;
+import com.sinscold.newfishing.item.LineBreak;
 import com.sinscold.newfishing.registry.ModEntities;
 import com.sinscold.newfishing.registry.ModTags;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -20,56 +22,55 @@ import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import com.sinscold.newfishing.item.LineBreak;
-
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Лавовый поплавок: то же, что ванильный, но «плавает» в лаве и ловит по таблице {@code newfishing:gameplay/lava_fishing}.
- * Наследует FishingHook, чтобы игрок (player.fishing) и рендерер работали как с обычным. Не горит (см. ModEntities).
- * Забрасывается с незеритовым крючком в любом измерении; клюёт только в Незере и только на незеритовой леске. В воде не работает.
- * Обычная леска рвётся с шансом 1 к 7 при вытаскивании поклёвки (LineBreak), незеритовая нет. Незеритовый крючок: добыча держится втрое дольше.
+ * Поплавок с незеритовым крючком: не горит, плавает на любой жидкости (вода, лава, модовые), цепляет существ.
+ * Клюёт только в жидкости, для которой есть таблица лута:
+ * вода — ванильная {@code gameplay/fishing}; лава — {@code newfishing:gameplay/lava_fishing} (только в Незере и только на
+ * незеритовой леске); другая жидкость {@code ns:path} — {@code ns:gameplay/fishing/path} (если такая таблица есть).
+ * Обычная леска рвётся 1 к 7 при вытаскивании поклёвки (LineBreak), незеритовая нет. Добыча держится втрое дольше.
+ * Наследует FishingHook, чтобы игрок (player.fishing) и рендерер работали как с обычным.
  */
-public class LavaFishingHook extends FishingHook {
-    public static final ResourceKey<LootTable> LAVA_FISHING = ResourceKey.create(Registries.LOOT_TABLE,
-            ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "gameplay/lava_fishing"));
+public class NetheriteFishingHook extends FishingHook {
+    public static final ResourceKey<LootTable> LAVA_FISHING = lootKey(NewFishing.MODID, "gameplay/lava_fishing");
 
-    // Время ожидания (в тиках): в лаве клюёт заметно быстрее, чем в воде. Подбирается на глаз.
-    private static final int LURE_MIN = 40;
-    private static final int LURE_MAX = 200;
+    // Время ожидания (в тиках). Вода — как в ваниле, лава быстрее. Подбирается на глаз.
+    private static final int LAVA_LURE_MIN = 40;
+    private static final int LAVA_LURE_MAX = 200;
+    private static final int WATER_LURE_MIN = 100;
+    private static final int WATER_LURE_MAX = 600;
     private static final int HOOKED_MIN = 20;
-    private static final int HOOKED_MAX = 60;
+    private static final int HOOKED_MAX = 80;
     private static final int BITE_MIN = 20;
     private static final int BITE_MAX = 40;
     /** Во сколько раз дольше держится добыча на незеритовом крючке. */
     private static final int BITE_MULTIPLIER = 3;
 
-    private static final EntityDataAccessor<Boolean> LAVA_BITING =
-            SynchedEntityData.defineId(LavaFishingHook.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> BITING =
+            SynchedEntityData.defineId(NetheriteFishingHook.class, EntityDataSerializers.BOOLEAN);
 
-    private enum State { FLYING, BOBBING }
-
-    private State state = State.FLYING;
-    private int outOfLavaTime;
+    private int outOfFluidTime;
     private int nibble;
     private int timeUntilLured;
     private int timeUntilHooked;
@@ -77,14 +78,20 @@ public class LavaFishingHook extends FishingHook {
     private int lootLuck;
     private int lureTicks;
     private boolean netheriteLine;
+    private boolean flying = true;
+    private ResourceKey<LootTable> biteTable;
 
-    public LavaFishingHook(EntityType<LavaFishingHook> type, Level level) {
+    public NetheriteFishingHook(EntityType<NetheriteFishingHook> type, Level level) {
         super(type, level);
     }
 
+    private static ResourceKey<LootTable> lootKey(String namespace, String path) {
+        return ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.fromNamespaceAndPath(namespace, path));
+    }
+
     /** Создаёт поплавок и «бросает» его от игрока (повторяет бросок ванильного). */
-    public static LavaFishingHook cast(Player player, Level level, int luck, int lureSpeed, boolean netheriteLine) {
-        LavaFishingHook hook = new LavaFishingHook(ModEntities.LAVA_FISHING_HOOK.get(), level);
+    public static NetheriteFishingHook cast(Player player, Level level, int luck, int lureSpeed, boolean netheriteLine) {
+        NetheriteFishingHook hook = new NetheriteFishingHook(ModEntities.NETHERITE_FISHING_HOOK.get(), level);
         hook.lootLuck = Math.max(0, luck);
         hook.lureTicks = Math.max(0, lureSpeed);
         hook.netheriteLine = netheriteLine;
@@ -118,31 +125,37 @@ public class LavaFishingHook extends FishingHook {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(LAVA_BITING, false);
+        builder.define(BITING, false);
     }
 
     private boolean isBiting() {
-        return this.getEntityData().get(LAVA_BITING);
+        return this.getEntityData().get(BITING);
     }
 
     private void setBiting(boolean biting) {
-        this.getEntityData().set(LAVA_BITING, biting);
-    }
-
-    /** Поплавок нельзя зацепить за существ: лавовый только ныряет в лаву. */
-    @Override
-    protected boolean canHitEntity(Entity entity) {
-        return false;
-    }
-
-    @Override
-    protected void onHitEntity(EntityHitResult result) {
+        this.getEntityData().set(BITING, biting);
     }
 
     private boolean shouldStop(Player player) {
         boolean holdsRod = player.getMainHandItem().is(Items.FISHING_ROD) || player.getOffhandItem().is(Items.FISHING_ROD);
-        // незеритовая леска не рвётся: расстояние не ограничено; но другое измерение или сломанная/убранная удочка прекращают рыбалку
+        // леска не ограничивает дальность; но другое измерение или убранная удочка прекращают рыбалку
         return player.isRemoved() || !player.isAlive() || !holdsRod || player.level() != this.level();
+    }
+
+    /** Таблица лута для жидкости в этой точке или null, если здесь не клюёт. */
+    private ResourceKey<LootTable> tableFor(FluidState state) {
+        if (state.is(FluidTags.LAVA)) {
+            return this.netheriteLine && this.level().dimension() == Level.NETHER ? LAVA_FISHING : null;
+        }
+        if (state.is(FluidTags.WATER)) {
+            return BuiltInLootTables.FISHING;
+        }
+        Fluid fluid = state.getType() instanceof FlowingFluid flowing ? flowing.getSource() : state.getType();
+        ResourceLocation id = BuiltInRegistries.FLUID.getKey(fluid);
+        ResourceKey<LootTable> key = lootKey(id.getNamespace(), "gameplay/fishing/" + id.getPath());
+        LootTable table = this.level().getServer() == null ? LootTable.EMPTY
+                : this.level().getServer().reloadableRegistries().getLootTable(key);
+        return table == LootTable.EMPTY ? null : key;
     }
 
     @Override
@@ -162,15 +175,27 @@ public class LavaFishingHook extends FishingHook {
 
         this.baseTick();
 
+        // зацепили существо: висим на нём
+        Entity hooked = this.getHookedIn();
+        if (hooked != null) {
+            if (hooked.isRemoved() || hooked.level().dimension() != this.level().dimension()) {
+                this.discard();
+                return;
+            }
+            this.setDeltaMovement(Vec3.ZERO);
+            this.setPos(hooked.getX(), hooked.getY(0.8), hooked.getZ());
+            return;
+        }
+
         BlockPos pos = this.blockPosition();
         FluidState fluid = this.level().getFluidState(pos);
-        boolean inLava = fluid.is(FluidTags.LAVA);
-        float height = inLava ? fluid.getHeight(this.level(), pos) : 0.0F;
+        boolean inFluid = !fluid.isEmpty();
+        float height = inFluid ? fluid.getHeight(this.level(), pos) : 0.0F;
 
-        if (this.state == State.FLYING) {
-            if (inLava) {
+        if (this.flying) {
+            if (inFluid) {
                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.3, 0.2, 0.3));
-                this.state = State.BOBBING;
+                this.flying = false;
                 return;
             }
             if (!this.level().isClientSide) {
@@ -186,34 +211,37 @@ public class LavaFishingHook extends FishingHook {
                 d0 += Math.signum(d0) * 0.1;
             }
             this.setDeltaMovement(motion.x * 0.9, motion.y - d0 * this.random.nextFloat() * 0.2, motion.z * 0.9);
-            if (inLava) {
-                this.outOfLavaTime = Math.max(0, this.outOfLavaTime - 1);
+            if (inFluid) {
+                this.outOfFluidTime = Math.max(0, this.outOfFluidTime - 1);
                 if (this.isBiting()) {
                     this.setDeltaMovement(this.getDeltaMovement().add(0.0, -0.1 * this.random.nextFloat() * this.random.nextFloat(), 0.0));
                 }
-                // клюёт только в Незере и только на незеритовой леске; иначе поплавок просто плавает в лаве
-                if (!this.level().isClientSide && this.netheriteLine && this.level().dimension() == Level.NETHER) {
-                    this.catchingFish(pos);
+                if (!this.level().isClientSide) {
+                    ResourceKey<LootTable> table = this.tableFor(fluid);
+                    if (table != null) {
+                        this.catchingFish(pos, fluid, table);
+                    }
                 }
             } else {
-                this.outOfLavaTime = Math.min(10, this.outOfLavaTime + 1);
+                this.outOfFluidTime = Math.min(10, this.outOfFluidTime + 1);
             }
         }
 
-        if (!inLava) {
+        if (!inFluid) {
             this.setDeltaMovement(this.getDeltaMovement().add(0.0, -0.03, 0.0));
         }
         this.move(MoverType.SELF, this.getDeltaMovement());
         this.updateRotation();
-        if (this.state == State.FLYING && (this.onGround() || this.horizontalCollision)) {
+        if (this.flying && (this.onGround() || this.horizontalCollision)) {
             this.setDeltaMovement(Vec3.ZERO);
         }
         this.setDeltaMovement(this.getDeltaMovement().scale(0.92));
         this.reapplyPosition();
     }
 
-    private void catchingFish(BlockPos pos) {
+    private void catchingFish(BlockPos pos, FluidState fluid, ResourceKey<LootTable> table) {
         ServerLevel serverLevel = (ServerLevel) this.level();
+        boolean lava = fluid.is(FluidTags.LAVA);
         if (this.nibble > 0) {
             this.nibble--;
             if (this.nibble <= 0) {
@@ -231,18 +259,34 @@ public class LavaFishingHook extends FishingHook {
                 double px = this.getX() + (double) (sin * (float) this.timeUntilHooked * 0.1F);
                 double py = (double) ((float) Mth.floor(this.getY()) + 1.0F);
                 double pz = this.getZ() + (double) (cos * (float) this.timeUntilHooked * 0.1F);
-                if (serverLevel.getBlockState(BlockPos.containing(px, py - 1.0, pz)).is(Blocks.LAVA)) {
-                    if (this.random.nextFloat() < 0.15F) {
-                        serverLevel.sendParticles(ParticleTypes.LAVA, px, py - 0.1, pz, 1, sin, 0.1, cos, 0.0);
+                if (!serverLevel.getFluidState(BlockPos.containing(px, py - 1.0, pz)).isEmpty()) {
+                    if (lava) {
+                        // подходящая рыба в лаве: частицы лавы
+                        serverLevel.sendParticles(ParticleTypes.LAVA, px, py, pz, 1, 0.05, 0.0, 0.05, 0.0);
+                    } else {
+                        if (this.random.nextFloat() < 0.15F) {
+                            serverLevel.sendParticles(ParticleTypes.BUBBLE, px, py - 0.1, pz, 1, sin, 0.1, cos, 0.0);
+                        }
+                        float dx = sin * 0.04F;
+                        float dz = cos * 0.04F;
+                        serverLevel.sendParticles(ParticleTypes.FISHING, px, py, pz, 0, dz, 0.01, -dx, 1.0);
+                        serverLevel.sendParticles(ParticleTypes.FISHING, px, py, pz, 0, -dz, 0.01, dx, 1.0);
                     }
-                    serverLevel.sendParticles(ParticleTypes.LAVA, px, py, pz, 1, 0.05, 0.0, 0.05, 0.0);
                 }
             } else {
-                this.playSound(SoundEvents.LAVA_POP, 0.5F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
                 double y = this.getY() + 0.5;
-                serverLevel.sendParticles(ParticleTypes.LAVA, this.getX(), y, this.getZ(), (int) (1.0F + this.getBbWidth() * 20.0F), this.getBbWidth(), 0.0, this.getBbWidth(), 0.2);
-                serverLevel.sendParticles(ParticleTypes.FLAME, this.getX(), y, this.getZ(), (int) (1.0F + this.getBbWidth() * 20.0F), this.getBbWidth(), 0.0, this.getBbWidth(), 0.2);
+                int count = (int) (1.0F + this.getBbWidth() * 20.0F);
+                if (lava) {
+                    this.playSound(SoundEvents.LAVA_POP, 0.5F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
+                    serverLevel.sendParticles(ParticleTypes.LAVA, this.getX(), y, this.getZ(), count, this.getBbWidth(), 0.0, this.getBbWidth(), 0.2);
+                    serverLevel.sendParticles(ParticleTypes.FLAME, this.getX(), y, this.getZ(), count, this.getBbWidth(), 0.0, this.getBbWidth(), 0.2);
+                } else {
+                    this.playSound(SoundEvents.FISHING_BOBBER_SPLASH, 0.25F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
+                    serverLevel.sendParticles(ParticleTypes.BUBBLE, this.getX(), y, this.getZ(), count, this.getBbWidth(), 0.0, this.getBbWidth(), 0.2);
+                    serverLevel.sendParticles(ParticleTypes.FISHING, this.getX(), y, this.getZ(), count, this.getBbWidth(), 0.0, this.getBbWidth(), 0.2);
+                }
                 this.nibble = Mth.nextInt(this.random, BITE_MIN, BITE_MAX) * BITE_MULTIPLIER;
+                this.biteTable = table;
                 this.setBiting(true);
             }
         } else if (this.timeUntilLured > 0) {
@@ -252,7 +296,9 @@ public class LavaFishingHook extends FishingHook {
                 this.timeUntilHooked = Mth.nextInt(this.random, HOOKED_MIN, HOOKED_MAX);
             }
         } else {
-            this.timeUntilLured = Math.max(10, Mth.nextInt(this.random, LURE_MIN, LURE_MAX) - this.lureTicks);
+            int min = lava ? LAVA_LURE_MIN : WATER_LURE_MIN;
+            int max = lava ? LAVA_LURE_MAX : WATER_LURE_MAX;
+            this.timeUntilLured = Math.max(10, Mth.nextInt(this.random, min, max) - this.lureTicks);
         }
     }
 
@@ -263,13 +309,19 @@ public class LavaFishingHook extends FishingHook {
             return 0;
         }
         int damage = 0;
-        if (this.nibble > 0 && LineBreak.shouldSnap(player)) {
-            // обычная леска порвалась: добыча потеряна, рыбалка окончена, удочка цела
-            LineBreak.announce(player, this);
-            this.discard();
-            return 0;
-        }
-        if (this.nibble > 0) {
+        Entity hooked = this.getHookedIn();
+        if (hooked != null) {
+            // подтягиваем зацепленное существо к игроку
+            Vec3 pull = new Vec3(player.getX() - this.getX(), player.getY() - this.getY(), player.getZ() - this.getZ()).scale(0.1);
+            hooked.setDeltaMovement(hooked.getDeltaMovement().add(pull));
+            damage = 5;
+        } else if (this.nibble > 0 && this.biteTable != null) {
+            if (LineBreak.shouldSnap(player)) {
+                // обычная леска порвалась: добыча потеряна, рыбалка окончена, удочка цела
+                LineBreak.announce(player, this);
+                this.discard();
+                return 0;
+            }
             LootParams params = new LootParams.Builder((ServerLevel) this.level())
                     .withParameter(LootContextParams.ORIGIN, this.position())
                     .withParameter(LootContextParams.TOOL, rod)
@@ -277,7 +329,7 @@ public class LavaFishingHook extends FishingHook {
                     .withParameter(LootContextParams.ATTACKING_ENTITY, this.getOwner())
                     .withLuck((float) this.lootLuck + player.getLuck())
                     .create(LootContextParamSets.FISHING);
-            LootTable table = this.level().getServer().reloadableRegistries().getLootTable(LAVA_FISHING);
+            LootTable table = this.level().getServer().reloadableRegistries().getLootTable(this.biteTable);
             List<ItemStack> items = table.getRandomItems(params);
             for (ItemStack stack : items) {
                 ItemEntity itemEntity = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), stack);

@@ -27,7 +27,7 @@ public final class ClientModEvents {
     /** Лавовый поплавок рисуется ванильным рендерером (своя 3D-модель — позже). */
     @SubscribeEvent
     static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(ModEntities.LAVA_FISHING_HOOK.get(), FishingHookRenderer::new);
+        event.registerEntityRenderer(ModEntities.NETHERITE_FISHING_HOOK.get(), FishingHookRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.CRATE.get(), CrateRenderer::new);
     }
 

@@ -15,7 +15,7 @@
   "message.newfishing.rod_missing_both": "Отсутствует леска и крючок",
   "message.newfishing.rod_missing_line": "Отсутствует леска",
   "message.newfishing.rod_missing_hook": "Отсутствует крючок",
-  "entity.newfishing.lava_fishing_hook": "Лавовый поплавок",
+  "entity.newfishing.netherite_fishing_hook": "Поплавок с незеритовым крючком",
   "block.newfishing.water_crate": "Водяной ящик",
   "block.newfishing.lava_crate": "Лавовый ящик",
   "container.newfishing.crate": "Ящик",

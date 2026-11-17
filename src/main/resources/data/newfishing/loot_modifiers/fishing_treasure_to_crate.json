@@ -1,0 +1,9 @@
+{
+  "type": "newfishing:crate_replaces_treasure",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "minecraft:gameplay/fishing"
+    }
+  ]
+}

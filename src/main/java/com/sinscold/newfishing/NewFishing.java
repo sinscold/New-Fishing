@@ -10,6 +10,7 @@ import com.sinscold.newfishing.registry.ModBlocks;
 import com.sinscold.newfishing.registry.ModEntities;
 import com.sinscold.newfishing.registry.ModSounds;
 import com.sinscold.newfishing.registry.ModItems;
+import com.sinscold.newfishing.registry.ModLootModifiers;
 import com.sinscold.newfishing.registry.ModRecipeSerializers;
 
 import net.neoforged.bus.api.IEventBus;
@@ -26,6 +27,7 @@ public class NewFishing {
         ModBlocks.BLOCKS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModSounds.SOUNDS.register(modEventBus);
+        ModLootModifiers.LOOT_MODIFIERS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModCreativeTabs.TABS.register(modEventBus);
         ModRecipeSerializers.SERIALIZERS.register(modEventBus);

@@ -1,7 +1,7 @@
 package com.sinscold.newfishing.registry;
 
 import com.sinscold.newfishing.NewFishing;
-import com.sinscold.newfishing.entity.LavaFishingHook;
+import com.sinscold.newfishing.entity.NetheriteFishingHook;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
@@ -13,16 +13,16 @@ public final class ModEntities {
     public static final DeferredRegister<EntityType<?>> ENTITIES =
             DeferredRegister.create(Registries.ENTITY_TYPE, NewFishing.MODID);
 
-    /** Лавовый поплавок: не горит, ловит только в лаве (см. LavaFishingHook). */
-    public static final DeferredHolder<EntityType<?>, EntityType<LavaFishingHook>> LAVA_FISHING_HOOK =
-            ENTITIES.register("lava_fishing_hook", () -> EntityType.Builder.<LavaFishingHook>of(LavaFishingHook::new, MobCategory.MISC)
+    /** Лавовый поплавок: не горит, ловит только в лаве (см. NetheriteFishingHook). */
+    public static final DeferredHolder<EntityType<?>, EntityType<NetheriteFishingHook>> NETHERITE_FISHING_HOOK =
+            ENTITIES.register("netherite_fishing_hook", () -> EntityType.Builder.<NetheriteFishingHook>of(NetheriteFishingHook::new, MobCategory.MISC)
                     .noSave()
                     .noSummon()
                     .fireImmune()
                     .sized(0.25F, 0.25F)
                     .clientTrackingRange(4)
                     .updateInterval(5)
-                    .build("lava_fishing_hook"));
+                    .build("netherite_fishing_hook"));
 
     private ModEntities() {}
 }

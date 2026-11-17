@@ -56,8 +56,8 @@ public record RodMods(ItemStack line, ItemStack hook) implements TooltipComponen
         return line.is(ModItems.NETHERITE_LINE.get());
     }
 
-    /** Незеритовый крючок: поплавок плавает в лаве (ловит только в Незере). */
-    public boolean hasLavaHook() {
+    /** Незеритовый крючок: поплавок для любых жидкостей, цепляет существ. */
+    public boolean hasNetheriteHook() {
         return hook.is(ModItems.NETHERITE_HOOK.get());
     }
 

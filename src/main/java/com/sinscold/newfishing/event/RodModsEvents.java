@@ -4,7 +4,7 @@ import com.sinscold.newfishing.NewFishing;
 import com.sinscold.newfishing.item.RodMods;
 import com.sinscold.newfishing.registry.ModDataComponents;
 
-import com.sinscold.newfishing.entity.LavaFishingHook;
+import com.sinscold.newfishing.entity.NetheriteFishingHook;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -97,14 +97,14 @@ public final class RodModsEvents {
 
         RodMods mods = RodMods.get(stack);
         if (mods.canFish()) {
-            // незеритовый крючок работает только в лаве: бросаем лавовый поплавок (клюёт только в Незере на незеритовой леске)
-            if (mods.hasLavaHook()) {
+            // незеритовый крючок: поплавок плавает на любой жидкости (вода, лава, модовые), см. NetheriteFishingHook
+            if (mods.hasNetheriteHook()) {
                 event.setCanceled(true);
                 event.setCancellationResult(InteractionResult.SUCCESS);
                 if (player.level() instanceof ServerLevel serverLevel) {
                     int lureSpeed = (int) (EnchantmentHelper.getFishingTimeReduction(serverLevel, stack, player) * 20.0F);
                     int luck = EnchantmentHelper.getFishingLuckBonus(serverLevel, stack, player);
-                    serverLevel.addFreshEntity(LavaFishingHook.cast(player, serverLevel, luck, lureSpeed, mods.hasNetheriteLine()));
+                    serverLevel.addFreshEntity(NetheriteFishingHook.cast(player, serverLevel, luck, lureSpeed, mods.hasNetheriteLine()));
                     serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.FISHING_BOBBER_THROW,
                             SoundSource.NEUTRAL, 0.5F, 0.4F / (serverLevel.getRandom().nextFloat() * 0.4F + 0.8F));
                     player.awardStat(Stats.ITEM_USED.get(Items.FISHING_ROD));
