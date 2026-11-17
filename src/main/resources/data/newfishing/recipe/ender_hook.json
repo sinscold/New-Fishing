@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "newfishing:blind_eye"
+    },
+    {
+      "item": "newfishing:fishing_hook"
+    }
+  ],
+  "result": {
+    "id": "newfishing:ender_hook",
+    "count": 1
+  }
+}

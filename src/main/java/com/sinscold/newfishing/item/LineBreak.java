@@ -33,5 +33,16 @@ public final class LineBreak {
         player.displayClientMessage(Component.translatable("message.newfishing.line_torn"), true);
     }
 
+    /** Поплавок попал в лаву без полного незеритового комплекта: леска (или поплавок) сгорает, рыбалка отменяется. */
+    public static void burn(Player player, Entity hook, boolean lineBurned) {
+        if (!(hook.level() instanceof net.minecraft.server.level.ServerLevel level)) return;
+        level.playSound(null, hook.getX(), hook.getY(), hook.getZ(), net.minecraft.sounds.SoundEvents.GENERIC_BURN, SoundSource.PLAYERS, 0.4F, 2.0F);
+        level.sendParticles(net.minecraft.core.particles.ParticleTypes.LARGE_SMOKE, hook.getX(), hook.getY() + 0.2, hook.getZ(), 6, 0.1, 0.1, 0.1, 0.02);
+        if (player != null) {
+            player.displayClientMessage(Component.translatable(lineBurned ? "message.newfishing.line_burned" : "message.newfishing.hook_burned"), true);
+        }
+        hook.discard();
+    }
+
     private LineBreak() {}
 }

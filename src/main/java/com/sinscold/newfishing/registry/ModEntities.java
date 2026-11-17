@@ -1,6 +1,7 @@
 package com.sinscold.newfishing.registry;
 
 import com.sinscold.newfishing.NewFishing;
+import com.sinscold.newfishing.entity.BlindEye;
 import com.sinscold.newfishing.entity.NetheriteFishingHook;
 
 import net.minecraft.core.registries.Registries;
@@ -23,6 +24,16 @@ public final class ModEntities {
                     .clientTrackingRange(4)
                     .updateInterval(5)
                     .build("netherite_fishing_hook"));
+
+    /** Брошенное слепое око. */
+    public static final DeferredHolder<EntityType<?>, EntityType<BlindEye>> BLIND_EYE =
+            ENTITIES.register("blind_eye", () -> EntityType.Builder.<BlindEye>of(BlindEye::new, MobCategory.MISC)
+                    .noSave()
+                    .noSummon()
+                    .sized(0.25F, 0.25F)
+                    .clientTrackingRange(4)
+                    .updateInterval(4)
+                    .build("blind_eye"));
 
     private ModEntities() {}
 }
