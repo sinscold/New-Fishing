@@ -52,9 +52,9 @@ public record RodMods(ItemStack line, ItemStack hook) implements TooltipComponen
         return hook.is(ModTags.ROD_HOOKS);
     }
 
-    /** Незеритовая леска и незеритовый крючок: комплект для лавовой рыбалки. */
-    public boolean isLavaKit() {
-        return line.is(ModItems.NETHERITE_LINE.get()) && hook.is(ModItems.NETHERITE_HOOK.get());
+    /** Незеритовый крючок: поплавок плавает в лаве (ловит только в Незере). */
+    public boolean hasLavaHook() {
+        return hook.is(ModItems.NETHERITE_HOOK.get());
     }
 
     /** Можно ли закидывать: есть леска и настоящий крючок. */

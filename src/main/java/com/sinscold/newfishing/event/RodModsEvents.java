@@ -11,7 +11,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResult;
@@ -98,8 +97,8 @@ public final class RodModsEvents {
 
         RodMods mods = RodMods.get(stack);
         if (mods.canFish()) {
-            // Незер + незеритовые леска и крючок: бросаем лавовый поплавок вместо ванильного
-            if (mods.isLavaKit() && player.level().dimension() == Level.NETHER) {
+            // незеритовый крючок: бросаем лавовый поплавок (в воде он сам станет обычным, ловит в лаве только в Незере)
+            if (mods.hasLavaHook()) {
                 event.setCanceled(true);
                 event.setCancellationResult(InteractionResult.SUCCESS);
                 if (player.level() instanceof ServerLevel serverLevel) {

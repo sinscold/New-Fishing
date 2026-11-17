@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "newfishing:block/lava_crate"
+    },
+    "facing=south": {
+      "model": "newfishing:block/lava_crate"
+    },
+    "facing=east": {
+      "model": "newfishing:block/lava_crate"
+    },
+    "facing=west": {
+      "model": "newfishing:block/lava_crate"
+    }
+  }
+}

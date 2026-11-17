@@ -30,6 +30,8 @@ import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import com.sinscold.newfishing.item.LineBreak;
+
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.FluidState;
@@ -44,8 +46,8 @@ import net.minecraft.world.phys.Vec3;
 /**
  * Лавовый поплавок: то же, что ванильный, но «плавает» в лаве и ловит по таблице {@code newfishing:gameplay/lava_fishing}.
  * Наследует FishingHook, чтобы игрок (player.fishing) и рендерер работали как с обычным. Не горит (см. ModEntities).
- * Забрасывается только в Незере и только с незеритовыми леской и крючком (см. RodModsEvents).
- * Незеритовая леска не рвётся: дальность не ограничена. Незеритовый крючок: добыча держится втрое дольше.
+ * Забрасывается с незеритовым крючком в любом измерении; ловит только в Незере. Попав в воду, превращается в обычный поплавок.
+ * Обычная леска рвётся с шансом 1 к 7 при вытаскивании поклёвки (LineBreak), незеритовая нет. Незеритовый крючок: добыча держится втрое дольше.
  */
 public class LavaFishingHook extends FishingHook {
     public static final ResourceKey<LootTable> LAVA_FISHING = ResourceKey.create(Registries.LOOT_TABLE,
@@ -164,6 +166,10 @@ public class LavaFishingHook extends FishingHook {
         float height = inLava ? fluid.getHeight(this.level(), pos) : 0.0F;
 
         if (this.state == State.FLYING) {
+            if (fluid.is(FluidTags.WATER)) {
+                this.switchToWaterHook(player);
+                return;
+            }
             if (inLava) {
                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.3, 0.2, 0.3));
                 this.state = State.BOBBING;
@@ -187,7 +193,8 @@ public class LavaFishingHook extends FishingHook {
                 if (this.isBiting()) {
                     this.setDeltaMovement(this.getDeltaMovement().add(0.0, -0.1 * this.random.nextFloat() * this.random.nextFloat(), 0.0));
                 }
-                if (!this.level().isClientSide) {
+                // ловит только в Незере; в других измерениях поплавок просто плавает в лаве
+                if (!this.level().isClientSide && this.level().dimension() == Level.NETHER) {
                     this.catchingFish(pos);
                 }
             } else {
@@ -205,6 +212,16 @@ public class LavaFishingHook extends FishingHook {
         }
         this.setDeltaMovement(this.getDeltaMovement().scale(0.92));
         this.reapplyPosition();
+    }
+
+    /** Лавовый поплавок попал в воду: заменяем его обычным, дальше ловит ванильная логика. */
+    private void switchToWaterHook(Player player) {
+        if (this.level().isClientSide) return;
+        FishingHook water = new FishingHook(player, this.level(), this.lootLuck, this.lureTicks);
+        water.moveTo(this.getX(), this.getY(), this.getZ());
+        water.setDeltaMovement(this.getDeltaMovement().multiply(0.3, 0.2, 0.3));
+        this.level().addFreshEntity(water);
+        this.discard();
     }
 
     private void catchingFish(BlockPos pos) {
@@ -230,7 +247,7 @@ public class LavaFishingHook extends FishingHook {
                     if (this.random.nextFloat() < 0.15F) {
                         serverLevel.sendParticles(ParticleTypes.LAVA, px, py - 0.1, pz, 1, sin, 0.1, cos, 0.0);
                     }
-                    serverLevel.sendParticles(ParticleTypes.SMOKE, px, py, pz, 0, cos * 0.04F, 0.01, -sin * 0.04F, 1.0);
+                    serverLevel.sendParticles(ParticleTypes.LAVA, px, py, pz, 1, 0.05, 0.0, 0.05, 0.0);
                 }
             } else {
                 this.playSound(SoundEvents.LAVA_POP, 0.5F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
@@ -258,6 +275,12 @@ public class LavaFishingHook extends FishingHook {
             return 0;
         }
         int damage = 0;
+        if (this.nibble > 0 && LineBreak.shouldSnap(player)) {
+            // обычная леска порвалась: добыча потеряна, рыбалка окончена, удочка цела
+            LineBreak.announce(player, this);
+            this.discard();
+            return 0;
+        }
         if (this.nibble > 0) {
             LootParams params = new LootParams.Builder((ServerLevel) this.level())
                     .withParameter(LootContextParams.ORIGIN, this.position())

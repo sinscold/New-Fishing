@@ -3,6 +3,7 @@ package com.sinscold.newfishing.registry;
 import com.sinscold.newfishing.NewFishing;
 
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -40,9 +41,9 @@ public final class ModItems {
             new Item.Properties().fireResistant());
 
     // --- Ящики (открытие по ПКМ — этап 5) ---
-    public static final DeferredItem<Item> WATER_CRATE = ITEMS.registerSimpleItem("water_crate",
+    public static final DeferredItem<BlockItem> WATER_CRATE = ITEMS.registerSimpleBlockItem("water_crate", ModBlocks.WATER_CRATE,
             new Item.Properties().stacksTo(16));
-    public static final DeferredItem<Item> LAVA_CRATE = ITEMS.registerSimpleItem("lava_crate",
+    public static final DeferredItem<BlockItem> LAVA_CRATE = ITEMS.registerSimpleBlockItem("lava_crate", ModBlocks.LAVA_CRATE,
             new Item.Properties().stacksTo(16).fireResistant());
 
     private ModItems() {}

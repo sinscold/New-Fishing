@@ -15,5 +15,10 @@
   "message.newfishing.rod_missing_both": "Missing line and hook",
   "message.newfishing.rod_missing_line": "Missing line",
   "message.newfishing.rod_missing_hook": "Missing hook",
-  "entity.newfishing.lava_fishing_hook": "Lava Bobber"
+  "entity.newfishing.lava_fishing_hook": "Lava Bobber",
+  "block.newfishing.water_crate": "Water Crate",
+  "block.newfishing.lava_crate": "Lava Crate",
+  "container.newfishing.crate": "Crate",
+  "message.newfishing.line_torn": "The line snapped!",
+  "subtitles.newfishing.line_torn": "Fishing line snaps"
 }

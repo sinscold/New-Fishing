@@ -5,6 +5,7 @@ import com.sinscold.newfishing.item.RodMods;
 
 import net.minecraft.client.renderer.entity.FishingHookRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
+import com.sinscold.newfishing.registry.ModBlockEntities;
 import com.sinscold.newfishing.registry.ModEntities;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
@@ -27,6 +28,7 @@ public final class ClientModEvents {
     @SubscribeEvent
     static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.LAVA_FISHING_HOOK.get(), FishingHookRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.CRATE.get(), CrateRenderer::new);
     }
 
     /** Свойство модели удочки: какой спрайт показывать (см. RodMods.visualState). */
