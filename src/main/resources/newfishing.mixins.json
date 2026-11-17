@@ -9,8 +9,5 @@
   ],
   "injectors": {
     "defaultRequire": 0
-  },
-  "client": [
-    "FishingHookRendererMixin"
-  ]
+  }
 }

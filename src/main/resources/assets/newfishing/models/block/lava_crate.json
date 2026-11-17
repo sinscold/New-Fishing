@@ -1,5 +1,5 @@
 {
   "textures": {
-    "particle": "newfishing:item/lava_crate"
+    "particle": "newfishing:block/lava_crate_particle"
   }
 }

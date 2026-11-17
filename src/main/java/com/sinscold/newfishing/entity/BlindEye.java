@@ -64,11 +64,12 @@ public class BlindEye extends Entity implements ItemSupplier {
                     this.getY() - 0.2 + this.random.nextDouble() * 0.5, this.getZ() + (this.random.nextDouble() - 0.5) * 0.5,
                     (this.random.nextDouble() - 0.5) * 0.2, -0.1, (this.random.nextDouble() - 0.5) * 0.2);
         } else if (this.life >= LIFETIME) {
+            // как у ока эндера: в конце парения звук, затем предмет падает или око разбивается
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.ENDER_EYE_DEATH, SoundSource.NEUTRAL, 1.0F, 1.0F);
             this.discard();
             if (this.random.nextInt(5) > 0) {
                 this.level().addFreshEntity(new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), this.getItem()));
             } else {
-                this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.ENDER_EYE_DEATH, SoundSource.NEUTRAL, 1.0F, 1.0F);
                 this.level().levelEvent(2003, this.blockPosition(), 0);
             }
         }

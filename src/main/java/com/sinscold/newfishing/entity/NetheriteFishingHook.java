@@ -76,6 +76,8 @@ public class NetheriteFishingHook extends FishingHook {
     /** Во сколько раз дольше держится добыча на незеритовом крючке. */
     private static final int BITE_MULTIPLIER = 3;
 
+    private static final EntityDataAccessor<Boolean> NETHERITE_TEXTURE =
+            SynchedEntityData.defineId(NetheriteFishingHook.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> BITING =
             SynchedEntityData.defineId(NetheriteFishingHook.class, EntityDataSerializers.BOOLEAN);
 
@@ -94,6 +96,10 @@ public class NetheriteFishingHook extends FishingHook {
     private Vec3 voidAnchor;
     private int jerkCooldown;
     private int dashTicks;
+    private int dashDuration;
+    private double dashDistance;
+    private Vec3 dashDir = Vec3.ZERO;
+    private boolean dashFast;
 
     public NetheriteFishingHook(EntityType<NetheriteFishingHook> type, Level level) {
         super(type, level);
@@ -111,6 +117,7 @@ public class NetheriteFishingHook extends FishingHook {
         hook.netheriteLine = netheriteLine;
         hook.phantomLine = phantomLine;
         hook.netheriteHook = netheriteHook;
+        hook.getEntityData().set(NETHERITE_TEXTURE, netheriteHook);
         hook.setOwner(player);
         player.fishing = hook;
 
@@ -142,6 +149,12 @@ public class NetheriteFishingHook extends FishingHook {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(BITING, false);
+        builder.define(NETHERITE_TEXTURE, false);
+    }
+
+    /** Для рендерера: рисовать поплавок с текстурой незеритового крючка. */
+    public boolean hasNetheriteHookTexture() {
+        return this.getEntityData().get(NETHERITE_TEXTURE);
     }
 
     private boolean isBiting() {
@@ -277,31 +290,40 @@ public class NetheriteFishingHook extends FishingHook {
         this.reapplyPosition();
     }
 
-    /** Рывок в случайную сторону (или к точке, где поплавок остановился, если ушёл далеко). */
-    private void jerk(double strength) {
-        Vec3 dir;
-        if (this.voidAnchor != null && this.position().distanceTo(this.voidAnchor) > 2.5) {
-            dir = this.voidAnchor.subtract(this.position()).normalize();
+    /**
+     * Рывок в случайную сторону на distance блоков за duration тиков. Обычный рывок: разгон и плавное замедление
+     * (скорость ~ 6u(1−u)); при поклёвке (fast): резкий старт и быстрое затухание. Если поплавок ушёл далеко от места
+     * остановки, рывок направлен обратно.
+     */
+    private void startDash(double distance, int duration, boolean fast) {
+        if (this.voidAnchor != null && this.position().distanceTo(this.voidAnchor) > 3.5) {
+            this.dashDir = this.voidAnchor.subtract(this.position()).normalize();
         } else {
             double angle = this.random.nextDouble() * Math.PI * 2.0;
-            dir = new Vec3(Math.cos(angle), (this.random.nextDouble() - 0.5) * 0.3, Math.sin(angle));
+            this.dashDir = new Vec3(Math.cos(angle), (this.random.nextDouble() - 0.5) * 0.2, Math.sin(angle)).normalize();
         }
-        this.setDeltaMovement(dir.scale(strength));
-        this.dashTicks = 8;
+        this.dashDistance = distance;
+        this.dashDuration = duration;
+        this.dashTicks = duration;
+        this.dashFast = fast;
     }
 
-    /** Поведение поплавка в зоне пустоты: редкие рывки и след частиц эндер-жемчуга. */
+    /** Поведение поплавка в зоне пустоты: рывки на 1–3 блока и одиночные частицы эндер-жемчуга из поплавка. */
     private void voidTick() {
         if (this.voidAnchor == null) {
             this.voidAnchor = this.position();
         }
         if (this.dashTicks > 0) {
+            double u = ((double) (this.dashDuration - this.dashTicks) + 0.5) / (double) this.dashDuration;
+            double profile = this.dashFast ? 3.0 * (1.0 - u) * (1.0 - u) : 6.0 * u * (1.0 - u);
+            this.setDeltaMovement(this.dashDir.scale(this.dashDistance * profile / (double) this.dashDuration));
             this.dashTicks--;
-            ((ServerLevel) this.level()).sendParticles(ParticleTypes.PORTAL, this.getX(), this.getY(), this.getZ(), 6, 0.1, 0.1, 0.1, 0.3);
-        }
-        if (this.jerkCooldown-- <= 0) {
-            this.jerkCooldown = 15 + this.random.nextInt(40);
-            this.jerk(0.15);
+            // одиночная частица, вылетающая из поплавка
+            ((ServerLevel) this.level()).sendParticles(ParticleTypes.PORTAL, this.getX(), this.getY() + 0.1, this.getZ(), 0,
+                    (this.random.nextDouble() - 0.5) * 2.0, this.random.nextDouble() - 0.3, (this.random.nextDouble() - 0.5) * 2.0, 0.5);
+        } else if (this.jerkCooldown-- <= 0) {
+            this.jerkCooldown = 20 + this.random.nextInt(50);
+            this.startDash(1.0 + this.random.nextDouble() * 2.0, 20, false);
         }
     }
 
@@ -346,7 +368,7 @@ public class NetheriteFishingHook extends FishingHook {
                 int count = (int) (1.0F + this.getBbWidth() * 20.0F);
                 if (inVoid) {
                     this.playSound(SoundEvents.ENDERMAN_TELEPORT, 0.3F, 1.5F);
-                    this.jerk(0.35); // при поклёвке поплавок резко улетает в сторону
+                    this.startDash(2.0 + this.random.nextDouble() * 1.5, 8, true); // при поклёвке резко улетает в сторону
                     serverLevel.sendParticles(ParticleTypes.PORTAL, this.getX(), y, this.getZ(), count * 2, this.getBbWidth(), 0.0, this.getBbWidth(), 0.2);
                 } else if (lava) {
                     this.playSound(SoundEvents.LAVA_POP, 0.5F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);

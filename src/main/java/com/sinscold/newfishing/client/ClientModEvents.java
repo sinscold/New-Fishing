@@ -3,7 +3,6 @@ package com.sinscold.newfishing.client;
 import com.sinscold.newfishing.NewFishing;
 import com.sinscold.newfishing.item.RodMods;
 
-import net.minecraft.client.renderer.entity.FishingHookRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import com.sinscold.newfishing.registry.ModBlockEntities;
 import com.sinscold.newfishing.registry.ModEntities;
@@ -48,7 +47,9 @@ public final class ClientModEvents {
     /** Лавовый поплавок рисуется ванильным рендерером (своя 3D-модель — позже). */
     @SubscribeEvent
     static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(ModEntities.NETHERITE_FISHING_HOOK.get(), FishingHookRenderer::new);
+        event.registerEntityRenderer(ModEntities.NETHERITE_FISHING_HOOK.get(), BobberRenderer::new);
+        // ванильный поплавок тоже рисуется нашей 3D-моделью
+        event.registerEntityRenderer(net.minecraft.world.entity.EntityType.FISHING_BOBBER, BobberRenderer::new);
         event.registerEntityRenderer(ModEntities.BLIND_EYE.get(), net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.CRATE.get(), CrateRenderer::new);
     }

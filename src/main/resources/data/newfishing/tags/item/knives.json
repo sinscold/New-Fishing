@@ -20,6 +20,7 @@
       "id": "farmersdelight:netherite_knife",
       "required": false
     },
-    "#minecraft:swords"
+    "#minecraft:swords",
+    "#minecraft:axes"
   ]
 }
