@@ -45,21 +45,29 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Поплавок с незеритовым крючком: не горит, плавает на любой жидкости (вода, лава, модовые), цепляет существ.
+ * Особый поплавок: плавает на любой жидкости (вода, лава, модовые), цепляет существ, а в Крае плавает в «зоне пустоты».
+ * Используется, если в удочке незеритовый крючок или фантомная леска; обычный крючок в лаве сгорает.
  * Клюёт только в жидкости, для которой есть таблица лута:
  * вода — ванильная {@code gameplay/fishing}; лава — {@code newfishing:gameplay/lava_fishing} (только в Незере и только на
  * незеритовой леске); другая жидкость {@code ns:path} — {@code ns:gameplay/fishing/path} (если такая таблица есть).
+ * Для пустоты (Край, Y от -64 до -50) нужна фантомная леска, подойдёт любой крючок: ловит по таблице {@code newfishing:gameplay/void_fishing}.
  * Обычная леска рвётся 1 к 7 при вытаскивании поклёвки (LineBreak), незеритовая нет. Добыча держится втрое дольше.
  * Наследует FishingHook, чтобы игрок (player.fishing) и рендерер работали как с обычным.
  */
 public class NetheriteFishingHook extends FishingHook {
     public static final ResourceKey<LootTable> LAVA_FISHING = lootKey(NewFishing.MODID, "gameplay/lava_fishing");
+    public static final ResourceKey<LootTable> VOID_FISHING = lootKey(NewFishing.MODID, "gameplay/void_fishing");
+    /** Зона пустоты в Крае: поплавок «застревает» на любой высоте в этом диапазоне. */
+    public static final double VOID_MIN_Y = -64.0;
+    public static final double VOID_MAX_Y = -50.0;
 
     // Время ожидания (в тиках). Вода — как в ваниле, лава быстрее. Подбирается на глаз.
     private static final int LAVA_LURE_MIN = 40;
     private static final int LAVA_LURE_MAX = 200;
     private static final int WATER_LURE_MIN = 100;
     private static final int WATER_LURE_MAX = 600;
+    private static final int VOID_LURE_MIN = 300;
+    private static final int VOID_LURE_MAX = 1000;
     private static final int HOOKED_MIN = 20;
     private static final int HOOKED_MAX = 80;
     private static final int BITE_MIN = 20;
@@ -78,6 +86,8 @@ public class NetheriteFishingHook extends FishingHook {
     private int lootLuck;
     private int lureTicks;
     private boolean netheriteLine;
+    private boolean phantomLine;
+    private boolean netheriteHook;
     private boolean flying = true;
     private ResourceKey<LootTable> biteTable;
 
@@ -90,11 +100,13 @@ public class NetheriteFishingHook extends FishingHook {
     }
 
     /** Создаёт поплавок и «бросает» его от игрока (повторяет бросок ванильного). */
-    public static NetheriteFishingHook cast(Player player, Level level, int luck, int lureSpeed, boolean netheriteLine) {
+    public static NetheriteFishingHook cast(Player player, Level level, int luck, int lureSpeed, boolean netheriteLine, boolean phantomLine, boolean netheriteHook) {
         NetheriteFishingHook hook = new NetheriteFishingHook(ModEntities.NETHERITE_FISHING_HOOK.get(), level);
         hook.lootLuck = Math.max(0, luck);
         hook.lureTicks = Math.max(0, lureSpeed);
         hook.netheriteLine = netheriteLine;
+        hook.phantomLine = phantomLine;
+        hook.netheriteHook = netheriteHook;
         hook.setOwner(player);
         player.fishing = hook;
 
@@ -143,7 +155,10 @@ public class NetheriteFishingHook extends FishingHook {
     }
 
     /** Таблица лута для жидкости в этой точке или null, если здесь не клюёт. */
-    private ResourceKey<LootTable> tableFor(FluidState state) {
+    private ResourceKey<LootTable> tableFor(FluidState state, boolean inVoid) {
+        if (inVoid) {
+            return this.phantomLine ? VOID_FISHING : null;
+        }
         if (state.is(FluidTags.LAVA)) {
             return this.netheriteLine && this.level().dimension() == Level.NETHER ? LAVA_FISHING : null;
         }
@@ -190,10 +205,23 @@ public class NetheriteFishingHook extends FishingHook {
         BlockPos pos = this.blockPosition();
         FluidState fluid = this.level().getFluidState(pos);
         boolean inFluid = !fluid.isEmpty();
+        // зона пустоты в Крае: поплавок парит на любой высоте
+        boolean inVoid = !inFluid && this.level().dimension() == Level.END && this.getY() >= VOID_MIN_Y && this.getY() <= VOID_MAX_Y;
+        boolean floating = inFluid || inVoid;
         float height = inFluid ? fluid.getHeight(this.level(), pos) : 0.0F;
 
+        // обычный крючок лаву не выдерживает: поплавок сгорает
+        if (inFluid && fluid.is(FluidTags.LAVA) && !this.netheriteHook) {
+            if (!this.level().isClientSide) {
+                this.playSound(SoundEvents.GENERIC_BURN, 0.4F, 2.0F);
+                ((ServerLevel) this.level()).sendParticles(ParticleTypes.LARGE_SMOKE, this.getX(), this.getY() + 0.2, this.getZ(), 6, 0.1, 0.1, 0.1, 0.02);
+                this.discard();
+            }
+            return;
+        }
+
         if (this.flying) {
-            if (inFluid) {
+            if (floating) {
                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.3, 0.2, 0.3));
                 this.flying = false;
                 return;
@@ -206,20 +234,25 @@ public class NetheriteFishingHook extends FishingHook {
             }
         } else {
             Vec3 motion = this.getDeltaMovement();
-            double d0 = this.getY() + motion.y - pos.getY() - height;
-            if (Math.abs(d0) < 0.01) {
-                d0 += Math.signum(d0) * 0.1;
+            if (inVoid) {
+                // в пустоте нет поверхности: поплавок просто повисает на месте
+                this.setDeltaMovement(motion.x * 0.9, motion.y * 0.6, motion.z * 0.9);
+            } else {
+                double d0 = this.getY() + motion.y - pos.getY() - height;
+                if (Math.abs(d0) < 0.01) {
+                    d0 += Math.signum(d0) * 0.1;
+                }
+                this.setDeltaMovement(motion.x * 0.9, motion.y - d0 * this.random.nextFloat() * 0.2, motion.z * 0.9);
             }
-            this.setDeltaMovement(motion.x * 0.9, motion.y - d0 * this.random.nextFloat() * 0.2, motion.z * 0.9);
-            if (inFluid) {
+            if (floating) {
                 this.outOfFluidTime = Math.max(0, this.outOfFluidTime - 1);
                 if (this.isBiting()) {
                     this.setDeltaMovement(this.getDeltaMovement().add(0.0, -0.1 * this.random.nextFloat() * this.random.nextFloat(), 0.0));
                 }
                 if (!this.level().isClientSide) {
-                    ResourceKey<LootTable> table = this.tableFor(fluid);
+                    ResourceKey<LootTable> table = this.tableFor(fluid, inVoid);
                     if (table != null) {
-                        this.catchingFish(pos, fluid, table);
+                        this.catchingFish(pos, fluid, inVoid, table);
                     }
                 }
             } else {
@@ -227,7 +260,7 @@ public class NetheriteFishingHook extends FishingHook {
             }
         }
 
-        if (!inFluid) {
+        if (!floating) {
             this.setDeltaMovement(this.getDeltaMovement().add(0.0, -0.03, 0.0));
         }
         this.move(MoverType.SELF, this.getDeltaMovement());
@@ -239,9 +272,9 @@ public class NetheriteFishingHook extends FishingHook {
         this.reapplyPosition();
     }
 
-    private void catchingFish(BlockPos pos, FluidState fluid, ResourceKey<LootTable> table) {
+    private void catchingFish(BlockPos pos, FluidState fluid, boolean inVoid, ResourceKey<LootTable> table) {
         ServerLevel serverLevel = (ServerLevel) this.level();
-        boolean lava = fluid.is(FluidTags.LAVA);
+        boolean lava = !inVoid && fluid.is(FluidTags.LAVA);
         if (this.nibble > 0) {
             this.nibble--;
             if (this.nibble <= 0) {
@@ -259,7 +292,9 @@ public class NetheriteFishingHook extends FishingHook {
                 double px = this.getX() + (double) (sin * (float) this.timeUntilHooked * 0.1F);
                 double py = (double) ((float) Mth.floor(this.getY()) + 1.0F);
                 double pz = this.getZ() + (double) (cos * (float) this.timeUntilHooked * 0.1F);
-                if (!serverLevel.getFluidState(BlockPos.containing(px, py - 1.0, pz)).isEmpty()) {
+                if (inVoid) {
+                    serverLevel.sendParticles(ParticleTypes.PORTAL, px, this.getY(), pz, 2, 0.05, 0.05, 0.05, 0.1);
+                } else if (!serverLevel.getFluidState(BlockPos.containing(px, py - 1.0, pz)).isEmpty()) {
                     if (lava) {
                         // подходящая рыба в лаве: частицы лавы
                         serverLevel.sendParticles(ParticleTypes.LAVA, px, py, pz, 1, 0.05, 0.0, 0.05, 0.0);
@@ -276,7 +311,10 @@ public class NetheriteFishingHook extends FishingHook {
             } else {
                 double y = this.getY() + 0.5;
                 int count = (int) (1.0F + this.getBbWidth() * 20.0F);
-                if (lava) {
+                if (inVoid) {
+                    this.playSound(SoundEvents.ENDERMAN_TELEPORT, 0.3F, 1.5F);
+                    serverLevel.sendParticles(ParticleTypes.PORTAL, this.getX(), y, this.getZ(), count * 2, this.getBbWidth(), 0.0, this.getBbWidth(), 0.2);
+                } else if (lava) {
                     this.playSound(SoundEvents.LAVA_POP, 0.5F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
                     serverLevel.sendParticles(ParticleTypes.LAVA, this.getX(), y, this.getZ(), count, this.getBbWidth(), 0.0, this.getBbWidth(), 0.2);
                     serverLevel.sendParticles(ParticleTypes.FLAME, this.getX(), y, this.getZ(), count, this.getBbWidth(), 0.0, this.getBbWidth(), 0.2);
@@ -296,8 +334,8 @@ public class NetheriteFishingHook extends FishingHook {
                 this.timeUntilHooked = Mth.nextInt(this.random, HOOKED_MIN, HOOKED_MAX);
             }
         } else {
-            int min = lava ? LAVA_LURE_MIN : WATER_LURE_MIN;
-            int max = lava ? LAVA_LURE_MAX : WATER_LURE_MAX;
+            int min = inVoid ? VOID_LURE_MIN : lava ? LAVA_LURE_MIN : WATER_LURE_MIN;
+            int max = inVoid ? VOID_LURE_MAX : lava ? LAVA_LURE_MAX : WATER_LURE_MAX;
             this.timeUntilLured = Math.max(10, Mth.nextInt(this.random, min, max) - this.lureTicks);
         }
     }
@@ -340,7 +378,7 @@ public class NetheriteFishingHook extends FishingHook {
                 itemEntity.setDeltaMovement(dx * 0.1, dy * 0.1 + Math.sqrt(Math.sqrt(dx * dx + dy * dy + dz * dz)) * 0.08, dz * 0.1);
                 this.level().addFreshEntity(itemEntity);
                 this.level().addFreshEntity(new ExperienceOrb(this.level(), player.getX(), player.getY() + 0.5, player.getZ() + 0.5, this.random.nextInt(6) + 1));
-                if (stack.is(ItemTags.FISHES) || stack.is(ModTags.NETHER_FISH)) {
+                if (stack.is(ItemTags.FISHES) || stack.is(ModTags.NETHER_FISH) || stack.is(ModTags.VOID_FISH)) {
                     player.awardStat(Stats.FISH_CAUGHT, 1);
                 }
             }

@@ -1,6 +1,7 @@
 package com.sinscold.newfishing.registry;
 
 import com.sinscold.newfishing.NewFishing;
+import com.sinscold.newfishing.item.VoidPikeFilletItem;
 
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
@@ -27,11 +28,19 @@ public final class ModItems {
             new Item.Properties().fireResistant()
                     .food(new FoodProperties.Builder().nutrition(6).saturationModifier(0.8f).build()));
 
+    // --- Рыба пустоты Края (ловится на фантомную леску) ---
+    public static final DeferredItem<Item> PHANTOM_RAY = ITEMS.registerSimpleItem("phantom_ray");
+    public static final DeferredItem<Item> VOID_PIKE = ITEMS.registerSimpleItem("void_pike");
+    public static final DeferredItem<Item> VOID_PIKE_FILLET = ITEMS.register("void_pike_fillet",
+            () -> new VoidPikeFilletItem(new Item.Properties().food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.4f).alwaysEdible().build())));
+    public static final DeferredItem<Item> VOID_PIKE_GUTS = ITEMS.registerSimpleItem("void_pike_guts");
+
     // --- Детали удочки (механика установки — этап 2) ---
     public static final DeferredItem<Item> FISHING_LINE = ITEMS.registerSimpleItem("fishing_line");
     public static final DeferredItem<Item> FISHING_HOOK = ITEMS.registerSimpleItem("fishing_hook");
     public static final DeferredItem<Item> NETHERITE_HOOK = ITEMS.registerSimpleItem("netherite_hook",
             new Item.Properties().fireResistant().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> PHANTOM_LINE = ITEMS.registerSimpleItem("phantom_line");
     public static final DeferredItem<Item> NETHERITE_LINE = ITEMS.registerSimpleItem("netherite_line",
             new Item.Properties().fireResistant().rarity(Rarity.UNCOMMON));
 

@@ -1,0 +1,31 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "base": {
+    "parent": "newfishing:item/rod_hand",
+    "textures": {
+      "layer0": "newfishing:item/fishing_rod_phantom_with_carrot-model",
+      "particle": "newfishing:item/fishing_rod_phantom_with_carrot-sprite"
+    }
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "newfishing:item/fishing_rod_phantom_with_carrot-sprite"
+      }
+    },
+    "ground": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "newfishing:item/fishing_rod_phantom_with_carrot-sprite"
+      }
+    },
+    "fixed": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "newfishing:item/fishing_rod_phantom_with_carrot-sprite"
+      }
+    }
+  }
+}
