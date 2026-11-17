@@ -91,6 +91,36 @@
     },
     {
       "predicate": {
+        "newfishing:rod_state": 11
+      },
+      "model": "newfishing:item/fishing_rod_phantom_line"
+    },
+    {
+      "predicate": {
+        "newfishing:rod_state": 12
+      },
+      "model": "newfishing:item/fishing_rod_phantom_and_float"
+    },
+    {
+      "predicate": {
+        "newfishing:rod_state": 13
+      },
+      "model": "newfishing:item/fishing_rod_phantom_and_netherite"
+    },
+    {
+      "predicate": {
+        "newfishing:rod_state": 14
+      },
+      "model": "newfishing:item/fishing_rod_phantom_with_carrot"
+    },
+    {
+      "predicate": {
+        "newfishing:rod_state": 15
+      },
+      "model": "newfishing:item/fishing_rod_phantom_with_warped_fungus"
+    },
+    {
+      "predicate": {
         "cast": 1,
         "newfishing:rod_state": 1
       },
@@ -102,6 +132,13 @@
         "newfishing:rod_state": 4
       },
       "model": "newfishing:item/fishing_rod_netherite_used"
+    },
+    {
+      "predicate": {
+        "cast": 1,
+        "newfishing:rod_state": 11
+      },
+      "model": "newfishing:item/fishing_rod_used"
     }
   ]
 }

@@ -23,6 +23,11 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.FISHING_HOOK.get());
                         output.accept(ModItems.NETHERITE_HOOK.get());
                         output.accept(ModItems.NETHERITE_LINE.get());
+                        output.accept(ModItems.PHANTOM_LINE.get());
+                        output.accept(ModItems.PHANTOM_RAY.get());
+                        output.accept(ModItems.VOID_PIKE.get());
+                        output.accept(ModItems.VOID_PIKE_FILLET.get());
+                        output.accept(ModItems.VOID_PIKE_GUTS.get());
                         output.accept(ModItems.GOLD_STRING.get());
                         output.accept(ModItems.NETHERITE_DUST.get());
                         output.accept(ModItems.LAVACARP.get());

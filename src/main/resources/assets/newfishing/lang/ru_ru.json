@@ -20,5 +20,10 @@
   "block.newfishing.lava_crate": "Лавовый ящик",
   "container.newfishing.crate": "Ящик",
   "message.newfishing.line_torn": "Леска порвалась!",
-  "subtitles.newfishing.line_torn": "Леска рвётся"
+  "subtitles.newfishing.line_torn": "Леска рвётся",
+  "item.newfishing.phantom_line": "Фантомная леска",
+  "item.newfishing.phantom_ray": "Фантомный скат",
+  "item.newfishing.void_pike": "Пустотная щука",
+  "item.newfishing.void_pike_fillet": "Филе пустотной щуки",
+  "item.newfishing.void_pike_guts": "Потроха пустотной щуки"
 }

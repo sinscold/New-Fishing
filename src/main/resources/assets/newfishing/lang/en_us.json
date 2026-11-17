@@ -20,5 +20,10 @@
   "block.newfishing.lava_crate": "Lava Crate",
   "container.newfishing.crate": "Crate",
   "message.newfishing.line_torn": "The line snapped!",
-  "subtitles.newfishing.line_torn": "Fishing line snaps"
+  "subtitles.newfishing.line_torn": "Fishing line snaps",
+  "item.newfishing.phantom_line": "Phantom Line",
+  "item.newfishing.phantom_ray": "Phantom Ray",
+  "item.newfishing.void_pike": "Void Pike",
+  "item.newfishing.void_pike_fillet": "Void Pike Fillet",
+  "item.newfishing.void_pike_guts": "Void Pike Guts"
 }

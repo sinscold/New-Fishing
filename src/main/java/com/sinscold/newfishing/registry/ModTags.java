@@ -19,6 +19,11 @@ public final class ModTags {
     /** Рыба из Незера (для статистики улова и будущей торговли). */
     public static final TagKey<Item> NETHER_FISH = item("nether_fish");
 
+    /** Рыба из пустоты Края. */
+    public static final TagKey<Item> VOID_FISH = item("void_fish");
+    /** Ножи (для разделки): ножи Farmer's Delight и, как запасной вариант, мечи. */
+    public static final TagKey<Item> KNIVES = item("knives");
+
     private static TagKey<Item> item(String name) {
         return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, name));
     }

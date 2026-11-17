@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:fishing",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "newfishing:phantom_ray",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "name": "newfishing:void_pike",
+          "weight": 50
+        }
+      ]
+    }
+  ]
+}
