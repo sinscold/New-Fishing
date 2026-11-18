@@ -80,8 +80,13 @@ public class NetheriteFishingHook extends FishingHook {
     /** Во сколько раз дольше держится добыча на незеритовом крючке. */
     private static final int BITE_MULTIPLIER = 3;
 
-    private static final EntityDataAccessor<Boolean> NETHERITE_TEXTURE =
-            SynchedEntityData.defineId(NetheriteFishingHook.class, EntityDataSerializers.BOOLEAN);
+    /** Какие детали удочки установлены (биты), синхронизируется с клиентом: от этого зависит и физика поплавка, и вид. */
+    private static final EntityDataAccessor<Integer> PARTS =
+            SynchedEntityData.defineId(NetheriteFishingHook.class, EntityDataSerializers.INT);
+    private static final int PART_NETHERITE_LINE = 1;
+    private static final int PART_PHANTOM_LINE = 2;
+    private static final int PART_NETHERITE_HOOK = 4;
+    private static final int PART_ENDER_HOOK = 8;
     private static final EntityDataAccessor<Boolean> BITING =
             SynchedEntityData.defineId(NetheriteFishingHook.class, EntityDataSerializers.BOOLEAN);
 
@@ -92,10 +97,6 @@ public class NetheriteFishingHook extends FishingHook {
     private float fishAngle;
     private int lootLuck;
     private int lureTicks;
-    private boolean netheriteLine;
-    private boolean phantomLine;
-    private boolean netheriteHook;
-    private boolean enderHook;
     private boolean flying = true;
     private ResourceKey<LootTable> biteTable;
     private Vec3 voidAnchor;
@@ -119,11 +120,8 @@ public class NetheriteFishingHook extends FishingHook {
         NetheriteFishingHook hook = new NetheriteFishingHook(ModEntities.NETHERITE_FISHING_HOOK.get(), level);
         hook.lootLuck = Math.max(0, luck);
         hook.lureTicks = Math.max(0, lureSpeed);
-        hook.netheriteLine = netheriteLine;
-        hook.phantomLine = phantomLine;
-        hook.enderHook = enderHook;
-        hook.netheriteHook = netheriteHook;
-        hook.getEntityData().set(NETHERITE_TEXTURE, netheriteHook);
+        hook.getEntityData().set(PARTS, (netheriteLine ? PART_NETHERITE_LINE : 0) | (phantomLine ? PART_PHANTOM_LINE : 0)
+                | (netheriteHook ? PART_NETHERITE_HOOK : 0) | (enderHook ? PART_ENDER_HOOK : 0));
         hook.setOwner(player);
         player.fishing = hook;
 
@@ -155,12 +153,28 @@ public class NetheriteFishingHook extends FishingHook {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(BITING, false);
-        builder.define(NETHERITE_TEXTURE, false);
+        builder.define(PARTS, 0);
     }
 
     /** Для рендерера: рисовать поплавок с текстурой незеритового крючка. */
     public boolean hasNetheriteHookTexture() {
-        return this.getEntityData().get(NETHERITE_TEXTURE);
+        return this.hasNetheriteHook();
+    }
+
+    private boolean hasNetheriteLine() {
+        return (this.getEntityData().get(PARTS) & PART_NETHERITE_LINE) != 0;
+    }
+
+    private boolean hasPhantomLine() {
+        return (this.getEntityData().get(PARTS) & PART_PHANTOM_LINE) != 0;
+    }
+
+    private boolean hasNetheriteHook() {
+        return (this.getEntityData().get(PARTS) & PART_NETHERITE_HOOK) != 0;
+    }
+
+    private boolean hasEnderHook() {
+        return (this.getEntityData().get(PARTS) & PART_ENDER_HOOK) != 0;
     }
 
     private boolean isBiting() {
@@ -181,11 +195,11 @@ public class NetheriteFishingHook extends FishingHook {
     /** Таблица лута для жидкости в этой точке или null, если здесь не клюёт. */
     private ResourceKey<LootTable> tableFor(FluidState state, boolean inVoid) {
         if (inVoid) {
-            return this.phantomLine ? VOID_FISHING : null; // inVoid бывает только у эндер-поплавка
+            return this.hasPhantomLine() ? VOID_FISHING : null; // inVoid бывает только у эндер-поплавка
         }
         if (state.is(FluidTags.LAVA)) {
             // клёв и анимации в лаве везде (на незеритовой леске), а улов только в Незере (см. retrieve)
-            return this.netheriteLine ? LAVA_FISHING : null;
+            return this.hasNetheriteLine() ? LAVA_FISHING : null;
         }
         if (state.is(FluidTags.WATER)) {
             return BuiltInLootTables.FISHING;
@@ -231,14 +245,14 @@ public class NetheriteFishingHook extends FishingHook {
         FluidState fluid = this.level().getFluidState(pos);
         boolean inFluid = !fluid.isEmpty();
                 // в пустоте парит только эндер-поплавок; остальные поплавки тонут (падают в бездну)
-        boolean inVoid = this.enderHook && !inFluid && this.level().dimension() == Level.END && this.getY() <= VOID_MAX_Y;
+        boolean inVoid = this.hasEnderHook() && !inFluid && this.level().dimension() == Level.END && this.getY() <= VOID_MAX_Y;
         boolean floating = inFluid || inVoid;
         float height = inFluid ? fluid.getHeight(this.level(), pos) : 0.0F;
 
         // в лаве выдерживает только полный незеритовый комплект: любая другая леска сгорает сразу, обычный крючок тоже
-        if (inFluid && fluid.is(FluidTags.LAVA) && !(this.netheriteLine && this.netheriteHook)) {
+        if (inFluid && fluid.is(FluidTags.LAVA) && !(this.hasNetheriteLine() && this.hasNetheriteHook())) {
             if (!this.level().isClientSide) {
-                LineBreak.burn(player, this, !this.netheriteLine);
+                LineBreak.burn(player, this, !this.hasNetheriteLine());
             }
             return;
         }
