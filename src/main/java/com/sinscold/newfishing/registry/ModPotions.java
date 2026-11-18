@@ -10,7 +10,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.brewing.RegisterBrewingRecipesEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.minecraft.world.item.alchemy.Potions;
 
 @EventBusSubscriber(modid = NewFishing.MODID)
 public final class ModPotions {
@@ -23,7 +22,7 @@ public final class ModPotions {
     /** Варка: неловкое зелье + потроха пустотной щуки. */
     @SubscribeEvent
     static void onRegisterBrewing(RegisterBrewingRecipesEvent event) {
-        event.getBuilder().addMix(Potions.AWKWARD, ModItems.VOID_PIKE_GUTS.get(), RETURN);
+        event.getBuilder().addRecipe(new com.sinscold.newfishing.item.ReturnBrewingRecipe());
     }
 
     private ModPotions() {}

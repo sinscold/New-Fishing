@@ -320,6 +320,7 @@ public class NetheriteFishingHook extends FishingHook {
     private void voidTick() {
         if (this.voidAnchor == null) {
             this.voidAnchor = this.position();
+            NewFishing.LOGGER.info("Поплавок в зоне пустоты на высоте Y={} (зона {}…{})", this.getY(), VOID_MIN_Y, VOID_MAX_Y);
         }
         if (this.dashTicks > 0) {
             double u = ((double) (this.dashDuration - this.dashTicks) + 0.5) / (double) this.dashDuration;
