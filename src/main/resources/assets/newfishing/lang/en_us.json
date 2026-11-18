@@ -36,5 +36,7 @@
   "item.minecraft.lingering_potion.effect.return": "Lingering Potion of Return",
   "item.minecraft.tipped_arrow.effect.return": "Arrow of Return",
   "effect.newfishing.return": "Return",
-  "entity.newfishing.return_portal": "Return Portal"
+  "entity.newfishing.return_portal": "Return Portal",
+  "subtitles.newfishing.lava_blop": "Bobber plops into lava",
+  "subtitles.newfishing.lava_bulb": "Something bites in lava"
 }

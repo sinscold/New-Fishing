@@ -15,5 +15,12 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> LINE_TORN = SOUNDS.register("line_torn",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "line_torn")));
 
+    /** Блоп: поплавок попал в лаву. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> LAVA_BLOP = SOUNDS.register("lava_blop",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "lava_blop")));
+    /** Булб: клёв в лаве. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> LAVA_BULB = SOUNDS.register("lava_bulb",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "lava_bulb")));
+
     private ModSounds() {}
 }

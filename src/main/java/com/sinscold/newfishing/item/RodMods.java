@@ -30,6 +30,13 @@ public record RodMods(ItemStack line, ItemStack hook) implements TooltipComponen
         return rod.getOrDefault(ModDataComponents.ROD_MODS.get(), EMPTY);
     }
 
+    /** Держит ли игрок удочку, с которой ещё можно рыбачить (есть леска и рыболовный крючок). */
+    public static boolean holdsFishableRod(net.minecraft.world.entity.player.Player player) {
+        ItemStack rod = player.getMainHandItem().is(Items.FISHING_ROD) ? player.getMainHandItem()
+                : player.getOffhandItem().is(Items.FISHING_ROD) ? player.getOffhandItem() : ItemStack.EMPTY;
+        return !rod.isEmpty() && get(rod).canFish();
+    }
+
     public static boolean isLine(ItemStack stack) {
         return stack.is(ModTags.ROD_LINES);
     }

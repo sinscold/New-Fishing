@@ -44,6 +44,7 @@ public class ReturnEffect extends InstantenousMobEffect {
         // портал на месте, где выпили: ведёт на точку возрождения
         spawnPortal(from, origin, to.dimension(), destination);
         player.teleportTo(to, destination.x, destination.y, destination.z, player.getYRot(), player.getXRot());
+        ReturnPortal.markTeleported(player);
         // портал у точки возрождения: ведёт обратно на место, где выпили (чуть в стороне, чтобы не сработать сразу)
         spawnPortal(to, destination.add(1.5, 0.0, 0.0), from.dimension(), origin);
     }

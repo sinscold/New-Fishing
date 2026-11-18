@@ -19,6 +19,13 @@ public final class VanillaHookLavaEvents {
         if (event.getEntity() instanceof FishingHook hook && !(hook instanceof NetheriteFishingHook)
                 && hook.level() instanceof ServerLevel level && hook.isInLava()) {
             com.sinscold.newfishing.item.LineBreak.burn(hook.getPlayerOwner(), hook, !hasNetheriteLine(hook.getPlayerOwner()));
+        } else if (event.getEntity() instanceof FishingHook hook && !(hook instanceof NetheriteFishingHook)
+                && hook.level() instanceof ServerLevel && hook.tickCount > 2) {
+            // из удочки вытащили леску или крючок во время рыбалки: рыбалка отменяется
+            net.minecraft.world.entity.player.Player owner = hook.getPlayerOwner();
+            if (owner != null && !com.sinscold.newfishing.item.RodMods.holdsFishableRod(owner)) {
+                hook.discard();
+            }
         }
     }
 

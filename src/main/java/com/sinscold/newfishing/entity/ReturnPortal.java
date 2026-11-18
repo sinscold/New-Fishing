@@ -19,6 +19,19 @@ public class ReturnPortal extends Entity {
     /** Первые тики портал не срабатывает, чтобы не вернуть игрока сразу. */
     private static final int ARMING = 60;
 
+    /** После перемещения игрок 2 секунды не может войти ни в один портал. */
+    private static final int COOLDOWN = 40;
+    private static final java.util.Map<java.util.UUID, Long> LAST_TELEPORT = new java.util.concurrent.ConcurrentHashMap<>();
+
+    public static void markTeleported(ServerPlayer player) {
+        LAST_TELEPORT.put(player.getUUID(), player.serverLevel().getGameTime());
+    }
+
+    private static boolean onCooldown(ServerPlayer player) {
+        Long last = LAST_TELEPORT.get(player.getUUID());
+        return last != null && player.serverLevel().getGameTime() - last < COOLDOWN;
+    }
+
     private ResourceKey<Level> targetDimension;
     private Vec3 target = Vec3.ZERO;
     private int age;
@@ -63,11 +76,15 @@ public class ReturnPortal extends Entity {
         }
         ServerLevel serverLevel = (ServerLevel) this.level();
         for (ServerPlayer player : serverLevel.getEntitiesOfClass(ServerPlayer.class, this.getBoundingBox().inflate(0.3))) {
+            if (onCooldown(player)) {
+                continue;
+            }
             ServerLevel to = serverLevel.getServer().getLevel(this.targetDimension);
             if (to == null) {
                 continue;
             }
             player.teleportTo(to, this.target.x, this.target.y, this.target.z, player.getYRot(), player.getXRot());
+            markTeleported(player);
             serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PORTAL_TRAVEL, SoundSource.PLAYERS, 0.3F, 1.2F);
             this.discard();
             return;

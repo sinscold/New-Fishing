@@ -1,1 +1,26 @@
-{ "line_torn": { "sounds": [ { "name": "newfishing:line_torn" } ], "subtitle": "subtitles.newfishing.line_torn" } }
+{
+  "line_torn": {
+    "sounds": [
+      {
+        "name": "newfishing:line_torn"
+      }
+    ],
+    "subtitle": "subtitles.newfishing.line_torn"
+  },
+  "lava_blop": {
+    "sounds": [
+      {
+        "name": "newfishing:lava_blop"
+      }
+    ],
+    "subtitle": "subtitles.newfishing.lava_blop"
+  },
+  "lava_bulb": {
+    "sounds": [
+      {
+        "name": "newfishing:lava_bulb"
+      }
+    ],
+    "subtitle": "subtitles.newfishing.lava_bulb"
+  }
+}

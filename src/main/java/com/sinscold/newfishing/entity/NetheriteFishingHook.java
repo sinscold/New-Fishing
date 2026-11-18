@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.sinscold.newfishing.NewFishing;
 import com.sinscold.newfishing.item.LineBreak;
+import com.sinscold.newfishing.item.RodMods;
+import com.sinscold.newfishing.registry.ModSounds;
 import com.sinscold.newfishing.registry.ModEntities;
 import com.sinscold.newfishing.registry.ModTags;
 
@@ -51,7 +53,7 @@ import net.minecraft.world.phys.Vec3;
  * Клюёт только в жидкости, для которой есть таблица лута:
  * вода — ванильная {@code gameplay/fishing}; лава — {@code newfishing:gameplay/lava_fishing} (только в Незере и только на
  * незеритовой леске); другая жидкость {@code ns:path} — {@code ns:gameplay/fishing/path} (если такая таблица есть).
- * Для пустоты (Край, Y от -64 до 15) нужны фантомная леска и эндер-поплавок (остальные поплавки тонут): ловит по таблице {@code newfishing:gameplay/void_fishing}.
+ * Для пустоты (Край, Y от 10 до 50) нужны фантомная леска и эндер-поплавок (остальные поплавки тонут): ловит по таблице {@code newfishing:gameplay/void_fishing}.
  * Обычная леска рвётся 1 к 7 при вытаскивании поклёвки (LineBreak), незеритовая нет. Добыча держится втрое дольше.
  * Наследует FishingHook, чтобы игрок (player.fishing) и рендерер работали как с обычным.
  */
@@ -59,8 +61,10 @@ public class NetheriteFishingHook extends FishingHook {
     public static final ResourceKey<LootTable> LAVA_FISHING = lootKey(NewFishing.MODID, "gameplay/lava_fishing");
     public static final ResourceKey<LootTable> VOID_FISHING = lootKey(NewFishing.MODID, "gameplay/void_fishing");
     /** Зона пустоты в Крае: поплавок «застревает» на любой высоте в этом диапазоне. */
-    public static final double VOID_MIN_Y = -64.0;
-    public static final double VOID_MAX_Y = 15.0;
+    public static final double VOID_MIN_Y = 10.0;
+    public static final double VOID_MAX_Y = 50.0;
+    /** Дальше этого расстояния от игрока (по горизонтали) поплавок в пустоте разворачивается к нему; вдвое дальше — леска обрывается. */
+    private static final double VOID_LEASH = 40.0;
 
     // Время ожидания (в тиках). Вода — как в ваниле, лава быстрее. Подбирается на глаз.
     private static final int LAVA_LURE_MIN = 40;
@@ -168,9 +172,8 @@ public class NetheriteFishingHook extends FishingHook {
     }
 
     private boolean shouldStop(Player player) {
-        boolean holdsRod = player.getMainHandItem().is(Items.FISHING_ROD) || player.getOffhandItem().is(Items.FISHING_ROD);
-        // леска не ограничивает дальность; но другое измерение или убранная удочка прекращают рыбалку
-        return player.isRemoved() || !player.isAlive() || !holdsRod || player.level() != this.level();
+        // леска не ограничивает дальность; но другое измерение, убранная удочка или вытащенная из неё леска/крючок прекращают рыбалку
+        return player.isRemoved() || !player.isAlive() || !RodMods.holdsFishableRod(player) || player.level() != this.level();
     }
 
     /** Таблица лута для жидкости в этой точке или null, если здесь не клюёт. */
@@ -179,7 +182,8 @@ public class NetheriteFishingHook extends FishingHook {
             return this.phantomLine ? VOID_FISHING : null; // inVoid бывает только у эндер-поплавка
         }
         if (state.is(FluidTags.LAVA)) {
-            return this.netheriteLine && this.level().dimension() == Level.NETHER ? LAVA_FISHING : null;
+            // клёв и анимации в лаве везде (на незеритовой леске), а улов только в Незере (см. retrieve)
+            return this.netheriteLine ? LAVA_FISHING : null;
         }
         if (state.is(FluidTags.WATER)) {
             return BuiltInLootTables.FISHING;
@@ -239,6 +243,9 @@ public class NetheriteFishingHook extends FishingHook {
 
         if (this.flying) {
             if (floating) {
+                if (!this.level().isClientSide && inFluid && fluid.is(FluidTags.LAVA)) {
+                    this.playSound(ModSounds.LAVA_BLOP.get(), 0.6F, 1.0F);
+                }
                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.3, 0.2, 0.3));
                 this.flying = false;
                 return;
@@ -298,7 +305,12 @@ public class NetheriteFishingHook extends FishingHook {
      * остановки, рывок направлен обратно.
      */
     private void startDash(double distance, int duration, boolean fast) {
-        if (this.voidAnchor != null && this.position().distanceTo(this.voidAnchor) > 40.0) {
+        Player owner = this.getPlayerOwner();
+        double ownerDistance = owner == null ? 0.0 : Math.hypot(owner.getX() - this.getX(), owner.getZ() - this.getZ());
+        if (owner != null && ownerDistance > VOID_LEASH) {
+            // слишком далеко от игрока: рывок в его сторону
+            this.dashDir = new Vec3(owner.getX() - this.getX(), (owner.getY() + 20.0 - this.getY()) * 0.2, owner.getZ() - this.getZ()).normalize();
+        } else if (this.voidAnchor != null && this.position().distanceTo(this.voidAnchor) > 40.0) {
             this.dashDir = this.voidAnchor.subtract(this.position()).normalize();
         } else {
             double angle = this.random.nextDouble() * Math.PI * 2.0;
@@ -321,6 +333,11 @@ public class NetheriteFishingHook extends FishingHook {
         if (this.voidAnchor == null) {
             this.voidAnchor = this.position();
             NewFishing.LOGGER.info("Поплавок в зоне пустоты на высоте Y={} (зона {}…{})", this.getY(), VOID_MIN_Y, VOID_MAX_Y);
+        }
+        Player leashOwner = this.getPlayerOwner();
+        if (leashOwner != null && Math.hypot(leashOwner.getX() - this.getX(), leashOwner.getZ() - this.getZ()) > VOID_LEASH * 2.0) {
+            this.discard(); // леска оборвалась от слишком большого расстояния
+            return;
         }
         if (this.dashTicks > 0) {
             double u = ((double) (this.dashDuration - this.dashTicks) + 0.5) / (double) this.dashDuration;
@@ -381,7 +398,7 @@ public class NetheriteFishingHook extends FishingHook {
                     this.startDash(6.0 + this.random.nextDouble() * 4.0, 12, true); // при поклёвке резко улетает в сторону
                     serverLevel.sendParticles(ParticleTypes.PORTAL, this.getX(), y, this.getZ(), count * 2, this.getBbWidth(), 0.0, this.getBbWidth(), 0.2);
                 } else if (lava) {
-                    this.playSound(SoundEvents.LAVA_POP, 0.5F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
+                    this.playSound(ModSounds.LAVA_BULB.get(), 0.7F, 1.0F);
                     serverLevel.sendParticles(ParticleTypes.LAVA, this.getX(), y, this.getZ(), count, this.getBbWidth(), 0.0, this.getBbWidth(), 0.2);
                     serverLevel.sendParticles(ParticleTypes.FLAME, this.getX(), y, this.getZ(), count, this.getBbWidth(), 0.0, this.getBbWidth(), 0.2);
                 } else {
@@ -419,6 +436,8 @@ public class NetheriteFishingHook extends FishingHook {
             Vec3 pull = new Vec3(player.getX() - this.getX(), player.getY() - this.getY(), player.getZ() - this.getZ()).scale(0.1);
             hooked.setDeltaMovement(hooked.getDeltaMovement().add(pull));
             damage = 5;
+        } else if (this.nibble > 0 && this.biteTable == LAVA_FISHING && this.level().dimension() != Level.NETHER) {
+            // в лаве вне Незера рыба клюёт, но улова нет
         } else if (this.nibble > 0 && this.biteTable != null) {
             if (LineBreak.shouldSnap(player)) {
                 // обычная леска порвалась: добыча потеряна, рыбалка окончена, удочка цела

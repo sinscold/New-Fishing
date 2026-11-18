@@ -36,5 +36,7 @@
   "item.minecraft.lingering_potion.effect.return": "Туманное зелье возвращения",
   "item.minecraft.tipped_arrow.effect.return": "Стрела возвращения",
   "effect.newfishing.return": "Возвращение",
-  "entity.newfishing.return_portal": "Портал возвращения"
+  "entity.newfishing.return_portal": "Портал возвращения",
+  "subtitles.newfishing.lava_blop": "Поплавок булькает в лаве",
+  "subtitles.newfishing.lava_bulb": "Клёв в лаве"
 }
