@@ -59,6 +59,10 @@ public final class RodModsEvents {
                 return;
             }
             event.getCarriedSlotAccess().set(removed);
+            // достали деталь из удочки во время рыбалки: рыбалка отменяется
+            if (!player.level().isClientSide && player.fishing != null) {
+                player.fishing.discard();
+            }
             player.playSound(SoundEvents.BUNDLE_REMOVE_ONE, 0.8F, 0.8F + player.level().getRandom().nextFloat() * 0.4F);
         } else if (RodMods.isLine(carried) && !mods.hasLine()) {
             rod.set(ModDataComponents.ROD_MODS.get(), mods.withLine(carried.split(1)));
@@ -98,13 +102,13 @@ public final class RodModsEvents {
         RodMods mods = RodMods.get(stack);
         if (mods.canFish()) {
             // незеритовый крючок или фантомная леска: особый поплавок (любые жидкости, пустота Края), см. NetheriteFishingHook
-            if (mods.hasNetheriteHook() || mods.hasPhantomLine()) {
+            if (mods.hasNetheriteHook() || mods.hasPhantomLine() || mods.hasEnderHook()) {
                 event.setCanceled(true);
                 event.setCancellationResult(InteractionResult.SUCCESS);
                 if (player.level() instanceof ServerLevel serverLevel) {
                     int lureSpeed = (int) (EnchantmentHelper.getFishingTimeReduction(serverLevel, stack, player) * 20.0F);
                     int luck = EnchantmentHelper.getFishingLuckBonus(serverLevel, stack, player);
-                    serverLevel.addFreshEntity(NetheriteFishingHook.cast(player, serverLevel, luck, lureSpeed, mods.hasNetheriteLine(), mods.hasPhantomLine(), mods.hasNetheriteHook()));
+                    serverLevel.addFreshEntity(NetheriteFishingHook.cast(player, serverLevel, luck, lureSpeed, mods.hasNetheriteLine(), mods.hasPhantomLine(), mods.hasNetheriteHook(), mods.hasEnderHook()));
                     serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.FISHING_BOBBER_THROW,
                             SoundSource.NEUTRAL, 0.5F, 0.4F / (serverLevel.getRandom().nextFloat() * 0.4F + 0.8F));
                     player.awardStat(Stats.ITEM_USED.get(Items.FISHING_ROD));

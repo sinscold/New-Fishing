@@ -30,5 +30,11 @@
   "item.newfishing.ender_hook": "Эндер-поплавок",
   "entity.newfishing.blind_eye": "Слепое око",
   "message.newfishing.line_burned": "Леска сгорела!",
-  "message.newfishing.hook_burned": "Поплавок сгорел!"
+  "message.newfishing.hook_burned": "Поплавок сгорел!",
+  "item.minecraft.potion.effect.return": "Зелье возвращения",
+  "item.minecraft.splash_potion.effect.return": "Взрывное зелье возвращения",
+  "item.minecraft.lingering_potion.effect.return": "Туманное зелье возвращения",
+  "item.minecraft.tipped_arrow.effect.return": "Стрела возвращения",
+  "effect.newfishing.return": "Возвращение",
+  "entity.newfishing.return_portal": "Портал возвращения"
 }

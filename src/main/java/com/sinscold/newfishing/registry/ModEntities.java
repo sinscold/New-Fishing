@@ -3,6 +3,7 @@ package com.sinscold.newfishing.registry;
 import com.sinscold.newfishing.NewFishing;
 import com.sinscold.newfishing.entity.BlindEye;
 import com.sinscold.newfishing.entity.NetheriteFishingHook;
+import com.sinscold.newfishing.entity.ReturnPortal;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
@@ -34,6 +35,17 @@ public final class ModEntities {
                     .clientTrackingRange(4)
                     .updateInterval(4)
                     .build("blind_eye"));
+
+    /** Портал от зелья возвращения. */
+    public static final DeferredHolder<EntityType<?>, EntityType<ReturnPortal>> RETURN_PORTAL =
+            ENTITIES.register("return_portal", () -> EntityType.Builder.<ReturnPortal>of(ReturnPortal::new, MobCategory.MISC)
+                    .noSave()
+                    .noSummon()
+                    .fireImmune()
+                    .sized(1.0F, 2.0F)
+                    .clientTrackingRange(8)
+                    .updateInterval(20)
+                    .build("return_portal"));
 
     private ModEntities() {}
 }

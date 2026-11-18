@@ -52,6 +52,11 @@ public record RodMods(ItemStack line, ItemStack hook) implements TooltipComponen
         return hook.is(ModTags.ROD_HOOKS);
     }
 
+    /** Эндер-поплавок: единственный, что зависает в пустоте Края. */
+    public boolean hasEnderHook() {
+        return hook.is(ModItems.ENDER_HOOK.get());
+    }
+
     public boolean hasPhantomLine() {
         return line.is(ModItems.PHANTOM_LINE.get());
     }

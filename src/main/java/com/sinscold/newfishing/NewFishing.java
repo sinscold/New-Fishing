@@ -7,7 +7,9 @@ import com.sinscold.newfishing.registry.ModCreativeTabs;
 import com.sinscold.newfishing.registry.ModDataComponents;
 import com.sinscold.newfishing.registry.ModBlockEntities;
 import com.sinscold.newfishing.registry.ModBlocks;
+import com.sinscold.newfishing.registry.ModEffects;
 import com.sinscold.newfishing.registry.ModEntities;
+import com.sinscold.newfishing.registry.ModPotions;
 import com.sinscold.newfishing.registry.ModSounds;
 import com.sinscold.newfishing.registry.ModItems;
 import com.sinscold.newfishing.registry.ModLootModifiers;
@@ -23,6 +25,8 @@ public class NewFishing {
 
     public NewFishing(IEventBus modEventBus) {
         ModDataComponents.COMPONENTS.register(modEventBus);
+        ModEffects.EFFECTS.register(modEventBus);
+        ModPotions.POTIONS.register(modEventBus);
         ModEntities.ENTITIES.register(modEventBus);
         ModBlocks.BLOCKS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);

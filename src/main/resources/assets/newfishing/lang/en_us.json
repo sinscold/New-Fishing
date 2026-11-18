@@ -30,5 +30,11 @@
   "item.newfishing.ender_hook": "Ender Bobber",
   "entity.newfishing.blind_eye": "Blind Eye",
   "message.newfishing.line_burned": "The line burned up!",
-  "message.newfishing.hook_burned": "The bobber burned up!"
+  "message.newfishing.hook_burned": "The bobber burned up!",
+  "item.minecraft.potion.effect.return": "Potion of Return",
+  "item.minecraft.splash_potion.effect.return": "Splash Potion of Return",
+  "item.minecraft.lingering_potion.effect.return": "Lingering Potion of Return",
+  "item.minecraft.tipped_arrow.effect.return": "Arrow of Return",
+  "effect.newfishing.return": "Return",
+  "entity.newfishing.return_portal": "Return Portal"
 }
