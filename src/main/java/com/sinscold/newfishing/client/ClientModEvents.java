@@ -61,6 +61,10 @@ public final class ClientModEvents {
         event.enqueueWork(() -> ItemProperties.register(Items.FISHING_ROD,
                 ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "rod_state"),
                 (stack, level, entity, seed) -> RodMods.get(stack).visualState()));
+        // вид лески для модели закинутой удочки
+        event.enqueueWork(() -> ItemProperties.register(Items.FISHING_ROD,
+                ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "rod_line"),
+                (stack, level, entity, seed) -> RodMods.get(stack).lineKind()));
     }
 
     private ClientModEvents() {}

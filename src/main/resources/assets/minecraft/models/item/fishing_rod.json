@@ -121,22 +121,40 @@
     },
     {
       "predicate": {
+        "newfishing:rod_state": 16
+      },
+      "model": "newfishing:item/fishing_rod_line_and_ender"
+    },
+    {
+      "predicate": {
+        "newfishing:rod_state": 17
+      },
+      "model": "newfishing:item/fishing_rod_netherite_line_ender"
+    },
+    {
+      "predicate": {
+        "newfishing:rod_state": 18
+      },
+      "model": "newfishing:item/fishing_rod_phantom_and_ender"
+    },
+    {
+      "predicate": {
         "cast": 1,
-        "newfishing:rod_state": 1
+        "newfishing:rod_line": 1
       },
       "model": "newfishing:item/fishing_rod_used"
     },
     {
       "predicate": {
         "cast": 1,
-        "newfishing:rod_state": 4
+        "newfishing:rod_line": 2
       },
       "model": "newfishing:item/fishing_rod_netherite_used"
     },
     {
       "predicate": {
         "cast": 1,
-        "newfishing:rod_state": 11
+        "newfishing:rod_line": 3
       },
       "model": "newfishing:item/fishing_rod_phantom_used"
     }

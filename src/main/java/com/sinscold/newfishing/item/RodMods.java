@@ -84,6 +84,7 @@ public record RodMods(ItemStack line, ItemStack hook) implements TooltipComponen
 
     /**
      * Номер вида удочки для модели (предикат `newfishing:rod_state`):
+     * 16 обычная леска + эндер-поплавок, 17 незеритовая + эндер, 18 фантомная + эндер.
      * 11 фантомная леска, 12 +крючок, 13 +незеритовый крючок, 14 +морковка, 15 +искажённый гриб.
      * 0 пустая, 1 леска, 2 леска+крючок, 3 леска+незеритовый крючок,
      * 4 незеритовая леска, 5 незеритовая леска+крючок, 6 незеритовая леска+незеритовый крючок.
@@ -91,6 +92,11 @@ public record RodMods(ItemStack line, ItemStack hook) implements TooltipComponen
      */
     public int visualState() {
         if (!hasLine()) return 0;
+        if (hook.is(ModItems.ENDER_HOOK.get())) {
+            if (line.is(ModItems.PHANTOM_LINE.get())) return 18;
+            if (line.is(ModItems.NETHERITE_LINE.get())) return 17;
+            return 16;
+        }
         if (line.is(ModItems.PHANTOM_LINE.get())) {
             if (hook.is(Items.CARROT)) return 14;
             if (hook.is(Items.WARPED_FUNGUS)) return 15;
@@ -105,6 +111,14 @@ public record RodMods(ItemStack line, ItemStack hook) implements TooltipComponen
         if (hook.is(ModItems.NETHERITE_HOOK.get())) return base + 2;
         if (hook.is(ModTags.ROD_HOOKS)) return base + 1;
         return base;
+    }
+
+    /** Вид лески для модели закинутой удочки (предикат `newfishing:rod_line`): 0 нет, 1 обычная, 2 незеритовая, 3 фантомная. */
+    public int lineKind() {
+        if (!hasLine()) return 0;
+        if (line.is(ModItems.PHANTOM_LINE.get())) return 3;
+        if (line.is(ModItems.NETHERITE_LINE.get())) return 2;
+        return 1;
     }
 
     public RodMods withLine(ItemStack newLine) {

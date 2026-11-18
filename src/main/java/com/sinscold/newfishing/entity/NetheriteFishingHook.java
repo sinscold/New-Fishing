@@ -280,6 +280,9 @@ public class NetheriteFishingHook extends FishingHook {
                 if (!this.level().isClientSide) {
                     this.voidTick();
                 }
+            } else if (!inFluid) {
+                // над жидкостью плавучести нет: только затухание по горизонтали, вертикаль даёт гравитация
+                this.setDeltaMovement(motion.x * 0.9, motion.y, motion.z * 0.9);
             } else {
                 // поверхность жидкости: поднимаемся вверх по столбцу, пока жидкость того же вида
                 int topY = pos.getY();
