@@ -52,7 +52,7 @@ public class BobberRenderer<T extends FishingHook> extends EntityRenderer<T> {
         // сам поплавок
         poseStack.pushPose();
         poseStack.translate(0.0F, -0.03F, 0.0F);
-        BobberGeometry.render(poseStack, buffer.getBuffer(RenderType.entityCutoutNoCull(this.getTextureLocation(entity))), packedLight, 0);
+        BobberGeometry.render(poseStack, buffer.getBuffer(RenderType.entityCutoutNoCull(this.getTextureLocation(entity))), packedLight, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
 
         // леска от руки (кончика удочки) к поплавку
