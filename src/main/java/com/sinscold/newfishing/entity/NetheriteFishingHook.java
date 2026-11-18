@@ -173,7 +173,9 @@ public class NetheriteFishingHook extends FishingHook {
 
     private boolean shouldStop(Player player) {
         // леска не ограничивает дальность; но другое измерение, убранная удочка или вытащенная из неё леска/крючок прекращают рыбалку
-        return player.isRemoved() || !player.isAlive() || !RodMods.holdsFishableRod(player) || player.level() != this.level();
+        if (player.isRemoved() || !player.isAlive() || player.level() != this.level()) return true;
+        // осмотр удочки дорогой по сравнению с остальным, поэтому раз в 10 тиков; мгновенная отмена идёт по событию извлечения детали
+        return this.tickCount % 10 == 0 && !RodMods.holdsFishableRod(player);
     }
 
     /** Таблица лута для жидкости в этой точке или null, если здесь не клюёт. */
@@ -229,7 +231,7 @@ public class NetheriteFishingHook extends FishingHook {
         FluidState fluid = this.level().getFluidState(pos);
         boolean inFluid = !fluid.isEmpty();
                 // в пустоте парит только эндер-поплавок; остальные поплавки тонут (падают в бездну)
-        boolean inVoid = this.enderHook && !inFluid && this.level().dimension() == Level.END && this.getY() >= VOID_MIN_Y && this.getY() <= VOID_MAX_Y;
+        boolean inVoid = this.enderHook && !inFluid && this.level().dimension() == Level.END && this.getY() <= VOID_MAX_Y;
         boolean floating = inFluid || inVoid;
         float height = inFluid ? fluid.getHeight(this.level(), pos) : 0.0F;
 
@@ -244,7 +246,7 @@ public class NetheriteFishingHook extends FishingHook {
         if (this.flying) {
             if (floating) {
                 if (!this.level().isClientSide && inFluid && fluid.is(FluidTags.LAVA)) {
-                    this.playSound(ModSounds.LAVA_BLOP.get(), 0.6F, 1.0F);
+                    this.playSound(ModSounds.LAVA_BLOP.get(), 1.0F, 1.0F);
                 }
                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.3, 0.2, 0.3));
                 this.flying = false;
@@ -265,11 +267,23 @@ public class NetheriteFishingHook extends FishingHook {
                     this.voidTick();
                 }
             } else {
-                double d0 = this.getY() + motion.y - pos.getY() - height;
+                // поверхность жидкости: поднимаемся вверх по столбцу, пока жидкость того же вида
+                int topY = pos.getY();
+                while (topY - pos.getY() < 16
+                        && this.level().getFluidState(new BlockPos(pos.getX(), topY + 1, pos.getZ())).getType().isSame(fluid.getType())) {
+                    topY++;
+                }
+                BlockPos topPos = new BlockPos(pos.getX(), topY, pos.getZ());
+                double surface = topY + this.level().getFluidState(topPos).getHeight(this.level(), topPos);
+                double d0 = this.getY() + motion.y - surface;
                 if (Math.abs(d0) < 0.01) {
                     d0 += Math.signum(d0) * 0.1;
                 }
-                this.setDeltaMovement(motion.x * 0.9, motion.y - d0 * this.random.nextFloat() * 0.2, motion.z * 0.9);
+                double vy = motion.y - d0 * this.random.nextFloat() * 0.2;
+                if (d0 < -0.3) {
+                    vy += Math.min(0.08, -d0 * 0.1); // ушёл глубоко: дополнительно выталкиваем к поверхности
+                }
+                this.setDeltaMovement(motion.x * 0.9, vy, motion.z * 0.9);
             }
             if (floating) {
                 this.outOfFluidTime = Math.max(0, this.outOfFluidTime - 1);
@@ -297,6 +311,11 @@ public class NetheriteFishingHook extends FishingHook {
         }
         this.setDeltaMovement(this.getDeltaMovement().scale(0.92));
         this.reapplyPosition();
+        // зона пустоты по высоте ограничена жёстко: ниже нижней границы поплавок поднимается обратно
+        if (inVoid && !this.flying && this.getY() < VOID_MIN_Y + 0.5) {
+            this.setPos(this.getX(), VOID_MIN_Y + 0.5, this.getZ());
+            this.setDeltaMovement(this.getDeltaMovement().x, Math.max(0.0, this.getDeltaMovement().y), this.getDeltaMovement().z);
+        }
     }
 
     /**
@@ -314,7 +333,7 @@ public class NetheriteFishingHook extends FishingHook {
             this.dashDir = this.voidAnchor.subtract(this.position()).normalize();
         } else {
             double angle = this.random.nextDouble() * Math.PI * 2.0;
-            this.dashDir = new Vec3(Math.cos(angle), (this.random.nextDouble() - 0.5) * 0.2, Math.sin(angle)).normalize();
+            this.dashDir = new Vec3(Math.cos(angle), (this.random.nextDouble() - 0.5) * 0.1, Math.sin(angle)).normalize();
         }
         // не выходить за границы зоны по высоте
         if (this.getY() > VOID_MAX_Y - 3.0) {
@@ -349,7 +368,7 @@ public class NetheriteFishingHook extends FishingHook {
                     (this.random.nextDouble() - 0.5) * 2.0, this.random.nextDouble() - 0.3, (this.random.nextDouble() - 0.5) * 2.0, 0.5);
         } else if (this.jerkCooldown-- <= 0) {
             this.jerkCooldown = 20 + this.random.nextInt(50);
-            double distance = 10.0 + this.random.nextDouble() * 20.0; // десятки блоков, средняя скорость 0,15 блока/тик
+            double distance = 2.0 + this.random.nextDouble() * 3.0; // 2–5 блоков, средняя скорость 0,15 блока/тик
             this.startDash(distance, (int) Math.ceil(distance / 0.15), false);
         }
     }
@@ -398,7 +417,7 @@ public class NetheriteFishingHook extends FishingHook {
                     this.startDash(6.0 + this.random.nextDouble() * 4.0, 12, true); // при поклёвке резко улетает в сторону
                     serverLevel.sendParticles(ParticleTypes.PORTAL, this.getX(), y, this.getZ(), count * 2, this.getBbWidth(), 0.0, this.getBbWidth(), 0.2);
                 } else if (lava) {
-                    this.playSound(ModSounds.LAVA_BULB.get(), 0.7F, 1.0F);
+                    this.playSound(ModSounds.LAVA_BULB.get(), 1.0F, 1.0F);
                     serverLevel.sendParticles(ParticleTypes.LAVA, this.getX(), y, this.getZ(), count, this.getBbWidth(), 0.0, this.getBbWidth(), 0.2);
                     serverLevel.sendParticles(ParticleTypes.FLAME, this.getX(), y, this.getZ(), count, this.getBbWidth(), 0.0, this.getBbWidth(), 0.2);
                 } else {
