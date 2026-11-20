@@ -24,16 +24,16 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.village.VillagerTradesEvent;
 
 /**
- * Торговля рыбаков: новичок покупает 8–16 штук одной любой рыбы за 1–2 изумруда,
- * мастер покупает 2–4 рыбы из Незера за 6 или 8 изумрудов.
+ * Торговля рыбаков: новичок покупает 8–16 штук одной любой рыбы за 1 изумруд (до 4 сделок),
+ * мастер покупает 2–4 рыбы из Незера за 3 или 4 изумруда (до 3 сделок).
  */
 @EventBusSubscriber(modid = NewFishing.MODID)
 public final class FisherTrades {
     @SubscribeEvent
     static void onVillagerTrades(VillagerTradesEvent event) {
         if (event.getType() != VillagerProfession.FISHERMAN) return;
-        event.getTrades().get(1).add(new BuyFish(ItemTags.FISHES, 8, 16, 1, 2, 12, 2));
-        event.getTrades().get(5).add(new BuyFish(ModTags.NETHER_FISH, 2, 4, 6, 8, 8, 30));
+        event.getTrades().get(1).add(new BuyFish(ItemTags.FISHES, 8, 16, 1, 1, 4, 2));
+        event.getTrades().get(5).add(new BuyFish(ModTags.NETHER_FISH, 2, 4, 3, 4, 3, 30));
     }
 
     /** Житель покупает рыбу одного вида за изумруды. */

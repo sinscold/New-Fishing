@@ -69,5 +69,10 @@
   "newfishing.configuration.gear_4": "Gear, subgroup 4",
   "newfishing.configuration.tools": "Tools (group)",
   "newfishing.configuration.tools_1": "Tools, subgroup 1",
-  "newfishing.configuration.tools_2": "Tools, subgroup 2"
+  "newfishing.configuration.tools_2": "Tools, subgroup 2",
+  "effect.newfishing.inferno": "Inferno",
+  "item.minecraft.potion.effect.inferno": "Potion of Inferno",
+  "item.minecraft.splash_potion.effect.inferno": "Splash Potion of Inferno",
+  "item.minecraft.lingering_potion.effect.inferno": "Lingering Potion of Inferno",
+  "item.minecraft.tipped_arrow.effect.inferno": "Arrow of Inferno"
 }

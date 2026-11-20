@@ -45,6 +45,8 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.LAVA_CRATE.get());
                         // зелья (временно здесь, в общей вкладке мода): только обычная бутылка, без взрывного и туманного
                         output.accept(PotionContents.createItemStack(Items.POTION, ModPotions.RETURN));
+                        output.accept(PotionContents.createItemStack(Items.POTION, ModPotions.INFERNO));
+                        output.accept(PotionContents.createItemStack(Items.POTION, ModPotions.LONG_INFERNO));
                     }).build());
 
     private ModCreativeTabs() {}

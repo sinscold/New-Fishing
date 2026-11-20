@@ -67,8 +67,8 @@ public class NetheriteFishingHook extends FishingHook {
     private static final double VOID_LEASH = 40.0;
 
     // Время ожидания (в тиках). Вода — как в ваниле, лава быстрее. Подбирается на глаз.
-    private static final int LAVA_LURE_MIN = 40;
-    private static final int LAVA_LURE_MAX = 200;
+    private static final int LAVA_LURE_MIN = 100;
+    private static final int LAVA_LURE_MAX = 400;
     private static final int WATER_LURE_MIN = 100;
     private static final int WATER_LURE_MAX = 600;
     private static final int VOID_LURE_MIN = 300;

@@ -6,7 +6,7 @@
    "entries": [
     {
      "type": "minecraft:tag",
-     "name": "minecraft:planks",
+     "name": "newfishing:crate_planks",
      "expand": true,
      "functions": [
       {

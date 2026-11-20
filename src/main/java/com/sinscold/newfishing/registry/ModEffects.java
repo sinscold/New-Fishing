@@ -16,5 +16,9 @@ public final class ModEffects {
     public static final DeferredHolder<MobEffect, ReturnEffect> RETURN =
             EFFECTS.register("return", () -> new ReturnEffect(MobEffectCategory.BENEFICIAL, 0x6A2CA0));
 
+    /** «Инферно»: удары поджигают цель. */
+    public static final DeferredHolder<MobEffect, com.sinscold.newfishing.effect.InfernoEffect> INFERNO =
+            EFFECTS.register("inferno", () -> new com.sinscold.newfishing.effect.InfernoEffect(MobEffectCategory.BENEFICIAL, 0xE8601C));
+
     private ModEffects() {}
 }

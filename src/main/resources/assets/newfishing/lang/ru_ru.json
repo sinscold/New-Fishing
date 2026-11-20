@@ -69,5 +69,10 @@
   "newfishing.configuration.gear_4": "Снаряжение, подгруппа 4",
   "newfishing.configuration.tools": "Инструменты (группа)",
   "newfishing.configuration.tools_1": "Инструменты, подгруппа 1",
-  "newfishing.configuration.tools_2": "Инструменты, подгруппа 2"
+  "newfishing.configuration.tools_2": "Инструменты, подгруппа 2",
+  "effect.newfishing.inferno": "Инферно",
+  "item.minecraft.potion.effect.inferno": "Зелье Инферно",
+  "item.minecraft.splash_potion.effect.inferno": "Взрывное зелье Инферно",
+  "item.minecraft.lingering_potion.effect.inferno": "Туманное зелье Инферно",
+  "item.minecraft.tipped_arrow.effect.inferno": "Стрела Инферно"
 }
