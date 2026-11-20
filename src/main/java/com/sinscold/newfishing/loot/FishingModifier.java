@@ -67,14 +67,14 @@ public class FishingModifier extends LootModifier {
             treasure = false;
         }
         if (junk) {
-            result.addAll(level.getServer().reloadableRegistries().getLootTable(BuiltInLootTables.FISHING_JUNK).getRandomItems(context));
+            level.getServer().reloadableRegistries().getLootTable(BuiltInLootTables.FISHING_JUNK).getRandomItems(context, result::add);
             if (random.nextDouble() < FishingBiomes.PLAYER_BIOME_ITEM_CHANCE) {
                 if (FishingBiomes.isJungle(playerBiome)) replace(result, FishingBiomes.JUNGLE_JUNK, random);
                 else if (FishingBiomes.isCold(playerBiome)) replace(result, FishingBiomes.TAIGA_JUNK, random);
                 else if (FishingBiomes.isDry(playerBiome)) replace(result, FishingBiomes.DESERT_JUNK, random);
             }
         } else {
-            result.addAll(level.getServer().reloadableRegistries().getLootTable(BuiltInLootTables.FISHING_FISH).getRandomItems(context));
+            level.getServer().reloadableRegistries().getLootTable(BuiltInLootTables.FISHING_FISH).getRandomItems(context, result::add);
             if (FishingBiomes.isCold(playerBiome) && random.nextDouble() < FishingBiomes.PLAYER_BIOME_ITEM_CHANCE) {
                 result.clear();
                 result.add(new ItemStack(FishingBiomes.COLD_FISH));
