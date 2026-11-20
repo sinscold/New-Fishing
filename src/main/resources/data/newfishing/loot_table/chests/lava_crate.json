@@ -198,8 +198,9 @@
    ],
    "conditions": [
     {
-     "condition": "minecraft:random_chance",
-     "chance": 0.5
+     "condition": "newfishing:config_chance",
+     "key": "lava.materials_1",
+     "default": 0.5
     }
    ]
   },
@@ -384,8 +385,9 @@
    ],
    "conditions": [
     {
-     "condition": "minecraft:random_chance",
-     "chance": 0.25
+     "condition": "newfishing:config_chance",
+     "key": "lava.materials_2",
+     "default": 0.25
     }
    ]
   },
@@ -427,8 +429,9 @@
    ],
    "conditions": [
     {
-     "condition": "minecraft:random_chance",
-     "chance": 0.125
+     "condition": "newfishing:config_chance",
+     "key": "lava.materials_3",
+     "default": 0.125
     }
    ]
   },
@@ -493,8 +496,9 @@
    ],
    "conditions": [
     {
-     "condition": "minecraft:random_chance",
-     "chance": 0.0625
+     "condition": "newfishing:config_chance",
+     "key": "lava.materials_4",
+     "default": 0.0625
     }
    ]
   },
@@ -579,8 +583,9 @@
    ],
    "conditions": [
     {
-     "condition": "minecraft:random_chance",
-     "chance": 0.75
+     "condition": "newfishing:config_chance",
+     "key": "lava.food",
+     "default": 0.75
     }
    ]
   },
@@ -688,8 +693,9 @@
         ],
         "conditions": [
          {
-          "condition": "minecraft:random_chance",
-          "chance": 0.1875
+          "condition": "newfishing:config_chance",
+          "key": "lava.gear_1",
+          "default": 0.1875
          }
         ]
        },
@@ -758,8 +764,9 @@
         ],
         "conditions": [
          {
-          "condition": "minecraft:random_chance",
-          "chance": 0.1875
+          "condition": "newfishing:config_chance",
+          "key": "lava.gear_2",
+          "default": 0.1875
          }
         ]
        },
@@ -789,8 +796,9 @@
         ],
         "conditions": [
          {
-          "condition": "minecraft:random_chance",
-          "chance": 0.0625
+          "condition": "newfishing:config_chance",
+          "key": "lava.gear_3",
+          "default": 0.0625
          }
         ]
        },
@@ -1104,8 +1112,9 @@
         ],
         "conditions": [
          {
-          "condition": "minecraft:random_chance",
-          "chance": 0.0625
+          "condition": "newfishing:config_chance",
+          "key": "lava.gear_4",
+          "default": 0.0625
          }
         ]
        }
@@ -1116,8 +1125,9 @@
    ],
    "conditions": [
     {
-     "condition": "minecraft:random_chance",
-     "chance": 0.5
+     "condition": "newfishing:config_chance",
+     "key": "lava.gear",
+     "default": 0.5
     }
    ]
   },
@@ -1300,8 +1310,9 @@
         ],
         "conditions": [
          {
-          "condition": "minecraft:random_chance",
-          "chance": 0.4375
+          "condition": "newfishing:config_chance",
+          "key": "lava.tools_1",
+          "default": 0.4375
          }
         ]
        },
@@ -1615,8 +1626,9 @@
         ],
         "conditions": [
          {
-          "condition": "minecraft:random_chance",
-          "chance": 0.0625
+          "condition": "newfishing:config_chance",
+          "key": "lava.tools_2",
+          "default": 0.0625
          }
         ]
        }
@@ -1627,8 +1639,9 @@
    ],
    "conditions": [
     {
-     "condition": "minecraft:random_chance",
-     "chance": 0.5
+     "condition": "newfishing:config_chance",
+     "key": "lava.tools",
+     "default": 0.5
     }
    ]
   }

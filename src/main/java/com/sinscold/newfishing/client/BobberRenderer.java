@@ -28,6 +28,10 @@ public class BobberRenderer<T extends FishingHook> extends EntityRenderer<T> {
     private static final ResourceLocation NETHERITE = ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "textures/entity/bobber/netherite_fishing_hook.png");
 
     /** Смещение начала лески к кончику удочки: от 3-го лица (вперёд по телу, вверх) и от 1-го (вперёд по взгляду, вверх). */
+    /** Размер «пикселя» лески (блоков) и её текстура (один белый пиксель, цвет задаётся вершинами). */
+    private static final float PIXEL = 1.0F / 16.0F;
+    private static final ResourceLocation LINE = ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "textures/entity/bobber/line.png");
+
     private static final double THIRD_FORWARD = 0.30;
     private static final double THIRD_UP = 0.55;
     private static final double FIRST_FORWARD = 0.20;
@@ -63,13 +67,49 @@ public class BobberRenderer<T extends FishingHook> extends EntityRenderer<T> {
         float dx = (float) (hand.x - hook.x);
         float dy = (float) (hand.y - hook.y);
         float dz = (float) (hand.z - hook.z);
-        VertexConsumer lines = buffer.getBuffer(RenderType.lineStrip());
-        PoseStack.Pose pose = poseStack.last();
-        for (int i = 0; i <= 16; i++) {
-            stringVertex(dx, dy, dz, lines, pose, fraction(i, 16), fraction(i + 1, 16));
-        }
+        this.renderPixelLine(poseStack, buffer, dx, dy, dz, packedLight, this.lineColor(entity));
         poseStack.popPose();
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
+    }
+
+    private int lineColor(T entity) {
+        int kind = entity instanceof NetheriteFishingHook hook ? hook.lineColorKind() : 0;
+        return switch (kind) {
+            case 1 -> 0xFF6B3F3F; // незеритовая
+            case 2 -> 0xFF8FA0E0; // фантомная
+            default -> 0xFF1A1A1A; // обычная
+        };
+    }
+
+    /** Леска из «пикселей»: маленькие квадраты размером 1/16 блока вдоль кривой, повёрнутые к камере. */
+    private void renderPixelLine(PoseStack poseStack, MultiBufferSource buffer, float dx, float dy, float dz, int light, int color) {
+        float length = Mth.sqrt(dx * dx + dy * dy + dz * dz);
+        int count = Mth.clamp((int) (length / PIXEL), 8, 600);
+        var camera = this.entityRenderDispatcher.cameraOrientation();
+        org.joml.Vector3f right = new org.joml.Vector3f(PIXEL * 0.5F, 0.0F, 0.0F).rotate(camera);
+        org.joml.Vector3f up = new org.joml.Vector3f(0.0F, PIXEL * 0.5F, 0.0F).rotate(camera);
+        VertexConsumer consumer = buffer.getBuffer(RenderType.entityCutoutNoCull(LINE));
+        PoseStack.Pose pose = poseStack.last();
+        for (int i = 0; i <= count; i++) {
+            float t = (float) i / (float) count;
+            float px = dx * t;
+            float py = dy * (t * t + t) * 0.5F + 0.25F;
+            float pz = dz * t;
+            quad(consumer, pose, px, py, pz, right, up, light, color);
+        }
+    }
+
+    private static void quad(VertexConsumer consumer, PoseStack.Pose pose, float x, float y, float z,
+                             org.joml.Vector3f right, org.joml.Vector3f up, int light, int color) {
+        float[][] corners = {{-1, -1}, {1, -1}, {1, 1}, {-1, 1}};
+        for (float[] c : corners) {
+            consumer.addVertex(pose, x + right.x * c[0] + up.x * c[1], y + right.y * c[0] + up.y * c[1], z + right.z * c[0] + up.z * c[1])
+                    .setColor(color)
+                    .setUv(0.5F, 0.5F)
+                    .setOverlay(net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY)
+                    .setLight(light)
+                    .setNormal(pose, 0.0F, 1.0F, 0.0F);
+        }
     }
 
     private Vec3 handPos(Player player, float swing, float partialTicks) {
@@ -101,23 +141,5 @@ public class BobberRenderer<T extends FishingHook> extends EntityRenderer<T> {
                 -cos * sideOffset - sin * forward - sin * THIRD_FORWARD,
                 (double) crouch - 0.45 * scale + THIRD_UP,
                 -sin * sideOffset + cos * forward + cos * THIRD_FORWARD);
-    }
-
-    private static float fraction(int value, int max) {
-        return (float) value / (float) max;
-    }
-
-    private static void stringVertex(float x, float y, float z, VertexConsumer consumer, PoseStack.Pose pose, float fraction, float nextFraction) {
-        float px = x * fraction;
-        float py = y * (fraction * fraction + fraction) * 0.5F + 0.25F;
-        float pz = z * fraction;
-        float nx = x * nextFraction - px;
-        float ny = y * (nextFraction * nextFraction + nextFraction) * 0.5F + 0.25F - py;
-        float nz = z * nextFraction - pz;
-        float length = Mth.sqrt(nx * nx + ny * ny + nz * nz);
-        nx /= length;
-        ny /= length;
-        nz /= length;
-        consumer.addVertex(pose, px, py, pz).setColor(-16777216).setNormal(pose, nx, ny, nz);
     }
 }

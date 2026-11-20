@@ -136,6 +136,21 @@ public class CrateBlockEntity extends RandomizableContainerBlockEntity implement
         return this.pendingDestroy && this.openersCounter.getOpenerCount() == 0;
     }
 
+    /** Раскрывает лут из таблицы и убирает предметы, отключённые игроком в настройках. */
+    @Override
+    public void unpackLootTable(@javax.annotation.Nullable Player player) {
+        boolean hadLoot = this.getLootTable() != null;
+        super.unpackLootTable(player);
+        if (hadLoot) {
+            NonNullList<ItemStack> list = this.getItems();
+            for (int i = 0; i < list.size(); i++) {
+                if (com.sinscold.newfishing.Config.isCrateItemDisabled(list.get(i))) {
+                    list.set(i, ItemStack.EMPTY);
+                }
+            }
+        }
+    }
+
     @Override
     public boolean triggerEvent(int id, int type) {
         if (id == 1) {

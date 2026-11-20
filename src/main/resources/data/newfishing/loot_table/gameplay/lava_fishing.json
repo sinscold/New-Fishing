@@ -19,11 +19,6 @@
           "type": "minecraft:item",
           "name": "minecraft:netherite_scrap",
           "weight": 5
-        },
-        {
-          "type": "minecraft:item",
-          "name": "newfishing:lava_crate",
-          "weight": 10
         }
       ]
     }

@@ -161,6 +161,11 @@ public class NetheriteFishingHook extends FishingHook {
         return this.hasNetheriteHook();
     }
 
+    /** Цвет лески для рендерера: 0 обычная, 1 незеритовая, 2 фантомная. */
+    public int lineColorKind() {
+        return this.hasPhantomLine() ? 2 : this.hasNetheriteLine() ? 1 : 0;
+    }
+
     private boolean hasNetheriteLine() {
         return (this.getEntityData().get(PARTS) & PART_NETHERITE_LINE) != 0;
     }
@@ -490,6 +495,10 @@ public class NetheriteFishingHook extends FishingHook {
                     .create(LootContextParamSets.FISHING);
             LootTable table = this.level().getServer().reloadableRegistries().getLootTable(this.biteTable);
             List<ItemStack> items = table.getRandomItems(params);
+            // лавовый ящик: отдельный настраиваемый шанс (Config.LAVA_CRATE_CHANCE), заменяет обычный улов
+            if (this.biteTable == LAVA_FISHING && this.random.nextDouble() < com.sinscold.newfishing.Config.lavaCrateChance()) {
+                items = List.of(new ItemStack(com.sinscold.newfishing.registry.ModItems.LAVA_CRATE.get()));
+            }
             for (ItemStack stack : items) {
                 ItemEntity itemEntity = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), stack);
                 itemEntity.setInvulnerable(true);

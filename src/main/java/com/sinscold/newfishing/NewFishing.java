@@ -12,10 +12,13 @@ import com.sinscold.newfishing.registry.ModEntities;
 import com.sinscold.newfishing.registry.ModPotions;
 import com.sinscold.newfishing.registry.ModSounds;
 import com.sinscold.newfishing.registry.ModItems;
+import com.sinscold.newfishing.registry.ModLootConditions;
 import com.sinscold.newfishing.registry.ModLootModifiers;
 import com.sinscold.newfishing.registry.ModRecipeSerializers;
 
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.common.Mod;
 
 @Mod(NewFishing.MODID)
@@ -23,7 +26,9 @@ public class NewFishing {
     public static final String MODID = "newfishing";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public NewFishing(IEventBus modEventBus) {
+    public NewFishing(IEventBus modEventBus, ModContainer modContainer) {
+        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        ModLootConditions.CONDITIONS.register(modEventBus);
         ModDataComponents.COMPONENTS.register(modEventBus);
         ModEffects.EFFECTS.register(modEventBus);
         ModPotions.POTIONS.register(modEventBus);

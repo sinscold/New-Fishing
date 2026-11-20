@@ -1,5 +1,5 @@
 {
-  "type": "newfishing:crate_replaces_treasure",
+  "type": "newfishing:fishing_modifier",
   "conditions": [
     {
       "condition": "neoforge:loot_table_id",
