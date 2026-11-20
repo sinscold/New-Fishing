@@ -99,20 +99,25 @@ public class BobberRenderer<T extends FishingHook> extends EntityRenderer<T> {
         PoseStack.Pose pose = poseStack.last();
         int lastU = Integer.MIN_VALUE;
         int lastV = Integer.MIN_VALUE;
+        int lastW = Integer.MIN_VALUE;
         int index = 0;
         for (int i = 0; i <= samples; i++) {
             float t = (float) i / (float) samples;
             float px = dx * t;
             float py = dy * (t * t + t) * 0.5F + 0.25F;
             float pz = dz * t;
-            float w = px * fwd.x + py * fwd.y + pz * fwd.z;
+            int cw = Math.round((px * fwd.x + py * fwd.y + pz * fwd.z) / PIXEL);
             int cu = Math.round((px * right.x + py * right.y + pz * right.z) / PIXEL);
             int cv = Math.round((px * up.x + py * up.y + pz * up.z) / PIXEL);
-            if (cu == lastU && cv == lastV) {
+            // глубина тоже в сетке: иначе от первого лица (смотрим вдоль лески) клетки на разной глубине
+            // склеиваются в одну и в леске появляются разрывы
+            if (cu == lastU && cv == lastV && cw == lastW) {
                 continue;
             }
             lastU = cu;
             lastV = cv;
+            lastW = cw;
+            float w = cw * PIXEL;
             float u = cu * PIXEL;
             float v = cv * PIXEL;
             float x = right.x * u + up.x * v + fwd.x * w;

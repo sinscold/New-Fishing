@@ -116,6 +116,9 @@ configurations {
 }
 
 dependencies {
+    // Curios API только для компиляции (необязательная зависимость). Сам мод для запуска лежит в run/mods/.
+    compileOnly files("run/mods/curios-neoforge-9.5.1+1.21.1.jar")
+
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"

@@ -1,0 +1,13 @@
+{
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "farmersdelight" }
+  ],
+  "type": "farmersdelight:cutting",
+  "ingredients": [
+    { "item": "newfishing:phantom_ray" }
+  ],
+  "result": [
+    { "item": { "id": "minecraft:phantom_membrane", "count": 2 } }
+  ],
+  "tool": { "tag": "c:tools/knife" }
+}

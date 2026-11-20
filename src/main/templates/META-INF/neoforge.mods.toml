@@ -49,7 +49,19 @@ description='''
 Reworked fishing: biome-based loot, lava fishing in the Nether, new fish and loot crates.
 '''
 
-# The [[mixins]] block allows you to declare your mixin config to FML so that it gets loaded.
+# The [[dependencies.${mod_id}]]
+    modId="curios"
+    type="optional"
+    versionRange="[9,)"
+    ordering="AFTER"
+    side="BOTH"
+[[dependencies.${mod_id}]]
+    modId="farmersdelight"
+    type="optional"
+    versionRange="[1,)"
+    ordering="AFTER"
+    side="BOTH"
+[[mixins]] block allows you to declare your mixin config to FML so that it gets loaded.
 #[[mixins]]
 #config="${mod_id}.mixins.json"
 

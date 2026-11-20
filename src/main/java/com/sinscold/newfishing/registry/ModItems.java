@@ -15,6 +15,11 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(NewFishing.MODID);
 
+    // --- Сумка для наживки (пояс Curios): предмет есть, только если установлен Curios ---
+    public static final DeferredItem<Item> BAIT_BAG = net.neoforged.fml.ModList.get() != null && net.neoforged.fml.ModList.get().isLoaded("curios")
+            ? ITEMS.registerSimpleItem("bait_bag", new Item.Properties().stacksTo(1))
+            : null;
+
     // --- Рыбы из лавы (не горят: их вылавливают из лавы) ---
     public static final DeferredItem<Item> LAVACARP = ITEMS.registerSimpleItem("lavacarp",
             new Item.Properties().fireResistant());
