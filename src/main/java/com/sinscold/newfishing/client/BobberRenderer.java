@@ -81,22 +81,58 @@ public class BobberRenderer<T extends FishingHook> extends EntityRenderer<T> {
         };
     }
 
-    /** Леска из «пикселей»: маленькие квадраты размером 1/16 блока вдоль кривой, повёрнутые к камере. */
+    /**
+     * Леска из «пикселей»: кривая выбирается плотно, каждая точка привязывается к сетке пикселей
+     * в плоскости камеры (ступенчатая лесенка), одинаковые клетки подряд пропускаются.
+     * Оттенок слегка меняется от клетки к клетке.
+     */
     private void renderPixelLine(PoseStack poseStack, MultiBufferSource buffer, float dx, float dy, float dz, int light, int color) {
         float length = Mth.sqrt(dx * dx + dy * dy + dz * dz);
-        int count = Mth.clamp((int) (length / PIXEL), 8, 600);
+        int samples = Mth.clamp((int) (length / PIXEL) * 2, 16, 1200);
         var camera = this.entityRenderDispatcher.cameraOrientation();
-        org.joml.Vector3f right = new org.joml.Vector3f(PIXEL * 0.5F, 0.0F, 0.0F).rotate(camera);
-        org.joml.Vector3f up = new org.joml.Vector3f(0.0F, PIXEL * 0.5F, 0.0F).rotate(camera);
+        org.joml.Vector3f right = new org.joml.Vector3f(1.0F, 0.0F, 0.0F).rotate(camera);
+        org.joml.Vector3f up = new org.joml.Vector3f(0.0F, 1.0F, 0.0F).rotate(camera);
+        org.joml.Vector3f fwd = new org.joml.Vector3f(0.0F, 0.0F, 1.0F).rotate(camera);
+        org.joml.Vector3f halfRight = new org.joml.Vector3f(right).mul(PIXEL * 0.5F);
+        org.joml.Vector3f halfUp = new org.joml.Vector3f(up).mul(PIXEL * 0.5F);
         VertexConsumer consumer = buffer.getBuffer(RenderType.entityCutoutNoCull(LINE));
         PoseStack.Pose pose = poseStack.last();
-        for (int i = 0; i <= count; i++) {
-            float t = (float) i / (float) count;
+        int lastU = Integer.MIN_VALUE;
+        int lastV = Integer.MIN_VALUE;
+        int index = 0;
+        for (int i = 0; i <= samples; i++) {
+            float t = (float) i / (float) samples;
             float px = dx * t;
             float py = dy * (t * t + t) * 0.5F + 0.25F;
             float pz = dz * t;
-            quad(consumer, pose, px, py, pz, right, up, light, color);
+            float w = px * fwd.x + py * fwd.y + pz * fwd.z;
+            int cu = Math.round((px * right.x + py * right.y + pz * right.z) / PIXEL);
+            int cv = Math.round((px * up.x + py * up.y + pz * up.z) / PIXEL);
+            if (cu == lastU && cv == lastV) {
+                continue;
+            }
+            lastU = cu;
+            lastV = cv;
+            float u = cu * PIXEL;
+            float v = cv * PIXEL;
+            float x = right.x * u + up.x * v + fwd.x * w;
+            float y = right.y * u + up.y * v + fwd.y * w;
+            float z = right.z * u + up.z * v + fwd.z * w;
+            quad(consumer, pose, x, y, z, halfRight, halfUp, light, shade(color, index++));
         }
+    }
+
+    /** Лёгкая вариация яркости: три оттенка по кругу. */
+    private static int shade(int color, int index) {
+        float k = switch (index % 3) {
+            case 0 -> 1.0F;
+            case 1 -> 0.85F;
+            default -> 1.12F;
+        };
+        int r = Mth.clamp((int) (((color >> 16) & 0xFF) * k), 0, 255);
+        int g = Mth.clamp((int) (((color >> 8) & 0xFF) * k), 0, 255);
+        int b = Mth.clamp((int) ((color & 0xFF) * k), 0, 255);
+        return 0xFF000000 | (r << 16) | (g << 8) | b;
     }
 
     private static void quad(VertexConsumer consumer, PoseStack.Pose pose, float x, float y, float z,
