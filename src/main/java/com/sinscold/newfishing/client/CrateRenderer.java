@@ -22,8 +22,6 @@ public class CrateRenderer implements BlockEntityRenderer<CrateBlockEntity> {
     public static final ResourceLocation WATER = ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "textures/entity/crate/water_crate.png");
     public static final ResourceLocation LAVA = ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "textures/entity/crate/lava_crate.png");
 
-    public static final ResourceLocation LOCK = ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "textures/entity/crate/lock.png");
-
     public CrateRenderer(BlockEntityRendererProvider.Context context) {
     }
 
@@ -35,9 +33,6 @@ public class CrateRenderer implements BlockEntityRenderer<CrateBlockEntity> {
         poseStack.mulPose(Axis.YP.rotationDegrees(-state.getValue(CrateBlock.FACING).toYRot()));
         ResourceLocation texture = state.is(ModBlocks.LAVA_CRATE.get()) ? LAVA : WATER;
         CrateGeometry.render(poseStack, buffer.getBuffer(RenderType.entityCutoutNoCull(texture)), packedLight, packedOverlay, crate.getOpenNess(partialTick));
-        if (state.getValue(CrateBlock.LOCKED)) {
-            CrateGeometry.renderLock(poseStack, buffer.getBuffer(RenderType.entityCutoutNoCull(LOCK)), packedLight, packedOverlay);
-        }
         poseStack.popPose();
     }
 }

@@ -4,27 +4,35 @@
   "base": {
     "parent": "newfishing:item/rod_hand",
     "textures": {
-      "layer0": "newfishing:item/fishing_rod_netherite_with_carrot-model",
-      "particle": "newfishing:item/fishing_rod_netherite_with_carrot-sprite"
+      "layer0": "newfishing:item/fishing_rod_empty_part-model",
+      "layer1": "newfishing:item/fishing_rod_netherite_line_part-model",
+      "layer2": "newfishing:item/fishing_rod_with_carrot_part-model",
+      "particle": "newfishing:item/fishing_rod_empty_part-sprite"
     }
   },
   "perspectives": {
     "gui": {
       "parent": "minecraft:item/generated",
       "textures": {
-        "layer0": "newfishing:item/fishing_rod_netherite_with_carrot-sprite"
+        "layer0": "newfishing:item/fishing_rod_empty_part-sprite",
+        "layer1": "newfishing:item/fishing_rod_netherite_line_part-sprite",
+        "layer2": "newfishing:item/fishing_rod_with_carrot_part-sprite"
       }
     },
     "ground": {
       "parent": "minecraft:item/generated",
       "textures": {
-        "layer0": "newfishing:item/fishing_rod_netherite_with_carrot-sprite"
+        "layer0": "newfishing:item/fishing_rod_empty_part-sprite",
+        "layer1": "newfishing:item/fishing_rod_netherite_line_part-sprite",
+        "layer2": "newfishing:item/fishing_rod_with_carrot_part-sprite"
       }
     },
     "fixed": {
       "parent": "minecraft:item/generated",
       "textures": {
-        "layer0": "newfishing:item/fishing_rod_netherite_with_carrot-sprite"
+        "layer0": "newfishing:item/fishing_rod_empty_part-sprite",
+        "layer1": "newfishing:item/fishing_rod_netherite_line_part-sprite",
+        "layer2": "newfishing:item/fishing_rod_with_carrot_part-sprite"
       }
     }
   }

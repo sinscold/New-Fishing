@@ -75,13 +75,16 @@
   "item.minecraft.splash_potion.effect.inferno": "Взрывное зелье Инферно",
   "item.minecraft.lingering_potion.effect.inferno": "Туманное зелье Инферно",
   "item.minecraft.tipped_arrow.effect.inferno": "Стрела Инферно",
-  "item.newfishing.locked_water_crate": "Запертый водяной ящик",
+  "item.newfishing.locked_water_crate": "Запертый ящик",
   "item.newfishing.locked_lava_crate": "Запертый лавовый ящик",
-  "message.newfishing.crate_locked": "Ящик заперт. Сними замок топором (ПКМ).",
-  "tooltip.newfishing.locked_crate": "Замок снимается топором: поставь ящик и нажми ПКМ.",
+  "message.newfishing.crate_locked": "Сними замок топором",
+  "tooltip.newfishing.locked_crate": "Сними замок топором",
   "item.newfishing.beer_crate": "Ящик пива",
   "block.newfishing.beer_crate": "Ящик пива",
   "item.newfishing.beer_bottle": "Бутылка пива",
   "effect.newfishing.tipsy": "Балдёж",
-  "newfishing.configuration.beerCrateChance": "Шанс ящика пива"
+  "newfishing.configuration.beerCrateChance": "Шанс ящика пива",
+  "item.newfishing.cigarette_pack": "Пачка сигарет",
+  "advancement.newfishing.kayf.title": "Кайф",
+  "advancement.newfishing.kayf.description": "Закури после рыбалки"
 }

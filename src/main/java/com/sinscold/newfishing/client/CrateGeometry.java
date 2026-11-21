@@ -109,36 +109,4 @@ public final class CrateGeometry {
             }
         }
     }
-
-    /** Замок на передней стенке: корпус и дужка (текстура lock.png 16×16 целиком на каждую грань). */
-    public static void renderLock(PoseStack poseStack, VertexConsumer consumer, int light, int overlay) {
-        box(poseStack, consumer, light, overlay, -2, 5, -8.5F, 2, 9, -7);
-        box(poseStack, consumer, light, overlay, -1, 9, -8.0F, 1, 11.5F, -7.5F);
-    }
-
-    private static void box(PoseStack poseStack, VertexConsumer consumer, int light, int overlay,
-                            float x1, float y1, float z1, float x2, float y2, float z2) {
-        PoseStack.Pose pose = poseStack.last();
-        float[][][] faces = {
-                {{x1, y1, z1}, {x1, y2, z1}, {x2, y2, z1}, {x2, y1, z1}}, // север
-                {{x1, y1, z2}, {x2, y1, z2}, {x2, y2, z2}, {x1, y2, z2}}, // юг
-                {{x2, y1, z1}, {x2, y2, z1}, {x2, y2, z2}, {x2, y1, z2}}, // восток
-                {{x1, y1, z1}, {x1, y1, z2}, {x1, y2, z2}, {x1, y2, z1}}, // запад
-                {{x1, y2, z1}, {x1, y2, z2}, {x2, y2, z2}, {x2, y2, z1}}, // верх
-                {{x1, y1, z1}, {x2, y1, z1}, {x2, y1, z2}, {x1, y1, z2}}, // низ
-        };
-        float[][] normals = {{0, 0, -1}, {0, 0, 1}, {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}};
-        float[][] uv = {{0, 1}, {1, 1}, {1, 0}, {0, 0}};
-        for (int f = 0; f < 6; f++) {
-            for (int i = 0; i < 4; i++) {
-                float[] v = faces[f][i];
-                consumer.addVertex(pose, v[0] / 16.0F, v[1] / 16.0F, v[2] / 16.0F)
-                        .setColor(-1)
-                        .setUv(uv[i][0], uv[i][1])
-                        .setOverlay(overlay)
-                        .setLight(light)
-                        .setNormal(pose, normals[f][0], normals[f][1], normals[f][2]);
-            }
-        }
-    }
 }

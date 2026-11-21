@@ -57,6 +57,7 @@ public final class ModCreativeTabs {
     static void onBuildContents(net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.FOOD_AND_DRINKS) {
             event.accept(ModItems.BEER_CRATE.get());
+            event.accept(ModItems.CIGARETTE_PACK.get());
         }
     }
 

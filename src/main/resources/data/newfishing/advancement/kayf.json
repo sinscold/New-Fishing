@@ -1,0 +1,28 @@
+{
+  "parent": "minecraft:adventure/root",
+  "display": {
+    "icon": {
+      "id": "newfishing:cigarette_pack"
+    },
+    "title": {
+      "translate": "advancement.newfishing.kayf.title"
+    },
+    "description": {
+      "translate": "advancement.newfishing.kayf.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "smoke": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "smoke"
+    ]
+  ]
+}

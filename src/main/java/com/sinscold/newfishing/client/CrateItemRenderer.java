@@ -26,9 +26,6 @@ public class CrateItemRenderer extends BlockEntityWithoutLevelRenderer {
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.0F, 0.5F);
         CrateGeometry.render(poseStack, buffer.getBuffer(RenderType.entityCutoutNoCull(texture)), packedLight, packedOverlay, 0.0F);
-        if (stack.getItem() instanceof com.sinscold.newfishing.item.LockedCrateItem) {
-            CrateGeometry.renderLock(poseStack, buffer.getBuffer(RenderType.entityCutoutNoCull(CrateRenderer.LOCK)), packedLight, packedOverlay);
-        }
         poseStack.popPose();
     }
 }

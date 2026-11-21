@@ -79,5 +79,10 @@ public final class ModItems {
             () -> new com.sinscold.newfishing.item.BeerBottleItem(new Item.Properties().stacksTo(16).craftRemainder(net.minecraft.world.item.Items.GLASS_BOTTLE)
                     .food(new FoodProperties.Builder().nutrition(0).saturationModifier(0.0F).alwaysEdible().build())));
 
+    /** Пачка сигарет (секретный дроп из лавы, 20 сигарет по прочности). */
+    public static final DeferredItem<Item> CIGARETTE_PACK = ITEMS.register("cigarette_pack",
+            () -> new com.sinscold.newfishing.item.CigarettePackItem(new Item.Properties().durability(20).fireResistant()
+                    .food(new FoodProperties.Builder().nutrition(0).saturationModifier(0.0F).alwaysEdible().eatSeconds(3.0F).build())));
+
     private ModItems() {}
 }
