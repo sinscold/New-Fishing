@@ -28,8 +28,9 @@ public class CigarettePackItem extends Item {
         super(properties);
     }
 
+    /** Без компонента пачка полная (20). */
     public static int count(ItemStack pack) {
-        return pack.getOrDefault(ModDataComponents.CIGARETTES.get(), 0);
+        return pack.getOrDefault(ModDataComponents.CIGARETTES.get(), MAX);
     }
 
     @Override

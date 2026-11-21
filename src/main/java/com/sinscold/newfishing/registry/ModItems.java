@@ -81,8 +81,7 @@ public final class ModItems {
 
     /** Пачка сигарет (секретный дроп из лавы): как мешок, 20 сигарет. Сигарета: стакаются свежие, надкуренная нет. */
     public static final DeferredItem<Item> CIGARETTE_PACK = ITEMS.register("cigarette_pack",
-            () -> new com.sinscold.newfishing.item.CigarettePackItem(new Item.Properties().stacksTo(1).fireResistant()
-                    .component(ModDataComponents.CIGARETTES.get(), 20)));
+            () -> new com.sinscold.newfishing.item.CigarettePackItem(new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<Item> CIGARETTE = ITEMS.register("cigarette",
             () -> new com.sinscold.newfishing.item.CigaretteItem(new Item.Properties().stacksTo(20)
                     .food(new FoodProperties.Builder().nutrition(0).saturationModifier(0.0F).alwaysEdible().build())));
