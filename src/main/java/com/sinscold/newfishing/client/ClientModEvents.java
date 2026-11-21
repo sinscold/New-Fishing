@@ -41,7 +41,7 @@ public final class ClientModEvents {
                 }
                 return renderer;
             }
-        }, ModItems.WATER_CRATE.get(), ModItems.LAVA_CRATE.get());
+        }, ModItems.WATER_CRATE.get(), ModItems.LAVA_CRATE.get(), ModItems.LOCKED_WATER_CRATE.get(), ModItems.LOCKED_LAVA_CRATE.get());
     }
 
     /** Лавовый поплавок рисуется ванильным рендерером (своя 3D-модель — позже). */

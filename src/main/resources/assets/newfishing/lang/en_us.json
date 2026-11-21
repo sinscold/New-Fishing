@@ -74,5 +74,9 @@
   "item.minecraft.potion.effect.inferno": "Potion of Inferno",
   "item.minecraft.splash_potion.effect.inferno": "Splash Potion of Inferno",
   "item.minecraft.lingering_potion.effect.inferno": "Lingering Potion of Inferno",
-  "item.minecraft.tipped_arrow.effect.inferno": "Arrow of Inferno"
+  "item.minecraft.tipped_arrow.effect.inferno": "Arrow of Inferno",
+  "item.newfishing.locked_water_crate": "Locked Water Crate",
+  "item.newfishing.locked_lava_crate": "Locked Lava Crate",
+  "message.newfishing.crate_locked": "The crate is locked. Right-click with an axe to remove the lock.",
+  "tooltip.newfishing.locked_crate": "Place it and right-click with an axe to remove the lock."
 }

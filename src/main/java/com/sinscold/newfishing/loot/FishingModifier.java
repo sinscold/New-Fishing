@@ -41,7 +41,7 @@ public class FishingModifier extends LootModifier {
             if (!isTreasure(stack)) {
                 result.add(stack);
             } else if (context.getRandom().nextDouble() < Config.waterCrateChance()) {
-                result.add(new ItemStack(ModItems.WATER_CRATE.get()));
+                result.add(new ItemStack(ModItems.LOCKED_WATER_CRATE.get()));
             }
         }
         return result;

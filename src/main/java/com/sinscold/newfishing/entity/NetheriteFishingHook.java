@@ -497,7 +497,7 @@ public class NetheriteFishingHook extends FishingHook {
             List<ItemStack> items = table.getRandomItems(params);
             // лавовый ящик: отдельный настраиваемый шанс (Config.LAVA_CRATE_CHANCE), заменяет обычный улов
             if (this.biteTable == LAVA_FISHING && this.random.nextDouble() < com.sinscold.newfishing.Config.lavaCrateChance()) {
-                items = List.of(new ItemStack(com.sinscold.newfishing.registry.ModItems.LAVA_CRATE.get()));
+                items = List.of(new ItemStack(com.sinscold.newfishing.registry.ModItems.LOCKED_LAVA_CRATE.get()));
             }
             for (ItemStack stack : items) {
                 ItemEntity itemEntity = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), stack);

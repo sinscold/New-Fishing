@@ -66,5 +66,11 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> LAVA_CRATE = ITEMS.registerSimpleBlockItem("lava_crate", ModBlocks.LAVA_CRATE,
             new Item.Properties().stacksTo(16).fireResistant());
 
+    /** Запертые ящики: их и вылавливают; замок снимается ПКМ топором после установки. */
+    public static final DeferredItem<Item> LOCKED_WATER_CRATE = ITEMS.register("locked_water_crate",
+            () -> new com.sinscold.newfishing.item.LockedCrateItem(ModBlocks.WATER_CRATE.get(), new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<Item> LOCKED_LAVA_CRATE = ITEMS.register("locked_lava_crate",
+            () -> new com.sinscold.newfishing.item.LockedCrateItem(ModBlocks.LAVA_CRATE.get(), new Item.Properties().stacksTo(16).fireResistant()));
+
     private ModItems() {}
 }

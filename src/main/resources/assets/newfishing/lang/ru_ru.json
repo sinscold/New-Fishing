@@ -74,5 +74,9 @@
   "item.minecraft.potion.effect.inferno": "Зелье Инферно",
   "item.minecraft.splash_potion.effect.inferno": "Взрывное зелье Инферно",
   "item.minecraft.lingering_potion.effect.inferno": "Туманное зелье Инферно",
-  "item.minecraft.tipped_arrow.effect.inferno": "Стрела Инферно"
+  "item.minecraft.tipped_arrow.effect.inferno": "Стрела Инферно",
+  "item.newfishing.locked_water_crate": "Запертый водяной ящик",
+  "item.newfishing.locked_lava_crate": "Запертый лавовый ящик",
+  "message.newfishing.crate_locked": "Ящик заперт. Сними замок топором (ПКМ).",
+  "tooltip.newfishing.locked_crate": "Замок снимается топором: поставь ящик и нажми ПКМ."
 }

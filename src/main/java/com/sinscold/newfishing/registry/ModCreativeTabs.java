@@ -41,6 +41,8 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.OBSIDIAN_CATFISH.get());
                         output.accept(ModItems.OBSIDIAN_CATFISH_FILLET.get());
                         output.accept(ModItems.COOKED_OBSIDIAN_CATFISH_FILLET.get());
+                        output.accept(ModItems.LOCKED_WATER_CRATE.get());
+                        output.accept(ModItems.LOCKED_LAVA_CRATE.get());
                         output.accept(ModItems.WATER_CRATE.get());
                         output.accept(ModItems.LAVA_CRATE.get());
                         // зелья (временно здесь, в общей вкладке мода): только обычная бутылка, без взрывного и туманного
