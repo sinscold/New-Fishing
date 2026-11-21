@@ -61,6 +61,13 @@ public final class ClientModEvents {
         event.enqueueWork(() -> ItemProperties.register(Items.FISHING_ROD,
                 ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "rod_state"),
                 (stack, level, entity, seed) -> RodMods.get(stack).visualState()));
+        // состояние пачки сигарет: 0 пустая, 1 неполная, 2 полная
+        event.enqueueWork(() -> ItemProperties.register(ModItems.CIGARETTE_PACK.get(),
+                ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "pack_state"),
+                (stack, level, entity, seed) -> {
+                    int count = com.sinscold.newfishing.item.CigarettePackItem.count(stack);
+                    return count <= 0 ? 0.0F : count >= com.sinscold.newfishing.item.CigarettePackItem.MAX ? 2.0F : 1.0F;
+                }));
         // вид лески для модели закинутой удочки
         event.enqueueWork(() -> ItemProperties.register(Items.FISHING_ROD,
                 ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "rod_line"),

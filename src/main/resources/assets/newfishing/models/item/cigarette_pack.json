@@ -4,7 +4,7 @@
   "base": {
     "textures": {
       "0": "newfishing:item/cigarette_pack_model",
-      "particle": "newfishing:item/cigarette_pack"
+      "particle": "newfishing:item/cigarette_pack_full"
     },
     "elements": [
       {
@@ -228,20 +228,34 @@
     "gui": {
       "parent": "minecraft:item/generated",
       "textures": {
-        "layer0": "newfishing:item/cigarette_pack"
+        "layer0": "newfishing:item/cigarette_pack_full"
       }
     },
     "ground": {
       "parent": "minecraft:item/generated",
       "textures": {
-        "layer0": "newfishing:item/cigarette_pack"
+        "layer0": "newfishing:item/cigarette_pack_full"
       }
     },
     "fixed": {
       "parent": "minecraft:item/generated",
       "textures": {
-        "layer0": "newfishing:item/cigarette_pack"
+        "layer0": "newfishing:item/cigarette_pack_full"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "newfishing:pack_state": 0
+      },
+      "model": "newfishing:item/cigarette_pack_empty"
+    },
+    {
+      "predicate": {
+        "newfishing:pack_state": 1
+      },
+      "model": "newfishing:item/cigarette_pack_half"
+    }
+  ]
 }
