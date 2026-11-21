@@ -24,6 +24,9 @@ public final class ModTags {
     /** Ножи (для разделки): ножи Farmer's Delight и, как запасной вариант, мечи. */
     public static final TagKey<Item> KNIVES = item("knives");
 
+    /** Зажигалки для сигарет (в левой руке): огниво. */
+    public static final TagKey<Item> LIGHTERS = item("lighters");
+
     private static TagKey<Item> item(String name) {
         return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, name));
     }

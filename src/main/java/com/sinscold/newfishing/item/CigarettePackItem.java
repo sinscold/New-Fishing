@@ -1,59 +1,72 @@
 package com.sinscold.newfishing.item;
 
-import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
+import java.util.List;
+
+import com.sinscold.newfishing.registry.ModDataComponents;
+import com.sinscold.newfishing.registry.ModItems;
+
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 
 /**
- * Пачка сигарет (пасхалка): ПКМ удерживать — закуриваешь (поднимает пачку к лицу, идёт дым), в конце тратится 1 прочность
- * (20 сигарет) и выдаётся скрытое достижение «Кайф». Больше ничего не даёт. Длительность задаёт компонент еды (по умолчанию 1,6 секунды).
+ * Пачка сигарет (пасхалка): как мешок, но только для сигарет (20 штук). В инвентаре ПКМ по пачке пустым курсором достаёт
+ * одну сигарету (см. event/CigaretteEvents), ПКМ в руке кладёт одну сигарету в инвентарь.
  */
 public class CigarettePackItem extends Item {
-    private static final ResourceLocation ADVANCEMENT = ResourceLocation.fromNamespaceAndPath("newfishing", "kayf");
+    public static final int MAX = 20;
 
     public CigarettePackItem(Properties properties) {
         super(properties);
     }
 
-    @Override
-    public UseAnim getUseAnimation(ItemStack stack) {
-        return UseAnim.TOOT_HORN;
+    public static int count(ItemStack pack) {
+        return pack.getOrDefault(ModDataComponents.CIGARETTES.get(), 0);
     }
 
     @Override
-    public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseDuration) {
-        if (level.isClientSide && remainingUseDuration % 6 == 0) {
-            Vec3 look = entity.getLookAngle();
-            level.addParticle(ParticleTypes.SMOKE, entity.getX() + look.x * 0.4, entity.getEyeY() - 0.15 + look.y * 0.4,
-                    entity.getZ() + look.z * 0.4, 0.0, 0.02, 0.0);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack pack = player.getItemInHand(hand);
+        int count = count(pack);
+        if (count <= 0) {
+            return InteractionResultHolder.fail(pack);
         }
-    }
-
-    @Override
-    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
-        if (level instanceof ServerLevel serverLevel) {
-            Vec3 look = entity.getLookAngle();
-            serverLevel.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, entity.getX() + look.x * 0.5, entity.getEyeY() - 0.15 + look.y * 0.5,
-                    entity.getZ() + look.z * 0.5, 6, 0.1, 0.05, 0.1, 0.01);
-            serverLevel.playSound(null, entity.blockPosition(), SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 0.3F, 1.6F);
-            if (entity instanceof ServerPlayer player) {
-                AdvancementHolder advancement = serverLevel.getServer().getAdvancements().get(ADVANCEMENT);
-                if (advancement != null) {
-                    player.getAdvancements().award(advancement, "smoke");
-                }
+        if (!level.isClientSide) {
+            pack.set(ModDataComponents.CIGARETTES.get(), count - 1);
+            ItemStack cigarette = new ItemStack(ModItems.CIGARETTE.get());
+            if (!player.getInventory().add(cigarette)) {
+                player.drop(cigarette, false);
             }
+            level.playSound(null, player.blockPosition(), SoundEvents.BUNDLE_REMOVE_ONE, SoundSource.PLAYERS, 0.8F, 1.0F);
         }
-        stack.hurtAndBreak(1, entity, LivingEntity.getSlotForHand(entity.getUsedItemHand()));
-        return stack;
+        return InteractionResultHolder.sidedSuccess(pack, level.isClientSide);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        tooltip.add(Component.translatable("tooltip.newfishing.cigarettes", count(stack), MAX).withStyle(ChatFormatting.GRAY));
+    }
+
+    @Override
+    public boolean isBarVisible(ItemStack stack) {
+        return count(stack) < MAX;
+    }
+
+    @Override
+    public int getBarWidth(ItemStack stack) {
+        return Math.round(13.0F * count(stack) / MAX);
+    }
+
+    @Override
+    public int getBarColor(ItemStack stack) {
+        return 0xD07830;
     }
 }

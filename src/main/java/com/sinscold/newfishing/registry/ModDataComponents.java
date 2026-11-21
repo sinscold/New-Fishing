@@ -20,5 +20,12 @@ public final class ModDataComponents {
                     .cacheEncoding()
                     .build());
 
+    /** Сколько сигарет осталось в пачке (0–20). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> CIGARETTES =
+            COMPONENTS.register("cigarettes", () -> DataComponentType.<Integer>builder()
+                    .persistent(com.mojang.serialization.Codec.intRange(0, 20))
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_INT)
+                    .build());
+
     private ModDataComponents() {}
 }

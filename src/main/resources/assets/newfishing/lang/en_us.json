@@ -86,5 +86,8 @@
   "newfishing.configuration.beerCrateChance": "Beer crate chance",
   "item.newfishing.cigarette_pack": "Pack of Cigarettes",
   "advancement.newfishing.kayf.title": "Bliss",
-  "advancement.newfishing.kayf.description": "Light one up after fishing"
+  "advancement.newfishing.kayf.description": "Light one up after fishing",
+  "item.newfishing.cigarette": "Cigarette",
+  "tooltip.newfishing.cigarettes": "Cigarettes: %s of %s",
+  "message.newfishing.need_lighter": "You need a lighter (flint and steel) in your off hand"
 }

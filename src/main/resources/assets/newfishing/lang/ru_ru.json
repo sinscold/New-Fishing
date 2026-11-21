@@ -86,5 +86,8 @@
   "newfishing.configuration.beerCrateChance": "Шанс ящика пива",
   "item.newfishing.cigarette_pack": "Пачка сигарет",
   "advancement.newfishing.kayf.title": "Кайф",
-  "advancement.newfishing.kayf.description": "Закури после рыбалки"
+  "advancement.newfishing.kayf.description": "Закури после рыбалки",
+  "item.newfishing.cigarette": "Сигарета",
+  "tooltip.newfishing.cigarettes": "Сигарет: %s из %s",
+  "message.newfishing.need_lighter": "Нужна зажигалка (огниво) в левой руке"
 }

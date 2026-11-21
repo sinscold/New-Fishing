@@ -79,9 +79,12 @@ public final class ModItems {
             () -> new com.sinscold.newfishing.item.BeerBottleItem(new Item.Properties().stacksTo(16).craftRemainder(net.minecraft.world.item.Items.GLASS_BOTTLE)
                     .food(new FoodProperties.Builder().nutrition(0).saturationModifier(0.0F).alwaysEdible().build())));
 
-    /** Пачка сигарет (секретный дроп из лавы, 20 сигарет по прочности). */
+    /** Пачка сигарет (секретный дроп из лавы): как мешок, 20 сигарет. Сигарета: стакаются свежие, надкуренная нет. */
     public static final DeferredItem<Item> CIGARETTE_PACK = ITEMS.register("cigarette_pack",
-            () -> new com.sinscold.newfishing.item.CigarettePackItem(new Item.Properties().durability(20).fireResistant()
+            () -> new com.sinscold.newfishing.item.CigarettePackItem(new Item.Properties().stacksTo(1).fireResistant()
+                    .component(ModDataComponents.CIGARETTES.get(), 20)));
+    public static final DeferredItem<Item> CIGARETTE = ITEMS.register("cigarette",
+            () -> new com.sinscold.newfishing.item.CigaretteItem(new Item.Properties().stacksTo(20)
                     .food(new FoodProperties.Builder().nutrition(0).saturationModifier(0.0F).alwaysEdible().build())));
 
     private ModItems() {}
