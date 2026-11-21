@@ -238,15 +238,15 @@
   "overrides": [
     {
       "predicate": {
-        "newfishing:pack_state": 0
-      },
-      "model": "newfishing:item/cigarette_pack_empty"
-    },
-    {
-      "predicate": {
         "newfishing:pack_state": 1
       },
       "model": "newfishing:item/cigarette_pack_half"
+    },
+    {
+      "predicate": {
+        "newfishing:pack_state": 2
+      },
+      "model": "newfishing:item/cigarette_pack_empty"
     }
   ]
 }
