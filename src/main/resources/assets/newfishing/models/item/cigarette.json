@@ -2,80 +2,10 @@
   "loader": "neoforge:separate_transforms",
   "gui_light": "front",
   "base": {
+    "parent": "minecraft:item/generated",
     "textures": {
-      "0": "newfishing:item/cigarette_model",
-      "particle": "newfishing:item/cigarette"
+      "layer0": "newfishing:item/cigarette_flat"
     },
-    "elements": [
-      {
-        "from": [
-          3,
-          7.4,
-          7.4
-        ],
-        "to": [
-          13,
-          8.6,
-          8.6
-        ],
-        "faces": {
-          "up": {
-            "uv": [
-              0,
-              0,
-              10,
-              1.2
-            ],
-            "texture": "#0"
-          },
-          "down": {
-            "uv": [
-              0,
-              0,
-              10,
-              1.2
-            ],
-            "texture": "#0"
-          },
-          "north": {
-            "uv": [
-              0,
-              0,
-              10,
-              1.2
-            ],
-            "texture": "#0"
-          },
-          "south": {
-            "uv": [
-              0,
-              0,
-              10,
-              1.2
-            ],
-            "texture": "#0"
-          },
-          "west": {
-            "uv": [
-              0,
-              0,
-              1.2,
-              1.2
-            ],
-            "texture": "#0"
-          },
-          "east": {
-            "uv": [
-              9,
-              0,
-              10,
-              1.2
-            ],
-            "texture": "#0"
-          }
-        }
-      }
-    ],
     "display": {
       "thirdperson_righthand": {
         "rotation": [
@@ -89,9 +19,9 @@
           0
         ],
         "scale": [
-          1.4,
-          1.4,
-          1.4
+          1.5,
+          1.5,
+          1.5
         ]
       },
       "thirdperson_lefthand": {
@@ -106,9 +36,9 @@
           0
         ],
         "scale": [
-          1.4,
-          1.4,
-          1.4
+          1.5,
+          1.5,
+          1.5
         ]
       },
       "firstperson_righthand": {
@@ -123,9 +53,9 @@
           0
         ],
         "scale": [
-          1.4,
-          1.4,
-          1.4
+          1.5,
+          1.5,
+          1.5
         ]
       },
       "firstperson_lefthand": {
@@ -140,9 +70,9 @@
           0
         ],
         "scale": [
-          1.4,
-          1.4,
-          1.4
+          1.5,
+          1.5,
+          1.5
         ]
       }
     }
