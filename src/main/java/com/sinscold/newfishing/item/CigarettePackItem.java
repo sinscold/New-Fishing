@@ -16,7 +16,7 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * Пачка сигарет (пасхалка): ПКМ удерживать — закуриваешь (поднимает пачку к лицу, идёт дым), в конце тратится 1 прочность
- * (20 сигарет) и выдаётся скрытое достижение «Кайф». Больше ничего не даёт. Длительность задаёт компонент еды (3 секунды).
+ * (20 сигарет) и выдаётся скрытое достижение «Кайф». Больше ничего не даёт. Длительность задаёт компонент еды (по умолчанию 1,6 секунды).
  */
 public class CigarettePackItem extends Item {
     private static final ResourceLocation ADVANCEMENT = ResourceLocation.fromNamespaceAndPath("newfishing", "kayf");

@@ -82,7 +82,7 @@ public final class ModItems {
     /** Пачка сигарет (секретный дроп из лавы, 20 сигарет по прочности). */
     public static final DeferredItem<Item> CIGARETTE_PACK = ITEMS.register("cigarette_pack",
             () -> new com.sinscold.newfishing.item.CigarettePackItem(new Item.Properties().durability(20).fireResistant()
-                    .food(new FoodProperties.Builder().nutrition(0).saturationModifier(0.0F).alwaysEdible().eatSeconds(3.0F).build())));
+                    .food(new FoodProperties.Builder().nutrition(0).saturationModifier(0.0F).alwaysEdible().build())));
 
     private ModItems() {}
 }
