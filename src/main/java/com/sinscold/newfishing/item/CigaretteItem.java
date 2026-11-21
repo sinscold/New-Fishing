@@ -1,5 +1,6 @@
 package com.sinscold.newfishing.item;
 
+import com.sinscold.newfishing.Config;
 import com.sinscold.newfishing.registry.ModTags;
 
 import net.minecraft.advancements.AdvancementHolder;
@@ -23,8 +24,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Сигарета: закуривается в правой руке при зажигалке (огниво) в левой. Свежие сигареты стакаются, надкуренная получает
- * прочность 3 (по одной затяжке) и перестаёт стакаться. Закуривание ничего не даёт, кроме скрытого достижения «Кайф».
+ * Сигарета: закуривается в правой руке при зажигалке (огниво) в левой. Сигареты не стакаются; надкуренная получает
+ * прочность 3 (по одной затяжке). Закуривание ничего не даёт, кроме скрытого достижения «Кайф».
  */
 public class CigaretteItem extends Item {
     public static final int USES = 3;
@@ -40,7 +41,6 @@ public class CigaretteItem extends Item {
     }
 
     private static void markSmoked(ItemStack stack) {
-        stack.set(DataComponents.MAX_STACK_SIZE, 1);
         stack.set(DataComponents.MAX_DAMAGE, USES);
         stack.set(DataComponents.DAMAGE, 0);
     }
@@ -53,21 +53,11 @@ public class CigaretteItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (hand != InteractionHand.MAIN_HAND || !player.getOffhandItem().is(ModTags.LIGHTERS)) {
+        if (hand != InteractionHand.MAIN_HAND || (Config.requireLighter() && !player.getOffhandItem().is(ModTags.LIGHTERS))) {
             if (!level.isClientSide) {
                 player.displayClientMessage(Component.translatable("message.newfishing.need_lighter"), true);
             }
             return InteractionResultHolder.fail(stack);
-        }
-        if (!isSmoked(stack) && stack.getCount() > 1) {
-            // из стопки закуривается одна, остальные возвращаются в инвентарь
-            ItemStack single = stack.copyWithCount(1);
-            ItemStack rest = stack.copyWithCount(stack.getCount() - 1);
-            player.setItemInHand(hand, single);
-            if (!player.getInventory().add(rest) && !level.isClientSide) {
-                player.drop(rest, false);
-            }
-            stack = single;
         }
         player.startUsingItem(hand);
         return InteractionResultHolder.consume(stack);
@@ -97,7 +87,7 @@ public class CigaretteItem extends Item {
             }
             // зажигалка тратит 1 прочность на каждую затяжку
             ItemStack lighter = entity.getOffhandItem();
-            if (lighter.is(ModTags.LIGHTERS)) {
+            if (Config.requireLighter() && lighter.is(ModTags.LIGHTERS)) {
                 lighter.hurtAndBreak(1, entity, EquipmentSlot.OFFHAND);
             }
         }

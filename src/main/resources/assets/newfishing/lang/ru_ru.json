@@ -89,5 +89,7 @@
   "advancement.newfishing.kayf.description": "Закури после рыбалки",
   "item.newfishing.cigarette": "Сигарета",
   "tooltip.newfishing.cigarettes": "Сигарет: %s из %s",
-  "message.newfishing.need_lighter": "Нужна зажигалка (огниво) в левой руке"
+  "message.newfishing.need_lighter": "Нет огня",
+  "newfishing.configuration.misc": "Прочее",
+  "newfishing.configuration.requireLighter": "Нужна зажигалка для сигареты"
 }

@@ -83,7 +83,7 @@ public final class ModItems {
     public static final DeferredItem<Item> CIGARETTE_PACK = ITEMS.register("cigarette_pack",
             () -> new com.sinscold.newfishing.item.CigarettePackItem(new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<Item> CIGARETTE = ITEMS.register("cigarette",
-            () -> new com.sinscold.newfishing.item.CigaretteItem(new Item.Properties().stacksTo(20)
+            () -> new com.sinscold.newfishing.item.CigaretteItem(new Item.Properties().stacksTo(1)
                     .food(new FoodProperties.Builder().nutrition(0).saturationModifier(0.0F).alwaysEdible().build())));
 
     private ModItems() {}

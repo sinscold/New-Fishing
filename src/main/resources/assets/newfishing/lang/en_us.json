@@ -89,5 +89,7 @@
   "advancement.newfishing.kayf.description": "Light one up after fishing",
   "item.newfishing.cigarette": "Cigarette",
   "tooltip.newfishing.cigarettes": "Cigarettes: %s of %s",
-  "message.newfishing.need_lighter": "You need a lighter (flint and steel) in your off hand"
+  "message.newfishing.need_lighter": "No fire",
+  "newfishing.configuration.misc": "Misc",
+  "newfishing.configuration.requireLighter": "Require a lighter to smoke"
 }
