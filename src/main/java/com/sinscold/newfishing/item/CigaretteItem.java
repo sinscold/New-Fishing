@@ -47,7 +47,7 @@ public class CigaretteItem extends Item {
 
     @Override
     public UseAnim getUseAnimation(ItemStack stack) {
-        return UseAnim.TOOT_HORN;
+        return UseAnim.SPYGLASS;
     }
 
     @Override

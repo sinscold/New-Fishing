@@ -2,9 +2,153 @@
   "loader": "neoforge:separate_transforms",
   "gui_light": "front",
   "base": {
-    "parent": "minecraft:item/handheld",
     "textures": {
-      "layer0": "newfishing:item/cigarette"
+      "0": "newfishing:item/cigarette_model",
+      "particle": "newfishing:item/cigarette"
+    },
+    "elements": [
+      {
+        "from": [
+          7.4,
+          7.4,
+          3
+        ],
+        "to": [
+          8.6,
+          8.6,
+          13
+        ],
+        "faces": {
+          "up": {
+            "uv": [
+              0,
+              0,
+              10,
+              1.2
+            ],
+            "texture": "#0",
+            "rotation": 90
+          },
+          "down": {
+            "uv": [
+              0,
+              0,
+              10,
+              1.2
+            ],
+            "texture": "#0",
+            "rotation": 90
+          },
+          "east": {
+            "uv": [
+              0,
+              0,
+              10,
+              1.2
+            ],
+            "texture": "#0",
+            "rotation": 90
+          },
+          "west": {
+            "uv": [
+              0,
+              0,
+              10,
+              1.2
+            ],
+            "texture": "#0",
+            "rotation": 90
+          },
+          "north": {
+            "uv": [
+              0,
+              0,
+              1.2,
+              1.2
+            ],
+            "texture": "#0"
+          },
+          "south": {
+            "uv": [
+              9,
+              0,
+              10,
+              1.2
+            ],
+            "texture": "#0"
+          }
+        }
+      }
+    ],
+    "display": {
+      "thirdperson_righthand": {
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1.4,
+          1.4,
+          1.4
+        ]
+      },
+      "thirdperson_lefthand": {
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1.4,
+          1.4,
+          1.4
+        ]
+      },
+      "firstperson_righthand": {
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1.4,
+          1.4,
+          1.4
+        ]
+      },
+      "firstperson_lefthand": {
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1.4,
+          1.4,
+          1.4
+        ]
+      }
     }
   },
   "perspectives": {
