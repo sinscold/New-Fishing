@@ -44,6 +44,9 @@ public class FishingModifier extends LootModifier {
                 result.add(new ItemStack(ModItems.LOCKED_WATER_CRATE.get()));
             }
         }
+        if (context.getRandom().nextDouble() < Config.beerCrateChance()) {
+            result.add(new ItemStack(ModItems.BEER_CRATE.get()));
+        }
         return result;
     }
 

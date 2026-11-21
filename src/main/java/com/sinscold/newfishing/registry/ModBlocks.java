@@ -17,5 +17,8 @@ public final class ModBlocks {
     public static final DeferredBlock<CrateBlock> LAVA_CRATE = BLOCKS.register("lava_crate",
             () -> new CrateBlock(BlockBehaviour.Properties.of().mapColor(MapColor.NETHER).strength(1.0F).sound(SoundType.NETHER_BRICKS).noOcclusion(), "lava_crate"));
 
+    public static final DeferredBlock<com.sinscold.newfishing.block.BeerCrateBlock> BEER_CRATE = BLOCKS.register("beer_crate",
+            () -> new com.sinscold.newfishing.block.BeerCrateBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(0.5F).sound(SoundType.WOOD).noOcclusion()));
+
     private ModBlocks() {}
 }

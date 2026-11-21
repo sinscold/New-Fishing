@@ -11,6 +11,7 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+@net.neoforged.fml.common.EventBusSubscriber(modid = NewFishing.MODID)
 public final class ModCreativeTabs {
     public static final DeferredRegister<CreativeModeTab> TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, NewFishing.MODID);
@@ -50,6 +51,14 @@ public final class ModCreativeTabs {
                         output.accept(PotionContents.createItemStack(Items.POTION, ModPotions.INFERNO));
                         output.accept(PotionContents.createItemStack(Items.POTION, ModPotions.LONG_INFERNO));
                     }).build());
+
+    /** Ящик пива лежит ещё и в ванильной вкладке «Еда и напитки». */
+    @net.neoforged.bus.api.SubscribeEvent
+    static void onBuildContents(net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeModeTabs.FOOD_AND_DRINKS) {
+            event.accept(ModItems.BEER_CRATE.get());
+        }
+    }
 
     private ModCreativeTabs() {}
 }

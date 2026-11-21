@@ -68,9 +68,16 @@ public final class ModItems {
 
     /** Запертые ящики: их и вылавливают; замок снимается ПКМ топором после установки. */
     public static final DeferredItem<Item> LOCKED_WATER_CRATE = ITEMS.register("locked_water_crate",
-            () -> new com.sinscold.newfishing.item.LockedCrateItem(ModBlocks.WATER_CRATE.get(), new Item.Properties().stacksTo(16)));
+            () -> new com.sinscold.newfishing.item.LockedCrateItem(ModBlocks.WATER_CRATE.get(), new Item.Properties().stacksTo(1)));
     public static final DeferredItem<Item> LOCKED_LAVA_CRATE = ITEMS.register("locked_lava_crate",
-            () -> new com.sinscold.newfishing.item.LockedCrateItem(ModBlocks.LAVA_CRATE.get(), new Item.Properties().stacksTo(16).fireResistant()));
+            () -> new com.sinscold.newfishing.item.LockedCrateItem(ModBlocks.LAVA_CRATE.get(), new Item.Properties().stacksTo(1).fireResistant()));
+
+    /** Ящик пива (6 бутылок, как торт) и бутылка пива. */
+    public static final DeferredItem<BlockItem> BEER_CRATE = ITEMS.registerSimpleBlockItem("beer_crate", ModBlocks.BEER_CRATE,
+            new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> BEER_BOTTLE = ITEMS.register("beer_bottle",
+            () -> new com.sinscold.newfishing.item.BeerBottleItem(new Item.Properties().stacksTo(16).craftRemainder(net.minecraft.world.item.Items.GLASS_BOTTLE)
+                    .food(new FoodProperties.Builder().nutrition(0).saturationModifier(0.0F).alwaysEdible().build())));
 
     private ModItems() {}
 }

@@ -20,5 +20,9 @@ public final class ModEffects {
     public static final DeferredHolder<MobEffect, com.sinscold.newfishing.effect.InfernoEffect> INFERNO =
             EFFECTS.register("inferno", () -> new com.sinscold.newfishing.effect.InfernoEffect(MobEffectCategory.BENEFICIAL, 0xE8601C));
 
+    /** «Балдёж» от бутылки пива. */
+    public static final DeferredHolder<MobEffect, com.sinscold.newfishing.effect.TipsyEffect> TIPSY =
+            EFFECTS.register("tipsy", () -> new com.sinscold.newfishing.effect.TipsyEffect(MobEffectCategory.NEUTRAL, 0xE0A040));
+
     private ModEffects() {}
 }

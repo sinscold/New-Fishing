@@ -33,6 +33,7 @@ public final class Config {
 
     public static final ModConfigSpec.DoubleValue WATER_CRATE_CHANCE;
     public static final ModConfigSpec.DoubleValue LAVA_CRATE_CHANCE;
+    public static final ModConfigSpec.DoubleValue BEER_CRATE_CHANCE;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> DISABLED_CRATE_ITEMS;
     public static final ModConfigSpec SPEC;
 
@@ -42,6 +43,8 @@ public final class Config {
                 .defineInRange("waterCrateChance", 1.0, 0.0, 1.0);
         LAVA_CRATE_CHANCE = BUILDER.comment("Шанс выловить лавовый ящик при любой удачной поклёвке в лаве.")
                 .defineInRange("lavaCrateChance", 0.10, 0.0, 1.0);
+        BEER_CRATE_CHANCE = BUILDER.comment("Шанс выловить ящик пива при любой удачной поклёвке в воде.")
+                .defineInRange("beerCrateChance", 0.01, 0.0, 1.0);
         BUILDER.pop();
 
         BUILDER.comment("Шансы групп и подгрупп лута ящиков (0 = никогда, 1 = всегда).").push("crate_loot_chances");
@@ -85,6 +88,14 @@ public final class Config {
             return WATER_CRATE_CHANCE.get();
         } catch (IllegalStateException e) {
             return 1.0;
+        }
+    }
+
+    public static double beerCrateChance() {
+        try {
+            return BEER_CRATE_CHANCE.get();
+        } catch (IllegalStateException e) {
+            return 0.01;
         }
     }
 

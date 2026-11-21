@@ -78,5 +78,10 @@
   "item.newfishing.locked_water_crate": "Locked Water Crate",
   "item.newfishing.locked_lava_crate": "Locked Lava Crate",
   "message.newfishing.crate_locked": "The crate is locked. Right-click with an axe to remove the lock.",
-  "tooltip.newfishing.locked_crate": "Place it and right-click with an axe to remove the lock."
+  "tooltip.newfishing.locked_crate": "Place it and right-click with an axe to remove the lock.",
+  "item.newfishing.beer_crate": "Crate of Beer",
+  "block.newfishing.beer_crate": "Crate of Beer",
+  "item.newfishing.beer_bottle": "Bottle of Beer",
+  "effect.newfishing.tipsy": "Tipsy",
+  "newfishing.configuration.beerCrateChance": "Beer crate chance"
 }
