@@ -73,14 +73,14 @@ public final class BaitBagRenderer implements ICurioRenderer {
             float dx = corners[i][0] - ox;
             float dz = corners[i][2] - oz;
             // поворот вокруг оси Y, затем перевод из «видовых» координат Blockbench (Y вверх от земли) в координаты тела (Y вниз от шеи)
-            pos[i][0] = ox + dx * cos + dz * sin;
-            pos[i][1] = 24.0F - corners[i][1];
+            pos[i][0] = -(ox + dx * cos + dz * sin); // зеркально по X
+            pos[i][1] = 20.0F - corners[i][1]; // на 4 пикселя выше
             pos[i][2] = oz - dx * sin + dz * cos;
         }
         float[][] uvs = {{uv[0], uv[1]}, {uv[0], uv[3]}, {uv[2], uv[3]}, {uv[2], uv[1]}};
         float rx = nx * cos + nz * sin;
         float rz = -nx * sin + nz * cos;
-        QUADS.add(new Quad(pos, uvs, new float[]{rx, -ny, rz}));
+        QUADS.add(new Quad(pos, uvs, new float[]{-rx, -ny, rz}));
     }
 
     @Override
