@@ -1,0 +1,172 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "base": {
+    "textures": {
+      "0": "newfishing:item/cigarette_model",
+      "particle": "newfishing:item/cigarette"
+    },
+    "elements": [
+      {
+        "from": [
+          7.5,
+          7.5,
+          5
+        ],
+        "to": [
+          8.5,
+          8.5,
+          11
+        ],
+        "faces": {
+          "up": {
+            "uv": [
+              0,
+              0,
+              6,
+              1
+            ],
+            "texture": "#0",
+            "rotation": 90
+          },
+          "down": {
+            "uv": [
+              0,
+              0,
+              6,
+              1
+            ],
+            "texture": "#0",
+            "rotation": 90
+          },
+          "east": {
+            "uv": [
+              0,
+              0,
+              6,
+              1
+            ],
+            "texture": "#0"
+          },
+          "west": {
+            "uv": [
+              0,
+              0,
+              6,
+              1
+            ],
+            "texture": "#0"
+          },
+          "north": {
+            "uv": [
+              0,
+              0,
+              1,
+              1
+            ],
+            "texture": "#0"
+          },
+          "south": {
+            "uv": [
+              5,
+              0,
+              6,
+              1
+            ],
+            "texture": "#0"
+          }
+        }
+      }
+    ],
+    "display": {
+      "thirdperson_righthand": {
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1.2,
+          1.2,
+          1.2
+        ]
+      },
+      "thirdperson_lefthand": {
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1.2,
+          1.2,
+          1.2
+        ]
+      },
+      "firstperson_righthand": {
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1.2,
+          1.2,
+          1.2
+        ]
+      },
+      "firstperson_lefthand": {
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1.2,
+          1.2,
+          1.2
+        ]
+      }
+    }
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "newfishing:item/cigarette"
+      }
+    },
+    "ground": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "newfishing:item/cigarette"
+      }
+    },
+    "fixed": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "newfishing:item/cigarette"
+      }
+    }
+  }
+}

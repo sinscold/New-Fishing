@@ -61,6 +61,10 @@ public final class ClientModEvents {
         event.enqueueWork(() -> ItemProperties.register(Items.FISHING_ROD,
                 ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "rod_state"),
                 (stack, level, entity, seed) -> RodMods.get(stack).visualState()));
+        // сумка для наживки на поясе (только если Curios установлен)
+        if (com.sinscold.newfishing.compat.CuriosCompat.isLoaded()) {
+            event.enqueueWork(BaitBagRenderer::register);
+        }
         // состояние пачки сигарет: 0 полная, 1 неполная, 2 пустая (предикаты в модели срабатывают при значении «не меньше»)
         event.enqueueWork(() -> ItemProperties.register(ModItems.CIGARETTE_PACK.get(),
                 ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "pack_state"),
