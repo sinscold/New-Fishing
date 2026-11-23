@@ -161,6 +161,11 @@ public class NetheriteFishingHook extends FishingHook {
         return this.hasNetheriteHook();
     }
 
+    /** Для рендерера: поплавок с текстурой эндер-крючка. */
+    public boolean hasEnderHookTexture() {
+        return this.hasEnderHook();
+    }
+
     /** Цвет лески для рендерера: 0 обычная, 1 незеритовая, 2 фантомная. */
     public int lineColorKind() {
         return this.hasPhantomLine() ? 2 : this.hasNetheriteLine() ? 1 : 0;
@@ -400,6 +405,10 @@ public class NetheriteFishingHook extends FishingHook {
         boolean lava = !inVoid && fluid.is(FluidTags.LAVA);
         if (this.nibble > 0) {
             this.nibble--;
+            if (inVoid && this.nibble % 6 == 0) {
+                // пока клюёт в пустоте, из поплавка идёт мерцание: видно, что пора вытаскивать
+                serverLevel.sendParticles(ParticleTypes.END_ROD, this.getX(), this.getY() + 0.3, this.getZ(), 3, 0.15, 0.2, 0.15, 0.03);
+            }
             if (this.nibble <= 0) {
                 this.timeUntilLured = 0;
                 this.timeUntilHooked = 0;
@@ -435,7 +444,9 @@ public class NetheriteFishingHook extends FishingHook {
                 double y = this.getY() + 0.5;
                 int count = (int) (1.0F + this.getBbWidth() * 20.0F);
                 if (inVoid) {
+                    this.playSound(SoundEvents.ENDER_EYE_DEATH, 1.0F, 1.0F); // звук разбивающегося глаза эндера: пора вытаскивать
                     this.playSound(SoundEvents.ENDERMAN_TELEPORT, 0.3F, 1.5F);
+                    serverLevel.sendParticles(ParticleTypes.END_ROD, this.getX(), y, this.getZ(), 24, 0.3, 0.3, 0.3, 0.12);
                     this.startDash(6.0 + this.random.nextDouble() * 4.0, 12, true); // при поклёвке резко улетает в сторону
                     serverLevel.sendParticles(ParticleTypes.PORTAL, this.getX(), y, this.getZ(), count * 2, this.getBbWidth(), 0.0, this.getBbWidth(), 0.2);
                 } else if (lava) {

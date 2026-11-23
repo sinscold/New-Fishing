@@ -25,6 +25,7 @@ import net.neoforged.neoforge.common.ItemAbilities;
  */
 public class BobberRenderer<T extends FishingHook> extends EntityRenderer<T> {
     private static final ResourceLocation REGULAR = ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "textures/entity/bobber/fishing_hook.png");
+    private static final ResourceLocation ENDER = ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "textures/entity/bobber/ender_hook.png");
     private static final ResourceLocation NETHERITE = ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "textures/entity/bobber/netherite_fishing_hook.png");
 
     /** Смещение начала лески к кончику удочки: от 3-го лица (вперёд по телу, вверх) и от 1-го (вперёд по взгляду, вверх). */
@@ -43,7 +44,11 @@ public class BobberRenderer<T extends FishingHook> extends EntityRenderer<T> {
 
     @Override
     public ResourceLocation getTextureLocation(T entity) {
-        return entity instanceof NetheriteFishingHook hook && hook.hasNetheriteHookTexture() ? NETHERITE : REGULAR;
+        if (entity instanceof NetheriteFishingHook hook) {
+            if (hook.hasEnderHookTexture()) return ENDER;
+            if (hook.hasNetheriteHookTexture()) return NETHERITE;
+        }
+        return REGULAR;
     }
 
     @Override
@@ -76,9 +81,9 @@ public class BobberRenderer<T extends FishingHook> extends EntityRenderer<T> {
     private int lineColor(T entity) {
         int kind = entity instanceof NetheriteFishingHook hook ? hook.lineColorKind() : 0;
         return switch (kind) {
-            case 1 -> 0xFF6B3F3F; // незеритовая
-            case 2 -> 0xFF8FA0E0; // фантомная
-            default -> 0xFF1A1A1A; // обычная
+            case 1 -> 0xFF654740; // незеритовая (коричневая, как на спрайте)
+            case 2 -> 0xFFCFCBB4; // фантомная (цвет мембраны фантома)
+            default -> 0xFFF2F2F2; // обычная (белая)
         };
     }
 
