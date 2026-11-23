@@ -67,7 +67,8 @@ public class BobberRenderer<T extends FishingHook> extends EntityRenderer<T> {
         float dx = (float) (hand.x - hook.x);
         float dy = (float) (hand.y - hook.y);
         float dz = (float) (hand.z - hook.z);
-        this.renderPixelLine(poseStack, buffer, dx, dy, dz, packedLight, this.lineColor(entity));
+        Vec3 cameraRel = this.entityRenderDispatcher.camera.getPosition().subtract(entity.getPosition(partialTicks));
+        this.renderPixelLine(poseStack, buffer, dx, dy, dz, cameraRel, packedLight, this.lineColor(entity));
         poseStack.popPose();
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
     }
@@ -82,48 +83,63 @@ public class BobberRenderer<T extends FishingHook> extends EntityRenderer<T> {
     }
 
     /**
-     * Леска из «пикселей»: кривая выбирается плотно, каждая точка привязывается к сетке пикселей
-     * в плоскости камеры (ступенчатая лесенка), одинаковые клетки подряд пропускаются.
-     * Оттенок слегка меняется от клетки к клетке.
+     * Леска из «пикселей» в 2D по сетке: вся леска лежит в одной плоскости, которая проходит через её концы (руку и поплавок)
+     * и повёрнута вокруг этой линии к камере. В плоскости строится сетка (вертикаль мира и перпендикуляр к ней), кривая
+     * провисания растеризуется по клеткам, получается ступенчатая лесенка. Все квадратики копланарны, поэтому нет
+     * разрывов от разной глубины. Оттенок слегка меняется от клетки к клетке.
      */
-    private void renderPixelLine(PoseStack poseStack, MultiBufferSource buffer, float dx, float dy, float dz, int light, int color) {
-        float length = Mth.sqrt(dx * dx + dy * dy + dz * dz);
-        int samples = Mth.clamp((int) (length / PIXEL) * 2, 16, 1200);
-        var camera = this.entityRenderDispatcher.cameraOrientation();
-        org.joml.Vector3f right = new org.joml.Vector3f(1.0F, 0.0F, 0.0F).rotate(camera);
-        org.joml.Vector3f up = new org.joml.Vector3f(0.0F, 1.0F, 0.0F).rotate(camera);
-        org.joml.Vector3f fwd = new org.joml.Vector3f(0.0F, 0.0F, 1.0F).rotate(camera);
-        org.joml.Vector3f halfRight = new org.joml.Vector3f(right).mul(PIXEL * 0.5F);
-        org.joml.Vector3f halfUp = new org.joml.Vector3f(up).mul(PIXEL * 0.5F);
+    private void renderPixelLine(PoseStack poseStack, MultiBufferSource buffer, float dx, float dy, float dz, Vec3 camRel, int light, int color) {
+        org.joml.Vector3f chord = new org.joml.Vector3f(dx, dy, dz);
+        float length = chord.length();
+        if (length < 1.0E-3F) {
+            return;
+        }
+        chord.div(length);
+        float originY = 0.25F;
+        // нормаль плоскости: направление на камеру без составляющей вдоль лески
+        org.joml.Vector3f toCamera = new org.joml.Vector3f((float) camRel.x - dx * 0.5F, (float) camRel.y - originY - dy * 0.5F, (float) camRel.z - dz * 0.5F);
+        org.joml.Vector3f normal = new org.joml.Vector3f(toCamera).sub(new org.joml.Vector3f(chord).mul(toCamera.dot(chord)));
+        if (normal.lengthSquared() < 1.0E-6F) {
+            normal.set(0.0F, 0.0F, 1.0F).sub(new org.joml.Vector3f(chord).mul(chord.z));
+            if (normal.lengthSquared() < 1.0E-6F) {
+                normal.set(1.0F, 0.0F, 0.0F);
+            }
+        }
+        normal.normalize();
+        // ось «вверх» в плоскости: вертикаль мира, спроецированная на плоскость
+        org.joml.Vector3f axisB = new org.joml.Vector3f(0.0F, 1.0F, 0.0F).sub(new org.joml.Vector3f(normal).mul(normal.y));
+        if (axisB.lengthSquared() < 1.0E-6F) {
+            axisB.set(chord);
+        }
+        axisB.normalize();
+        org.joml.Vector3f axisA = new org.joml.Vector3f(axisB).cross(normal).normalize();
+        org.joml.Vector3f halfA = new org.joml.Vector3f(axisA).mul(PIXEL * 0.5F);
+        org.joml.Vector3f halfB = new org.joml.Vector3f(axisB).mul(PIXEL * 0.5F);
+
+        int samples = Mth.clamp((int) (length / PIXEL) * 3, 24, 1500);
         VertexConsumer consumer = buffer.getBuffer(RenderType.entityCutoutNoCull(LINE));
         PoseStack.Pose pose = poseStack.last();
-        int lastU = Integer.MIN_VALUE;
-        int lastV = Integer.MIN_VALUE;
-        int lastW = Integer.MIN_VALUE;
+        int lastA = Integer.MIN_VALUE;
+        int lastB = Integer.MIN_VALUE;
         int index = 0;
         for (int i = 0; i <= samples; i++) {
             float t = (float) i / (float) samples;
             float px = dx * t;
-            float py = dy * (t * t + t) * 0.5F + 0.25F;
+            float py = dy * (t * t + t) * 0.5F;
             float pz = dz * t;
-            int cw = Math.round((px * fwd.x + py * fwd.y + pz * fwd.z) / PIXEL);
-            int cu = Math.round((px * right.x + py * right.y + pz * right.z) / PIXEL);
-            int cv = Math.round((px * up.x + py * up.y + pz * up.z) / PIXEL);
-            // глубина тоже в сетке: иначе от первого лица (смотрим вдоль лески) клетки на разной глубине
-            // склеиваются в одну и в леске появляются разрывы
-            if (cu == lastU && cv == lastV && cw == lastW) {
+            int ca = Math.round((px * axisA.x + py * axisA.y + pz * axisA.z) / PIXEL);
+            int cb = Math.round((px * axisB.x + py * axisB.y + pz * axisB.z) / PIXEL);
+            if (ca == lastA && cb == lastB) {
                 continue;
             }
-            lastU = cu;
-            lastV = cv;
-            lastW = cw;
-            float w = cw * PIXEL;
-            float u = cu * PIXEL;
-            float v = cv * PIXEL;
-            float x = right.x * u + up.x * v + fwd.x * w;
-            float y = right.y * u + up.y * v + fwd.y * w;
-            float z = right.z * u + up.z * v + fwd.z * w;
-            quad(consumer, pose, x, y, z, halfRight, halfUp, light, shade(color, index++));
+            lastA = ca;
+            lastB = cb;
+            float a = ca * PIXEL;
+            float b = cb * PIXEL;
+            float x = axisA.x * a + axisB.x * b;
+            float y = axisA.y * a + axisB.y * b + originY;
+            float z = axisA.z * a + axisB.z * b;
+            quad(consumer, pose, x, y, z, halfA, halfB, light, shade(color, index++));
         }
     }
 
