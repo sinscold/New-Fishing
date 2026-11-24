@@ -26,6 +26,7 @@ public final class ClientModEvents {
     @SubscribeEvent
     static void onRegisterTooltips(RegisterClientTooltipComponentFactoriesEvent event) {
         event.register(RodMods.class, ClientRodModsTooltip::new);
+        event.register(com.sinscold.newfishing.item.BaitBag.Contents.class, ClientRodModsTooltip::forBag);
     }
 
     /** Ящики в инвентаре и в руке рисуются моделью, а не спрайтом. */

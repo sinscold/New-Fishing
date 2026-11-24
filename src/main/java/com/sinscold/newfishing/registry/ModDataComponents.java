@@ -20,6 +20,14 @@ public final class ModDataComponents {
                     .cacheEncoding()
                     .build());
 
+    /** Содержимое сумки для наживки: 3 слота. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.world.item.component.ItemContainerContents>> BAIT_BAG_CONTENTS =
+            COMPONENTS.register("bait_bag_contents", () -> DataComponentType.<net.minecraft.world.item.component.ItemContainerContents>builder()
+                    .persistent(net.minecraft.world.item.component.ItemContainerContents.CODEC)
+                    .networkSynchronized(net.minecraft.world.item.component.ItemContainerContents.STREAM_CODEC)
+                    .cacheEncoding()
+                    .build());
+
     /** Сколько сигарет осталось в пачке (0–20). */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> CIGARETTES =
             COMPONENTS.register("cigarettes", () -> DataComponentType.<Integer>builder()

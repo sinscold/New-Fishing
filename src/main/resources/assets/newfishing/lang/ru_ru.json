@@ -104,5 +104,6 @@
   "block.newfishing.eaten_acacia_log": "Выеденное акациевое бревно",
   "block.newfishing.eaten_jungle_log": "Выеденное тропическое бревно",
   "message.newfishing.forgot_bait": "Возможно, вы забыли наживку",
-  "message.newfishing.bait_wrong_dimension": "Эта наживка здесь не клюёт"
+  "message.newfishing.bait_wrong_dimension": "Эта наживка здесь не клюёт",
+  "tooltip.newfishing.bait_points": "Очки приманки в рыбалке: %s"
 }

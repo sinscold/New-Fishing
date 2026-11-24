@@ -25,6 +25,28 @@ public final class BaitEvents {
     /** Шанс выеденного бревна в дереве, выращенном из саженца в жарком биоме. */
     private static final float GROWN_TREE_EATEN_CHANCE = 0.2F;
 
+    /** Сумка для наживки в инвентаре, как мешок: ПКМ наживкой на курсоре кладёт, ПКМ пустым курсором достаёт последнюю стопку. */
+    @SubscribeEvent
+    static void onStackedOnBag(net.neoforged.neoforge.event.ItemStackedOnOtherEvent event) {
+        ItemStack bag = event.getStackedOnItem();
+        if (ModItems.BAIT_BAG == null || !bag.is(ModItems.BAIT_BAG.get())) return;
+        if (event.getClickAction() != net.minecraft.world.inventory.ClickAction.SECONDARY) return;
+        Player player = event.getPlayer();
+        if (!event.getSlot().allowModification(player)) return;
+        ItemStack carried = event.getCarriedItem();
+        if (carried.isEmpty()) {
+            ItemStack removed = com.sinscold.newfishing.item.BaitBag.removeLast(bag);
+            if (removed.isEmpty()) return;
+            event.getCarriedSlotAccess().set(removed);
+            player.playSound(net.minecraft.sounds.SoundEvents.BUNDLE_REMOVE_ONE, 0.8F, 0.8F + player.level().getRandom().nextFloat() * 0.4F);
+        } else if (com.sinscold.newfishing.item.BaitBag.insert(bag, carried)) {
+            player.playSound(net.minecraft.sounds.SoundEvents.BUNDLE_INSERT, 0.8F, 0.8F + player.level().getRandom().nextFloat() * 0.4F);
+        } else {
+            return;
+        }
+        event.setCanceled(true);
+    }
+
     @SubscribeEvent
     static void onDrops(LivingDropsEvent event) {
         if (event.getEntity() instanceof Endermite mite && event.getSource().getEntity() instanceof Player) {

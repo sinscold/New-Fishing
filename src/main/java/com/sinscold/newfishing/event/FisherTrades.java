@@ -34,6 +34,26 @@ public final class FisherTrades {
         if (event.getType() != VillagerProfession.FISHERMAN) return;
         event.getTrades().get(1).add(new BuyFish(ItemTags.FISHES, 8, 16, 1, 1, 4, 2));
         event.getTrades().get(5).add(new BuyFish(ModTags.NETHER_FISH, 2, 4, 3, 4, 3, 30));
+        // подмастерье (уровень 3) продаёт 4 наживки профи за 16 изумрудов
+        event.getTrades().get(3).add((trader, random) -> new MerchantOffer(new ItemCost(Items.EMERALD, 16),
+                new ItemStack(com.sinscold.newfishing.registry.ModItems.PRO_BAIT.get(), 4), 4, 10, 0.05F));
+        // удочки, которые продаёт рыбак, приходят с обычной леской и обычным крючком
+        event.getTrades().replaceAll((level, listings) -> {
+            List<VillagerTrades.ItemListing> wrapped = new ArrayList<>(listings.size());
+            for (VillagerTrades.ItemListing listing : listings) {
+                wrapped.add((trader, random) -> withRodParts(listing.getOffer(trader, random)));
+            }
+            return wrapped;
+        });
+    }
+
+    private static MerchantOffer withRodParts(MerchantOffer offer) {
+        if (offer != null && offer.getResult().is(Items.FISHING_ROD) && !com.sinscold.newfishing.item.RodMods.get(offer.getResult()).hasLine()) {
+            offer.getResult().set(com.sinscold.newfishing.registry.ModDataComponents.ROD_MODS.get(), new com.sinscold.newfishing.item.RodMods(
+                    new ItemStack(com.sinscold.newfishing.registry.ModItems.FISHING_LINE.get()),
+                    new ItemStack(com.sinscold.newfishing.registry.ModItems.FISHING_HOOK.get())));
+        }
+        return offer;
     }
 
     /** Житель покупает рыбу одного вида за изумруды. */

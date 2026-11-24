@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:bread"
+    },
+    [
+      {
+        "tag": "c:seeds"
+      },
+      {
+        "tag": "c:foods/raw_meat"
+      }
+    ]
+  ],
+  "result": {
+    "count": 2,
+    "id": "newfishing:amateur_bait"
+  }
+}

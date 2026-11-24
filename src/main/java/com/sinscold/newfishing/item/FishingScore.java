@@ -53,15 +53,15 @@ public final class FishingScore {
                     Map.entry(ModItems.PHANTOM_LINE.get(), 3.0),
                     // наживка
                     Map.entry(ModItems.BEGINNER_BAIT.get(), 1.0),
-                    Map.entry(ModItems.AMATEUR_BAIT.get(), 2.0), // в задании очков нет, взято среднее между новичком и профи
+                    Map.entry(ModItems.AMATEUR_BAIT.get(), 1.5)
                     Map.entry(ModItems.PRO_BAIT.get(), 4.0),
                     Map.entry(ModItems.WORM.get(), 2.0),
                     Map.entry(ModItems.FAT_GRUB.get(), 2.0),
                     Map.entry(ModItems.BEETLE.get(), 2.0),
                     Map.entry(Items.WARPED_FUNGUS, 2.0),
-                    Map.entry(Items.PORKCHOP, 1.0), // в задании очков нет
-                    Map.entry(Items.CHORUS_FRUIT, 1.0), // в задании очков нет
-                    Map.entry(Items.POPPED_CHORUS_FRUIT, 2.0), // в задании очков нет
+                    Map.entry(Items.PORKCHOP, 2.0)
+                    Map.entry(Items.CHORUS_FRUIT, 3.0)
+                    Map.entry(Items.POPPED_CHORUS_FRUIT, 3.5)
                     Map.entry(ModItems.ENDERMITE.get(), 3.0));
         }
         return points;

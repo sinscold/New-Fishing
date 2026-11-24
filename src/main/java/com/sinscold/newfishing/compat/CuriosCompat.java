@@ -22,6 +22,11 @@ public final class CuriosCompat {
         return LOADED && ModItems.BAIT_BAG != null && Impl.hasBag(player);
     }
 
+    /** Надетая сумка для наживки (сам стек из слота Curios, изменения в нём сохраняются) или пустой стек. */
+    public static ItemStack findBaitBag(Player player) {
+        return LOADED && ModItems.BAIT_BAG != null ? Impl.findBag(player) : ItemStack.EMPTY;
+    }
+
     /** Уровень «Везучего рыбака» на удочке: ванильный бонус удачи равен уровню. */
     public static int vanillaLuck(ServerLevel level, ItemStack rod) {
         var enchantments = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
@@ -34,6 +39,13 @@ public final class CuriosCompat {
             return top.theillusivec4.curios.api.CuriosApi.getCuriosInventory(player)
                     .map(inv -> inv.isEquipped(ModItems.BAIT_BAG.get()))
                     .orElse(false);
+        }
+
+        static ItemStack findBag(Player player) {
+            return top.theillusivec4.curios.api.CuriosApi.getCuriosInventory(player)
+                    .flatMap(inv -> inv.findFirstCurio(ModItems.BAIT_BAG.get()))
+                    .map(top.theillusivec4.curios.api.SlotResult::stack)
+                    .orElse(ItemStack.EMPTY);
         }
     }
 

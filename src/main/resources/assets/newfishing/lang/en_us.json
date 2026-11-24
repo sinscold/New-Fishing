@@ -104,5 +104,6 @@
   "block.newfishing.eaten_acacia_log": "Eaten Acacia Log",
   "block.newfishing.eaten_jungle_log": "Eaten Jungle Log",
   "message.newfishing.forgot_bait": "Maybe you forgot the bait",
-  "message.newfishing.bait_wrong_dimension": "Nothing bites on this bait here"
+  "message.newfishing.bait_wrong_dimension": "Nothing bites on this bait here",
+  "tooltip.newfishing.bait_points": "Fishing bait points: %s"
 }

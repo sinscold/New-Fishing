@@ -25,9 +25,22 @@ public class ClientRodModsTooltip implements ClientTooltipComponent {
     private static final int SLOT_Y = 2;
 
     private final RodMods mods;
+    /** Для сумки для наживки: три слота наживки вместо деталей удочки (иначе null). */
+    private final java.util.List<ItemStack> bagItems;
 
     public ClientRodModsTooltip(RodMods mods) {
         this.mods = mods;
+        this.bagItems = null;
+    }
+
+    private ClientRodModsTooltip(java.util.List<ItemStack> bagItems) {
+        this.mods = RodMods.EMPTY;
+        this.bagItems = bagItems;
+    }
+
+    /** Подсказка сумки для наживки: та же рамка, три слота наживки с количеством. */
+    public static ClientRodModsTooltip forBag(com.sinscold.newfishing.item.BaitBag.Contents contents) {
+        return new ClientRodModsTooltip(contents.items());
     }
 
     @Override
@@ -43,12 +56,20 @@ public class ClientRodModsTooltip implements ClientTooltipComponent {
     @Override
     public void renderImage(Font font, int x, int y, GuiGraphics graphics) {
         graphics.blit(FRAME, x, y + 1, 0, 0, FRAME_W, FRAME_H, FRAME_W, FRAME_H);
+        if (this.bagItems != null) {
+            int[] xs = {LINE_X, HOOK_X, BAIT_X};
+            for (int i = 0; i < xs.length; i++) {
+                ItemStack stack = i < this.bagItems.size() ? this.bagItems.get(i) : ItemStack.EMPTY;
+                drawSlot(graphics, BAIT_SLOT, stack, x + xs[i], y + 1 + SLOT_Y);
+                if (!stack.isEmpty()) {
+                    graphics.renderItemDecorations(font, stack, x + xs[i], y + 1 + SLOT_Y);
+                }
+            }
+            return;
+        }
         drawSlot(graphics, LINE_SLOT, mods.line(), x + LINE_X, y + 1 + SLOT_Y);
         drawSlot(graphics, HOOK_SLOT, mods.hook(), x + HOOK_X, y + 1 + SLOT_Y);
         drawSlot(graphics, BAIT_SLOT, mods.bait(), x + BAIT_X, y + 1 + SLOT_Y);
-        if (!mods.bait().isEmpty()) {
-            graphics.renderItemDecorations(font, mods.bait(), x + BAIT_X, y + 1 + SLOT_Y); // количество наживки
-        }
     }
 
     private static void drawSlot(GuiGraphics graphics, ResourceLocation emptyIcon, ItemStack stack, int x, int y) {

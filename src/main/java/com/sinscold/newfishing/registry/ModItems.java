@@ -65,7 +65,8 @@ public final class ModItems {
     public static final DeferredItem<Item> WORM = ITEMS.registerSimpleItem("worm");
     public static final DeferredItem<Item> BEETLE = ITEMS.registerSimpleItem("beetle");
     /** Выпадает из эндермита; наживка для пустоты. */
-    public static final DeferredItem<Item> ENDERMITE = ITEMS.registerSimpleItem("endermite");
+    public static final DeferredItem<Item> ENDERMITE = ITEMS.registerSimpleItem("endermite",
+            new Item.Properties().rarity(Rarity.RARE));
 
     // --- Блоки с наживкой ---
     public static final DeferredItem<BlockItem> SUSPICIOUS_DIRT = ITEMS.registerSimpleBlockItem("suspicious_dirt", ModBlocks.SUSPICIOUS_DIRT);

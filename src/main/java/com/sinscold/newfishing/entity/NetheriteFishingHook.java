@@ -549,6 +549,7 @@ public class NetheriteFishingHook extends FishingHook {
             }
             damage = this.onGround() ? 2 : 1;
             this.useBait(rod);
+            com.sinscold.newfishing.item.BaitBag.refillRod(player, rod);
         }
         this.discard();
         return damage;

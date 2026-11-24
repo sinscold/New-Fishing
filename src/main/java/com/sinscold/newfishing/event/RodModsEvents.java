@@ -66,13 +66,9 @@ public final class RodModsEvents {
                 player.fishing.discard();
             }
             player.playSound(SoundEvents.BUNDLE_REMOVE_ONE, 0.8F, 0.8F + player.level().getRandom().nextFloat() * 0.4F);
-        } else if (RodMods.isBait(carried) && mods.hasFishingHook()
-                && (!mods.hasBait() || ItemStack.isSameItemSameComponents(mods.bait(), carried) && mods.bait().getCount() < mods.bait().getMaxStackSize())) {
-            // наживка насаживается на крючок: кладётся вся стопка с курсора (или докладывается к той же наживке)
-            int room = mods.hasBait() ? mods.bait().getMaxStackSize() - mods.bait().getCount() : carried.getMaxStackSize();
-            ItemStack added = carried.split(Math.min(room, carried.getCount()));
-            ItemStack bait = mods.hasBait() ? mods.bait().copyWithCount(mods.bait().getCount() + added.getCount()) : added;
-            rod.set(ModDataComponents.ROD_MODS.get(), mods.withBait(bait));
+        } else if (RodMods.isBait(carried) && mods.hasFishingHook() && !mods.hasBait()) {
+            // наживка насаживается на крючок: в слоте только одна штука
+            rod.set(ModDataComponents.ROD_MODS.get(), mods.withBait(carried.split(1)));
             player.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 0.8F + player.level().getRandom().nextFloat() * 0.4F);
         } else if (RodMods.isLine(carried) && !mods.hasLine()) {
             rod.set(ModDataComponents.ROD_MODS.get(), mods.withLine(carried.split(1)));
@@ -109,6 +105,9 @@ public final class RodModsEvents {
             }
         }
 
+        if (!event.getLevel().isClientSide) {
+            com.sinscold.newfishing.item.BaitBag.refillRod(player, stack); // пустой слот наживки пополняется из надетой сумки
+        }
         RodMods mods = RodMods.get(stack);
         if (mods.canFish()) {
             // любой заброс идёт через наш поплавок: в нём наживка и очки рыбалки (см. FishingScore)
