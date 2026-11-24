@@ -55,6 +55,24 @@ public final class ModItems {
     public static final DeferredItem<Item> NETHERITE_LINE = ITEMS.registerSimpleItem("netherite_line",
             new Item.Properties().fireResistant().rarity(Rarity.UNCOMMON));
 
+    // --- Наживка (слот наживки удочки) ---
+    public static final DeferredItem<Item> BEGINNER_BAIT = ITEMS.registerSimpleItem("beginner_bait");
+    public static final DeferredItem<Item> AMATEUR_BAIT = ITEMS.registerSimpleItem("amateur_bait");
+    public static final DeferredItem<Item> PRO_BAIT = ITEMS.registerSimpleItem("pro_bait",
+            new Item.Properties().rarity(Rarity.UNCOMMON));
+    /** Из подозрительной земли: личинка в холодных биомах, червяк в умеренных; жук из выеденных брёвен в жарких. */
+    public static final DeferredItem<Item> FAT_GRUB = ITEMS.registerSimpleItem("fat_grub");
+    public static final DeferredItem<Item> WORM = ITEMS.registerSimpleItem("worm");
+    public static final DeferredItem<Item> BEETLE = ITEMS.registerSimpleItem("beetle");
+    /** Выпадает из эндермита; наживка для пустоты. */
+    public static final DeferredItem<Item> ENDERMITE = ITEMS.registerSimpleItem("endermite");
+
+    // --- Блоки с наживкой ---
+    public static final DeferredItem<BlockItem> SUSPICIOUS_DIRT = ITEMS.registerSimpleBlockItem("suspicious_dirt", ModBlocks.SUSPICIOUS_DIRT);
+    public static final DeferredItem<BlockItem> EATEN_OAK_LOG = ITEMS.registerSimpleBlockItem("eaten_oak_log", ModBlocks.EATEN_OAK_LOG);
+    public static final DeferredItem<BlockItem> EATEN_ACACIA_LOG = ITEMS.registerSimpleBlockItem("eaten_acacia_log", ModBlocks.EATEN_ACACIA_LOG);
+    public static final DeferredItem<BlockItem> EATEN_JUNGLE_LOG = ITEMS.registerSimpleBlockItem("eaten_jungle_log", ModBlocks.EATEN_JUNGLE_LOG);
+
     // --- Материалы для лески (рецепты в recipe/ и data/newfishing/recipe/) ---
     public static final DeferredItem<Item> GOLD_STRING = ITEMS.registerSimpleItem("gold_string");
     public static final DeferredItem<Item> NETHERITE_DUST = ITEMS.registerSimpleItem("netherite_dust",

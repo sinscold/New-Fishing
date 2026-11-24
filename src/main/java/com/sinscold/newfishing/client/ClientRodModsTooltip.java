@@ -9,17 +9,19 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-/** Два слота под подсказкой удочки (как содержимое мешка): леска и крючок. Слот 18×18 в стиле инвентаря, иконка пустого слота 16×16. */
+/** Три слота под подсказкой удочки (как содержимое мешка): леска, крючок и наживка. Слот 18×18 в стиле инвентаря, иконка пустого слота 16×16. */
 public class ClientRodModsTooltip implements ClientTooltipComponent {
     private static final ResourceLocation FRAME = ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "textures/gui/rod_tooltip_modification_slots.png");
     private static final ResourceLocation LINE_SLOT = ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "textures/gui/rod_slot_line.png");
     private static final ResourceLocation HOOK_SLOT = ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "textures/gui/rod_slot_hook.png");
+    private static final ResourceLocation BAIT_SLOT = ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "textures/gui/rod_slot_bait.png");
     /** Размер рамки (rod_tooltip_modification_slots.png) и позиции внутренних областей слотов 16×16. */
-    private static final int FRAME_W = 38;
+    private static final int FRAME_W = 56;
     private static final int FRAME_H = 22;
     private static final int ICON = 16;
     private static final int LINE_X = 2;
     private static final int HOOK_X = 20;
+    private static final int BAIT_X = 38;
     private static final int SLOT_Y = 2;
 
     private final RodMods mods;
@@ -43,6 +45,10 @@ public class ClientRodModsTooltip implements ClientTooltipComponent {
         graphics.blit(FRAME, x, y + 1, 0, 0, FRAME_W, FRAME_H, FRAME_W, FRAME_H);
         drawSlot(graphics, LINE_SLOT, mods.line(), x + LINE_X, y + 1 + SLOT_Y);
         drawSlot(graphics, HOOK_SLOT, mods.hook(), x + HOOK_X, y + 1 + SLOT_Y);
+        drawSlot(graphics, BAIT_SLOT, mods.bait(), x + BAIT_X, y + 1 + SLOT_Y);
+        if (!mods.bait().isEmpty()) {
+            graphics.renderItemDecorations(font, mods.bait(), x + BAIT_X, y + 1 + SLOT_Y); // количество наживки
+        }
     }
 
     private static void drawSlot(GuiGraphics graphics, ResourceLocation emptyIcon, ItemStack stack, int x, int y) {

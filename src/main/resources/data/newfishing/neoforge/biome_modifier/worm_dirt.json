@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#newfishing:has_worm_dirt",
+  "features": "newfishing:worm_dirt",
+  "step": "top_layer_modification"
+}

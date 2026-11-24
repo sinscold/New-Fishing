@@ -1,0 +1,9 @@
+{
+  "type": "newfishing:bait_dirt",
+  "config": {
+    "biomes": "newfishing:has_worm_dirt",
+    "under_trees": false,
+    "tries": 3,
+    "chance": 0.5
+  }
+}

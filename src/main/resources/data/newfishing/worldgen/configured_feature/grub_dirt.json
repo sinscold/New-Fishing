@@ -1,0 +1,8 @@
+{
+  "type": "newfishing:bait_dirt",
+  "config": {
+    "biomes": "newfishing:has_grub_dirt",
+    "under_trees": true,
+    "chance": 0.15
+  }
+}

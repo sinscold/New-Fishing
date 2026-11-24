@@ -91,5 +91,18 @@
   "tooltip.newfishing.cigarettes": "Сигарет: %s из %s",
   "message.newfishing.need_lighter": "Нет огня",
   "newfishing.configuration.misc": "Прочее",
-  "newfishing.configuration.requireLighter": "Нужна зажигалка для сигареты"
+  "newfishing.configuration.requireLighter": "Нужна зажигалка для сигареты",
+  "item.newfishing.beginner_bait": "Наживка новичка",
+  "item.newfishing.amateur_bait": "Наживка любителя",
+  "item.newfishing.pro_bait": "Наживка профи",
+  "item.newfishing.fat_grub": "Жирная личинка",
+  "item.newfishing.worm": "Червяк",
+  "item.newfishing.beetle": "Жук",
+  "item.newfishing.endermite": "Эндермит",
+  "block.newfishing.suspicious_dirt": "Подозрительная земля",
+  "block.newfishing.eaten_oak_log": "Выеденное дубовое бревно",
+  "block.newfishing.eaten_acacia_log": "Выеденное акациевое бревно",
+  "block.newfishing.eaten_jungle_log": "Выеденное тропическое бревно",
+  "message.newfishing.forgot_bait": "Возможно, вы забыли наживку",
+  "message.newfishing.bait_wrong_dimension": "Эта наживка здесь не клюёт"
 }

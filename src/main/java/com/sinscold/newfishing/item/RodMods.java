@@ -12,18 +12,28 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-/** Модификации внутри удочки: по одному предмету в слотах «леска» и «крючок» (пустой стек = слот пуст). */
-public record RodMods(ItemStack line, ItemStack hook) implements TooltipComponent {
-    public static final RodMods EMPTY = new RodMods(ItemStack.EMPTY, ItemStack.EMPTY);
+/**
+ * Модификации внутри удочки: по одному предмету в слотах «леска» и «крючок» и стопка наживки в слоте «наживка»
+ * (пустой стек = слот пуст).
+ */
+public record RodMods(ItemStack line, ItemStack hook, ItemStack bait) implements TooltipComponent {
+    public static final RodMods EMPTY = new RodMods(ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY);
+
+    /** Для старых вызовов без наживки. */
+    public RodMods(ItemStack line, ItemStack hook) {
+        this(line, hook, ItemStack.EMPTY);
+    }
 
     public static final Codec<RodMods> CODEC = RecordCodecBuilder.create(i -> i.group(
             ItemStack.OPTIONAL_CODEC.optionalFieldOf("line", ItemStack.EMPTY).forGetter(RodMods::line),
-            ItemStack.OPTIONAL_CODEC.optionalFieldOf("hook", ItemStack.EMPTY).forGetter(RodMods::hook)
+            ItemStack.OPTIONAL_CODEC.optionalFieldOf("hook", ItemStack.EMPTY).forGetter(RodMods::hook),
+            ItemStack.OPTIONAL_CODEC.optionalFieldOf("bait", ItemStack.EMPTY).forGetter(RodMods::bait)
     ).apply(i, RodMods::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, RodMods> STREAM_CODEC = StreamCodec.composite(
             ItemStack.OPTIONAL_STREAM_CODEC, RodMods::line,
             ItemStack.OPTIONAL_STREAM_CODEC, RodMods::hook,
+            ItemStack.OPTIONAL_STREAM_CODEC, RodMods::bait,
             RodMods::new);
 
     public static RodMods get(ItemStack rod) {
@@ -44,6 +54,21 @@ public record RodMods(ItemStack line, ItemStack hook) implements TooltipComponen
     /** Подходит ли предмет для слота крючка: крючок или морковка/гриб на палке. */
     public static boolean isHookSlotItem(ItemStack stack) {
         return stack.is(ModTags.ROD_HOOKS) || stack.is(ModTags.ROD_RIDING_STICKS);
+    }
+
+    /** Подходит ли предмет для слота наживки (тег `newfishing:rod_baits`). */
+    public static boolean isBait(ItemStack stack) {
+        return stack.is(ModTags.ROD_BAITS);
+    }
+
+    /** Удочка в руке игрока (основная рука в приоритете) или пустой стек. */
+    public static ItemStack heldRod(net.minecraft.world.entity.player.Player player) {
+        return player.getMainHandItem().is(Items.FISHING_ROD) ? player.getMainHandItem()
+                : player.getOffhandItem().is(Items.FISHING_ROD) ? player.getOffhandItem() : ItemStack.EMPTY;
+    }
+
+    public boolean hasBait() {
+        return !bait.isEmpty();
     }
 
     public boolean hasLine() {
@@ -122,22 +147,28 @@ public record RodMods(ItemStack line, ItemStack hook) implements TooltipComponen
     }
 
     public RodMods withLine(ItemStack newLine) {
-        return new RodMods(newLine, hook);
+        return new RodMods(newLine, hook, bait);
     }
 
     public RodMods withHook(ItemStack newHook) {
-        return new RodMods(line, newHook);
+        return new RodMods(line, newHook, bait);
+    }
+
+    public RodMods withBait(ItemStack newBait) {
+        return new RodMods(line, hook, newBait);
     }
 
     @Override
     public boolean equals(Object o) {
         return o instanceof RodMods other
                 && ItemStack.matches(line, other.line)
-                && ItemStack.matches(hook, other.hook);
+                && ItemStack.matches(hook, other.hook)
+                && ItemStack.matches(bait, other.bait);
     }
 
     @Override
     public int hashCode() {
-        return 31 * ItemStack.hashItemAndComponents(line) + ItemStack.hashItemAndComponents(hook);
+        return 31 * (31 * ItemStack.hashItemAndComponents(line) + ItemStack.hashItemAndComponents(hook))
+                + ItemStack.hashItemAndComponents(bait) + bait.getCount();
     }
 }

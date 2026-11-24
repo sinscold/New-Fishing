@@ -10,7 +10,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResult;
@@ -47,9 +46,12 @@ public final class RodModsEvents {
         NewFishing.LOGGER.debug("Удочка: курсор={}, леска={}, крючок={}, слот-крючка={}", carried, mods.line(), mods.hook(), RodMods.isHookSlotItem(carried));
 
         if (carried.isEmpty()) {
-            // достать: сначала крючок, потом леску
+            // достать: сначала наживку, потом крючок, потом леску
             ItemStack removed;
-            if (mods.hasHook()) {
+            if (mods.hasBait()) {
+                removed = mods.bait();
+                rod.set(ModDataComponents.ROD_MODS.get(), mods.withBait(ItemStack.EMPTY));
+            } else if (mods.hasHook()) {
                 removed = mods.hook();
                 rod.set(ModDataComponents.ROD_MODS.get(), mods.withHook(ItemStack.EMPTY));
             } else if (mods.hasLine()) {
@@ -64,6 +66,14 @@ public final class RodModsEvents {
                 player.fishing.discard();
             }
             player.playSound(SoundEvents.BUNDLE_REMOVE_ONE, 0.8F, 0.8F + player.level().getRandom().nextFloat() * 0.4F);
+        } else if (RodMods.isBait(carried) && mods.hasFishingHook()
+                && (!mods.hasBait() || ItemStack.isSameItemSameComponents(mods.bait(), carried) && mods.bait().getCount() < mods.bait().getMaxStackSize())) {
+            // наживка насаживается на крючок: кладётся вся стопка с курсора (или докладывается к той же наживке)
+            int room = mods.hasBait() ? mods.bait().getMaxStackSize() - mods.bait().getCount() : carried.getMaxStackSize();
+            ItemStack added = carried.split(Math.min(room, carried.getCount()));
+            ItemStack bait = mods.hasBait() ? mods.bait().copyWithCount(mods.bait().getCount() + added.getCount()) : added;
+            rod.set(ModDataComponents.ROD_MODS.get(), mods.withBait(bait));
+            player.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 0.8F + player.level().getRandom().nextFloat() * 0.4F);
         } else if (RodMods.isLine(carried) && !mods.hasLine()) {
             rod.set(ModDataComponents.ROD_MODS.get(), mods.withLine(carried.split(1)));
             player.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 0.8F + player.level().getRandom().nextFloat() * 0.4F);
@@ -101,25 +111,17 @@ public final class RodModsEvents {
 
         RodMods mods = RodMods.get(stack);
         if (mods.canFish()) {
-            // незеритовый крючок или фантомная леска: особый поплавок (любые жидкости, пустота Края), см. NetheriteFishingHook
-            boolean baitBag = com.sinscold.newfishing.compat.CuriosCompat.hasBaitBag(player);
-            if (mods.hasNetheriteHook() || mods.hasPhantomLine() || mods.hasEnderHook() || baitBag) {
-                event.setCanceled(true);
-                event.setCancellationResult(InteractionResult.SUCCESS);
-                if (player.level() instanceof ServerLevel serverLevel) {
-                    int lureSpeed = (int) (EnchantmentHelper.getFishingTimeReduction(serverLevel, stack, player) * 20.0F);
-                    int luck = EnchantmentHelper.getFishingLuckBonus(serverLevel, stack, player);
-                    if (baitBag) {
-                        // сумка для наживки возвращает приманку и везучего рыбака до ванильных значений (в моде они вдвое слабее)
-                        lureSpeed *= 2;
-                        luck = com.sinscold.newfishing.compat.CuriosCompat.vanillaLuck(serverLevel, stack);
-                    }
-                    serverLevel.addFreshEntity(NetheriteFishingHook.cast(player, serverLevel, luck, lureSpeed, mods.hasNetheriteLine(), mods.hasPhantomLine(), mods.hasNetheriteHook(), mods.hasEnderHook()));
-                    serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.FISHING_BOBBER_THROW,
-                            SoundSource.NEUTRAL, 0.5F, 0.4F / (serverLevel.getRandom().nextFloat() * 0.4F + 0.8F));
-                    player.awardStat(Stats.ITEM_USED.get(Items.FISHING_ROD));
-                    player.gameEvent(GameEvent.ITEM_INTERACT_START);
-                }
+            // любой заброс идёт через наш поплавок: в нём наживка и очки рыбалки (см. FishingScore)
+            event.setCanceled(true);
+            event.setCancellationResult(InteractionResult.SUCCESS);
+            if (player.level() instanceof ServerLevel serverLevel) {
+                boolean baitBag = com.sinscold.newfishing.compat.CuriosCompat.hasBaitBag(player);
+                double score = com.sinscold.newfishing.item.FishingScore.score(player, stack, serverLevel, baitBag);
+                serverLevel.addFreshEntity(NetheriteFishingHook.cast(player, serverLevel, score, mods.hasNetheriteLine(), mods.hasPhantomLine(), mods.hasNetheriteHook(), mods.hasEnderHook()));
+                serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.FISHING_BOBBER_THROW,
+                        SoundSource.NEUTRAL, 0.5F, 0.4F / (serverLevel.getRandom().nextFloat() * 0.4F + 0.8F));
+                player.awardStat(Stats.ITEM_USED.get(Items.FISHING_ROD));
+                player.gameEvent(GameEvent.ITEM_INTERACT_START);
             }
             return;
         }

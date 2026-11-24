@@ -1,6 +1,9 @@
 {
   "values": [
     "newfishing:water_crate",
-    "newfishing:beer_crate"
+    "newfishing:beer_crate",
+    "newfishing:eaten_oak_log",
+    "newfishing:eaten_acacia_log",
+    "newfishing:eaten_jungle_log"
   ]
 }

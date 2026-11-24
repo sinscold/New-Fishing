@@ -48,7 +48,7 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * Особый поплавок: плавает на любой жидкости (вода, лава, модовые), цепляет существ, а в Крае плавает в «зоне пустоты».
- * Используется, если в удочке незеритовый крючок или фантомная леска. В лаве выдерживает только полный незеритовый комплект
+ * Используется для любого заброса (наживка и очки рыбалки, см. FishingScore). В лаве выдерживает только полный незеритовый комплект
  * (иначе леска или поплавок сгорают и рыбалка отменяется).
  * Клюёт только в жидкости, для которой есть таблица лута:
  * вода — ванильная {@code gameplay/fishing}; лава — {@code newfishing:gameplay/lava_fishing} (только в Незере и только на
@@ -95,8 +95,16 @@ public class NetheriteFishingHook extends FishingHook {
     private int timeUntilLured;
     private int timeUntilHooked;
     private float fishAngle;
-    private int lootLuck;
-    private int lureTicks;
+    /** Удача лута и множитель ожидания рыбы из очков рыбалки (FishingScore), считаются при забросе. */
+    private float lootLuck;
+    private double waitFactor = 1.0;
+    /** Наживка: 0 подходит, 1 нет наживки, 2 наживка не для этого измерения. Обновляется раз в 10 тиков. */
+    private int baitState = 1;
+    /** Сколько тиков поплавок ждёт в жидкости без подходящей наживки (подсказка через 5 секунд, один раз). */
+    private int noBaitTicks;
+    private static final int NO_BAIT_HINT_TICKS = 100;
+    /** Шанс, что наживка потратится после улова. */
+    private static final float BAIT_USE_CHANCE = 1.0F / 3.0F;
     private boolean flying = true;
     private ResourceKey<LootTable> biteTable;
     private Vec3 voidAnchor;
@@ -116,10 +124,11 @@ public class NetheriteFishingHook extends FishingHook {
     }
 
     /** Создаёт поплавок и «бросает» его от игрока (повторяет бросок ванильного). */
-    public static NetheriteFishingHook cast(Player player, Level level, int luck, int lureSpeed, boolean netheriteLine, boolean phantomLine, boolean netheriteHook, boolean enderHook) {
+    public static NetheriteFishingHook cast(Player player, Level level, double score, boolean netheriteLine, boolean phantomLine, boolean netheriteHook, boolean enderHook) {
         NetheriteFishingHook hook = new NetheriteFishingHook(ModEntities.NETHERITE_FISHING_HOOK.get(), level);
-        hook.lootLuck = Math.max(0, luck);
-        hook.lureTicks = Math.max(0, lureSpeed);
+        hook.lootLuck = com.sinscold.newfishing.item.FishingScore.lootLuck(score);
+        hook.waitFactor = com.sinscold.newfishing.item.FishingScore.waitFactor(score);
+        hook.baitState = baitStateOf(player, level);
         hook.getEntityData().set(PARTS, (netheriteLine ? PART_NETHERITE_LINE : 0) | (phantomLine ? PART_PHANTOM_LINE : 0)
                 | (netheriteHook ? PART_NETHERITE_HOOK : 0) | (enderHook ? PART_ENDER_HOOK : 0));
         hook.setOwner(player);
@@ -199,7 +208,16 @@ public class NetheriteFishingHook extends FishingHook {
         // леска не ограничивает дальность; но другое измерение, убранная удочка или вытащенная из неё леска/крючок прекращают рыбалку
         if (player.isRemoved() || !player.isAlive() || player.level() != this.level()) return true;
         // осмотр удочки дорогой по сравнению с остальным, поэтому раз в 10 тиков; мгновенная отмена идёт по событию извлечения детали
-        return this.tickCount % 10 == 0 && !RodMods.holdsFishableRod(player);
+        if (this.tickCount % 10 != 0) return false;
+        if (!RodMods.holdsFishableRod(player)) return true;
+        this.baitState = baitStateOf(player, this.level()); // наживку могли насадить уже во время рыбалки
+        return false;
+    }
+
+    private static int baitStateOf(Player player, Level level) {
+        ItemStack bait = RodMods.get(RodMods.heldRod(player)).bait();
+        if (bait.isEmpty()) return 1;
+        return com.sinscold.newfishing.item.FishingScore.baitWorks(bait, level) ? 0 : 2;
     }
 
     /** Таблица лута для жидкости в этой точке или null, если здесь не клюёт. */
@@ -468,10 +486,16 @@ public class NetheriteFishingHook extends FishingHook {
                 this.fishAngle = Mth.nextFloat(this.random, 0.0F, 360.0F);
                 this.timeUntilHooked = Mth.nextInt(this.random, HOOKED_MIN, HOOKED_MAX);
             }
+        } else if (this.baitState != 0) {
+            // без подходящей наживки рыба к поплавку не плывёт; через 5 секунд подсказка (один раз за заброс)
+            if (++this.noBaitTicks == NO_BAIT_HINT_TICKS && this.getPlayerOwner() != null) {
+                this.getPlayerOwner().displayClientMessage(net.minecraft.network.chat.Component.translatable(
+                        this.baitState == 1 ? "message.newfishing.forgot_bait" : "message.newfishing.bait_wrong_dimension"), true);
+            }
         } else {
             int min = inVoid ? VOID_LURE_MIN : lava ? LAVA_LURE_MIN : WATER_LURE_MIN;
             int max = inVoid ? VOID_LURE_MAX : lava ? LAVA_LURE_MAX : WATER_LURE_MAX;
-            this.timeUntilLured = Math.max(10, Mth.nextInt(this.random, min, max) - this.lureTicks);
+            this.timeUntilLured = Math.max(10, (int) (Mth.nextInt(this.random, min, max) * this.waitFactor));
         }
     }
 
@@ -502,7 +526,7 @@ public class NetheriteFishingHook extends FishingHook {
                     .withParameter(LootContextParams.TOOL, rod)
                     .withParameter(LootContextParams.THIS_ENTITY, this)
                     .withParameter(LootContextParams.ATTACKING_ENTITY, this.getOwner())
-                    .withLuck((float) this.lootLuck + player.getLuck())
+                    .withLuck(this.lootLuck)
                     .create(LootContextParamSets.FISHING);
             LootTable table = this.level().getServer().reloadableRegistries().getLootTable(this.biteTable);
             List<ItemStack> items = table.getRandomItems(params);
@@ -524,9 +548,19 @@ public class NetheriteFishingHook extends FishingHook {
                 }
             }
             damage = this.onGround() ? 2 : 1;
+            this.useBait(rod);
         }
         this.discard();
         return damage;
+    }
+
+    /** После улова наживка тратится с шансом 1 к 3. */
+    private void useBait(ItemStack rod) {
+        RodMods mods = RodMods.get(rod);
+        if (!mods.hasBait() || this.random.nextFloat() >= BAIT_USE_CHANCE) return;
+        ItemStack bait = mods.bait().copy();
+        bait.shrink(1);
+        rod.set(com.sinscold.newfishing.registry.ModDataComponents.ROD_MODS.get(), mods.withBait(bait));
     }
 
     @Override

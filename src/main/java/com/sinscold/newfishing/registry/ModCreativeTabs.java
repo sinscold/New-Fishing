@@ -27,6 +27,17 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.NETHERITE_HOOK.get());
                         output.accept(ModItems.NETHERITE_LINE.get());
                         output.accept(ModItems.PHANTOM_LINE.get());
+                        output.accept(ModItems.BEGINNER_BAIT.get());
+                        output.accept(ModItems.AMATEUR_BAIT.get());
+                        output.accept(ModItems.PRO_BAIT.get());
+                        output.accept(ModItems.WORM.get());
+                        output.accept(ModItems.FAT_GRUB.get());
+                        output.accept(ModItems.BEETLE.get());
+                        output.accept(ModItems.ENDERMITE.get());
+                        output.accept(ModItems.SUSPICIOUS_DIRT.get());
+                        output.accept(ModItems.EATEN_OAK_LOG.get());
+                        output.accept(ModItems.EATEN_ACACIA_LOG.get());
+                        output.accept(ModItems.EATEN_JUNGLE_LOG.get());
                         output.accept(ModItems.BLIND_EYE.get());
                         output.accept(ModItems.ENDER_HOOK.get());
                         output.accept(ModItems.PHANTOM_RAY.get());

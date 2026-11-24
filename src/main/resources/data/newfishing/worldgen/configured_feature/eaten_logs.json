@@ -1,0 +1,7 @@
+{
+  "type": "newfishing:eaten_log",
+  "config": {
+    "biomes": "newfishing:has_eaten_logs",
+    "chance": 0.2
+  }
+}

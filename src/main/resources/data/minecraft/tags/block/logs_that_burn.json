@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "newfishing:eaten_oak_log",
+    "newfishing:eaten_acacia_log",
+    "newfishing:eaten_jungle_log"
+  ]
+}

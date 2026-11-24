@@ -34,6 +34,7 @@ public class NewFishing {
         ModPotions.POTIONS.register(modEventBus);
         ModEntities.ENTITIES.register(modEventBus);
         ModBlocks.BLOCKS.register(modEventBus);
+        com.sinscold.newfishing.registry.ModFeatures.FEATURES.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModSounds.SOUNDS.register(modEventBus);
         ModLootModifiers.LOOT_MODIFIERS.register(modEventBus);

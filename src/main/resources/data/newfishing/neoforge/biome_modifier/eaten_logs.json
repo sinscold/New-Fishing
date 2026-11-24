@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#newfishing:has_eaten_logs",
+  "features": "newfishing:eaten_logs",
+  "step": "top_layer_modification"
+}

@@ -91,5 +91,18 @@
   "tooltip.newfishing.cigarettes": "Cigarettes: %s of %s",
   "message.newfishing.need_lighter": "No fire",
   "newfishing.configuration.misc": "Misc",
-  "newfishing.configuration.requireLighter": "Require a lighter to smoke"
+  "newfishing.configuration.requireLighter": "Require a lighter to smoke",
+  "item.newfishing.beginner_bait": "Beginner Bait",
+  "item.newfishing.amateur_bait": "Amateur Bait",
+  "item.newfishing.pro_bait": "Pro Bait",
+  "item.newfishing.fat_grub": "Fat Grub",
+  "item.newfishing.worm": "Worm",
+  "item.newfishing.beetle": "Beetle",
+  "item.newfishing.endermite": "Endermite",
+  "block.newfishing.suspicious_dirt": "Suspicious Dirt",
+  "block.newfishing.eaten_oak_log": "Eaten Oak Log",
+  "block.newfishing.eaten_acacia_log": "Eaten Acacia Log",
+  "block.newfishing.eaten_jungle_log": "Eaten Jungle Log",
+  "message.newfishing.forgot_bait": "Maybe you forgot the bait",
+  "message.newfishing.bait_wrong_dimension": "Nothing bites on this bait here"
 }
