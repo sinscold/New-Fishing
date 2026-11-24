@@ -67,8 +67,8 @@ public class CigaretteItem extends Item {
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseDuration) {
         if (level.isClientSide && remainingUseDuration % 6 == 0) {
             Vec3 look = entity.getLookAngle();
-            level.addParticle(ParticleTypes.SMOKE, entity.getX() + look.x * 0.4, entity.getEyeY() - 0.15 + look.y * 0.4,
-                    entity.getZ() + look.z * 0.4, 0.0, 0.02, 0.0);
+            level.addParticle(ParticleTypes.SMOKE, entity.getX() + look.x * 0.9, entity.getEyeY() - 0.1 + look.y * 0.9,
+                    entity.getZ() + look.z * 0.9, 0.0, 0.02, 0.0);
         }
     }
 
@@ -76,8 +76,8 @@ public class CigaretteItem extends Item {
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
         if (level instanceof ServerLevel serverLevel) {
             Vec3 look = entity.getLookAngle();
-            serverLevel.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, entity.getX() + look.x * 0.5, entity.getEyeY() - 0.15 + look.y * 0.5,
-                    entity.getZ() + look.z * 0.5, 6, 0.1, 0.05, 0.1, 0.01);
+            serverLevel.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, entity.getX() + look.x * 0.9, entity.getEyeY() - 0.1 + look.y * 0.9,
+                    entity.getZ() + look.z * 0.9, 4, 0.1, 0.05, 0.1, 0.01);
             serverLevel.playSound(null, entity.blockPosition(), SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 0.3F, 1.6F);
             if (entity instanceof ServerPlayer player) {
                 AdvancementHolder advancement = serverLevel.getServer().getAdvancements().get(ADVANCEMENT);

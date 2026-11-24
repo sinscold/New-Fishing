@@ -33,10 +33,10 @@ public class BobberRenderer<T extends FishingHook> extends EntityRenderer<T> {
     private static final float PIXEL = 1.0F / 16.0F;
     private static final ResourceLocation LINE = ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "textures/entity/bobber/line.png");
 
-    private static final double THIRD_FORWARD = 0.30;
-    private static final double THIRD_UP = 0.55;
+    private static final double THIRD_FORWARD = 0.675; // +6 пикселей вперёд
+    private static final double THIRD_UP = 0.2375; // −5 пикселей вниз
     private static final double FIRST_FORWARD = 0.20;
-    private static final double FIRST_UP = 0.12;
+    private static final double FIRST_UP = 0.37; // +4 пикселя вверх
 
     public BobberRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -78,12 +78,13 @@ public class BobberRenderer<T extends FishingHook> extends EntityRenderer<T> {
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
     }
 
-    private int lineColor(T entity) {
+    /** Палитра лески из трёх оттенков (чередуются по клеткам): цвета от Синса. */
+    private int[] lineColor(T entity) {
         int kind = entity instanceof NetheriteFishingHook hook ? hook.lineColorKind() : 0;
         return switch (kind) {
-            case 1 -> 0xFF654740; // незеритовая (коричневая, как на спрайте)
-            case 2 -> 0xFFCFCBB4; // фантомная (цвет мембраны фантома)
-            default -> 0xFFF2F2F2; // обычная (белая)
+            case 1 -> new int[]{0xFF654740, 0xFF5A3D37, 0xFF5A3D37}; // незеритовая
+            case 2 -> new int[]{0xFFC3B9A1, 0xFFA99B87, 0xFFA99B87}; // фантомная
+            default -> new int[]{0xFF747474, 0xFF646464, 0xFF646464}; // обычная
         };
     }
 
@@ -93,7 +94,7 @@ public class BobberRenderer<T extends FishingHook> extends EntityRenderer<T> {
      * провисания растеризуется по клеткам, получается ступенчатая лесенка. Все квадратики копланарны, поэтому нет
      * разрывов от разной глубины. Оттенок слегка меняется от клетки к клетке.
      */
-    private void renderPixelLine(PoseStack poseStack, MultiBufferSource buffer, float dx, float dy, float dz, Vec3 camRel, int light, int color) {
+    private void renderPixelLine(PoseStack poseStack, MultiBufferSource buffer, float dx, float dy, float dz, Vec3 camRel, int light, int[] palette) {
         org.joml.Vector3f chord = new org.joml.Vector3f(dx, dy, dz);
         float length = chord.length();
         if (length < 1.0E-3F) {
@@ -144,21 +145,8 @@ public class BobberRenderer<T extends FishingHook> extends EntityRenderer<T> {
             float x = axisA.x * a + axisB.x * b;
             float y = axisA.y * a + axisB.y * b + originY;
             float z = axisA.z * a + axisB.z * b;
-            quad(consumer, pose, x, y, z, halfA, halfB, light, shade(color, index++));
+            quad(consumer, pose, x, y, z, halfA, halfB, light, palette[index++ % 3]);
         }
-    }
-
-    /** Лёгкая вариация яркости: три оттенка по кругу. */
-    private static int shade(int color, int index) {
-        float k = switch (index % 3) {
-            case 0 -> 1.0F;
-            case 1 -> 0.85F;
-            default -> 1.12F;
-        };
-        int r = Mth.clamp((int) (((color >> 16) & 0xFF) * k), 0, 255);
-        int g = Mth.clamp((int) (((color >> 8) & 0xFF) * k), 0, 255);
-        int b = Mth.clamp((int) ((color & 0xFF) * k), 0, 255);
-        return 0xFF000000 | (r << 16) | (g << 8) | b;
     }
 
     private static void quad(VertexConsumer consumer, PoseStack.Pose pose, float x, float y, float z,

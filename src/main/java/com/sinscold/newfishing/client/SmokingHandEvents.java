@@ -1,6 +1,5 @@
 package com.sinscold.newfishing.client;
 
-import com.mojang.math.Axis;
 import com.sinscold.newfishing.NewFishing;
 import com.sinscold.newfishing.registry.ModItems;
 
@@ -20,9 +19,9 @@ import net.neoforged.neoforge.client.event.RenderHandEvent;
  */
 @EventBusSubscriber(modid = NewFishing.MODID, value = Dist.CLIENT)
 public final class SmokingHandEvents {
-    private static final float SHIFT_X = -0.641864F;
-    private static final float TURN = 10.0F;
-    private static float appliedFactor = 0.0F;
+    private static final float SHIFT_X = -0.56F;
+    private static final float SHIFT_Y = 0.42F;
+        private static float appliedFactor = 0.0F;
 
     @SubscribeEvent
     static void onRenderHand(RenderHandEvent event) {
@@ -32,13 +31,11 @@ public final class SmokingHandEvents {
             appliedFactor = 0.0F;
             if (event.getItemStack().is(ModItems.CIGARETTE.get()) && player.isUsingItem() && player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
                 float factor = Mth.clamp((player.getTicksUsingItem() + event.getPartialTick()) / 8.0F, 0.0F, 1.0F);
-                event.getPoseStack().translate(SHIFT_X * factor, 0.0F, 0.0F);
-                event.getPoseStack().mulPose(Axis.YP.rotationDegrees(TURN * factor));
+                event.getPoseStack().translate(SHIFT_X * factor, SHIFT_Y * factor, 0.0F);
                 appliedFactor = factor;
             }
         } else if (appliedFactor != 0.0F) {
-            event.getPoseStack().mulPose(Axis.YP.rotationDegrees(-TURN * appliedFactor));
-            event.getPoseStack().translate(-SHIFT_X * appliedFactor, 0.0F, 0.0F);
+            event.getPoseStack().translate(-SHIFT_X * appliedFactor, -SHIFT_Y * appliedFactor, 0.0F);
             appliedFactor = 0.0F;
         }
     }
