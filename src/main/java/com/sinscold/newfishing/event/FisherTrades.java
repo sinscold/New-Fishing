@@ -54,7 +54,7 @@ public final class FisherTrades {
 
     private static MerchantOffer withRodParts(MerchantOffer offer) {
         if (offer != null && offer.getResult().is(Items.FISHING_ROD) && !com.sinscold.newfishing.item.RodMods.get(offer.getResult()).hasLine()) {
-            offer.getResult().set(com.sinscold.newfishing.registry.ModDataComponents.ROD_MODS.get(), new com.sinscold.newfishing.item.RodMods(
+            com.sinscold.newfishing.item.RodMods.set(offer.getResult(), new com.sinscold.newfishing.item.RodMods(
                     new ItemStack(com.sinscold.newfishing.registry.ModItems.FISHING_LINE.get()),
                     new ItemStack(com.sinscold.newfishing.registry.ModItems.FISHING_HOOK.get())));
         }

@@ -20,6 +20,13 @@ public final class ModDataComponents {
                     .cacheEncoding()
                     .build());
 
+    /** Сила рыбалки деталей удочки (леска + крючок + наживка); пересчитывается только при вкладывании/извлечении (RodMods.set). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> FISHING_POWER =
+            COMPONENTS.register("fishing_power", () -> DataComponentType.<Float>builder()
+                    .persistent(com.mojang.serialization.Codec.FLOAT)
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.FLOAT)
+                    .build());
+
     /** Содержимое сумки для наживки: 3 слота. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.world.item.component.ItemContainerContents>> BAIT_BAG_CONTENTS =
             COMPONENTS.register("bait_bag_contents", () -> DataComponentType.<net.minecraft.world.item.component.ItemContainerContents>builder()

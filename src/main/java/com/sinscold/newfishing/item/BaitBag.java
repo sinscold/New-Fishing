@@ -91,7 +91,7 @@ public final class BaitBag {
         if (bag.isEmpty()) return;
         ItemStack bait = takeOne(bag);
         if (!bait.isEmpty()) {
-            rod.set(ModDataComponents.ROD_MODS.get(), mods.withBait(bait));
+            RodMods.set(rod, mods.withBait(bait));
         }
     }
 

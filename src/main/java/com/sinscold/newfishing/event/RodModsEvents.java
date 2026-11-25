@@ -50,13 +50,13 @@ public final class RodModsEvents {
             ItemStack removed;
             if (mods.hasBait()) {
                 removed = mods.bait();
-                rod.set(ModDataComponents.ROD_MODS.get(), mods.withBait(ItemStack.EMPTY));
+                RodMods.set(rod, mods.withBait(ItemStack.EMPTY));
             } else if (mods.hasHook()) {
                 removed = mods.hook();
-                rod.set(ModDataComponents.ROD_MODS.get(), mods.withHook(ItemStack.EMPTY));
+                RodMods.set(rod, mods.withHook(ItemStack.EMPTY));
             } else if (mods.hasLine()) {
                 removed = mods.line();
-                rod.set(ModDataComponents.ROD_MODS.get(), mods.withLine(ItemStack.EMPTY));
+                RodMods.set(rod, mods.withLine(ItemStack.EMPTY));
             } else {
                 return;
             }
@@ -68,13 +68,13 @@ public final class RodModsEvents {
             player.playSound(SoundEvents.BUNDLE_REMOVE_ONE, 0.8F, 0.8F + player.level().getRandom().nextFloat() * 0.4F);
         } else if (RodMods.isBait(carried) && mods.hasFishingHook() && !mods.hasBait()) {
             // наживка насаживается на крючок: в слоте только одна штука
-            rod.set(ModDataComponents.ROD_MODS.get(), mods.withBait(carried.split(1)));
+            RodMods.set(rod, mods.withBait(carried.split(1)));
             player.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 0.8F + player.level().getRandom().nextFloat() * 0.4F);
         } else if (RodMods.isLine(carried) && !mods.hasLine()) {
-            rod.set(ModDataComponents.ROD_MODS.get(), mods.withLine(carried.split(1)));
+            RodMods.set(rod, mods.withLine(carried.split(1)));
             player.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 0.8F + player.level().getRandom().nextFloat() * 0.4F);
         } else if (RodMods.isHookSlotItem(carried) && mods.hasLine() && !mods.hasHook()) {
-            rod.set(ModDataComponents.ROD_MODS.get(), mods.withHook(carried.split(1)));
+            RodMods.set(rod, mods.withHook(carried.split(1)));
             player.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 0.8F + player.level().getRandom().nextFloat() * 0.4F);
         } else {
             return;
@@ -115,7 +115,7 @@ public final class RodModsEvents {
             event.setCancellationResult(InteractionResult.SUCCESS);
             if (player.level() instanceof ServerLevel serverLevel) {
                 boolean baitBag = com.sinscold.newfishing.compat.CuriosCompat.hasBaitBag(player);
-                double score = com.sinscold.newfishing.item.FishingScore.score(player, stack, serverLevel, baitBag);
+                double score = com.sinscold.newfishing.item.FishingScore.score(player, stack, baitBag);
                 serverLevel.addFreshEntity(NetheriteFishingHook.cast(player, serverLevel, score, mods.hasNetheriteLine(), mods.hasPhantomLine(), mods.hasNetheriteHook(), mods.hasEnderHook()));
                 serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.FISHING_BOBBER_THROW,
                         SoundSource.NEUTRAL, 0.5F, 0.4F / (serverLevel.getRandom().nextFloat() * 0.4F + 0.8F));

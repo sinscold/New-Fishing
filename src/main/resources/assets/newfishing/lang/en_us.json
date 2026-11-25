@@ -106,5 +106,7 @@
   "subtitles.newfishing.crate_locked": "Crate is locked",
   "newfishing.configuration.treasure": "Treasure (one guaranteed)",
   "newfishing.configuration.rod_mod": "Rod modification (one of)",
-  "tooltip.newfishing.bait_when_on_hook": "When on hook:"
+  "tooltip.newfishing.bait_when_on_hook": "When on hook:",
+  "tooltip.newfishing.part_when_in_rod": "When in rod:",
+  "tooltip.newfishing.rod_power": " Fishing power: %s"
 }

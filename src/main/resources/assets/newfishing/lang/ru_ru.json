@@ -106,5 +106,7 @@
   "subtitles.newfishing.crate_locked": "Ящик заперт",
   "newfishing.configuration.treasure": "Сокровище (одно обязательно)",
   "newfishing.configuration.rod_mod": "Модификация удочки (одна из)",
-  "tooltip.newfishing.bait_when_on_hook": "Когда на крючке:"
+  "tooltip.newfishing.bait_when_on_hook": "Когда на крючке:",
+  "tooltip.newfishing.part_when_in_rod": "Когда в удочке:",
+  "tooltip.newfishing.rod_power": " Сила рыбалки: %s"
 }

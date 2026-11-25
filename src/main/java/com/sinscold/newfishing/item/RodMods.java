@@ -36,6 +36,12 @@ public record RodMods(ItemStack line, ItemStack hook, ItemStack bait) implements
             ItemStack.OPTIONAL_STREAM_CODEC, RodMods::bait,
             RodMods::new);
 
+    /** Записывает детали в удочку и сразу пересчитывает их силу рыбалки (единственное место пересчёта). */
+    public static void set(ItemStack rod, RodMods mods) {
+        rod.set(ModDataComponents.ROD_MODS.get(), mods);
+        rod.set(ModDataComponents.FISHING_POWER.get(), (float) FishingScore.partsPower(mods));
+    }
+
     public static RodMods get(ItemStack rod) {
         return rod.getOrDefault(ModDataComponents.ROD_MODS.get(), EMPTY);
     }

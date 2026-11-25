@@ -70,16 +70,40 @@ public final class FishingScore {
         return stack.isEmpty() ? 0.0 : points().getOrDefault(stack.getItem(), 0.0);
     }
 
-    /** Очки рыбалки игрока с этой удочкой (считается один раз при забросе). */
-    public static double score(Player player, ItemStack rod, ServerLevel level, boolean baitBag) {
-        RodMods mods = RodMods.get(rod);
-        double score = pointsOf(mods.line()) + pointsOf(mods.hook()) + pointsOf(mods.bait());
+    /** Сила деталей: леска + крючок + наживка (пересчитывается при вкладывании, см. RodMods.set). */
+    public static double partsPower(RodMods mods) {
+        return pointsOf(mods.line()) + pointsOf(mods.hook()) + pointsOf(mods.bait());
+    }
+
+    /** Сохранённая сила деталей удочки; у удочек без сохранённого значения (из лута, старых миров) считается из деталей. */
+    public static double partsPower(ItemStack rod) {
+        Float stored = rod.get(com.sinscold.newfishing.registry.ModDataComponents.FISHING_POWER.get());
+        return stored != null ? stored : partsPower(RodMods.get(rod));
+    }
+
+    /** Сила от чар удочки: приманка и везучий рыбак по 0,3 за уровень. */
+    public static double enchantPower(ItemStack rod) {
+        double power = 0.0;
+        for (var entry : rod.getEnchantments().entrySet()) {
+            if (entry.getKey().is(Enchantments.LURE) || entry.getKey().is(Enchantments.LUCK_OF_THE_SEA)) {
+                power += 0.3 * entry.getIntValue();
+            }
+        }
+        return power;
+    }
+
+    /** Полная сила рыбалки: детали + чары + сумка для наживки + эффект «Удача». Считается при забросе (и в подсказке). */
+    public static double score(Player player, ItemStack rod, boolean baitBag) {
+        double score = partsPower(rod) + enchantPower(rod);
         if (baitBag) score += 1.0;
-        if (player.hasEffect(MobEffects.LUCK)) score += 1.0;
-        var enchantments = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-        score += 0.3 * rod.getEnchantmentLevel(enchantments.getOrThrow(Enchantments.LURE));
-        score += 0.3 * rod.getEnchantmentLevel(enchantments.getOrThrow(Enchantments.LUCK_OF_THE_SEA));
+        if (player != null && player.hasEffect(MobEffects.LUCK)) score += 1.0;
         return score;
+    }
+
+    /** Число для подсказки: целое без дробной части, иначе с одним знаком после запятой. */
+    public static String format(double value) {
+        double rounded = Math.round(value * 10.0) / 10.0;
+        return rounded == Math.rint(rounded) ? String.valueOf((long) rounded) : String.valueOf(rounded);
     }
 
     /** Удача лута для таблицы рыбалки: ниже нейтральных очков отрицательная (больше мусора), выше положительная. */

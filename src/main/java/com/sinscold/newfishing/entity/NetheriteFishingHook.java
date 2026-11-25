@@ -561,7 +561,7 @@ public class NetheriteFishingHook extends FishingHook {
         if (!mods.hasBait() || this.random.nextFloat() >= BAIT_USE_CHANCE) return;
         ItemStack bait = mods.bait().copy();
         bait.shrink(1);
-        rod.set(com.sinscold.newfishing.registry.ModDataComponents.ROD_MODS.get(), mods.withBait(bait));
+        RodMods.set(rod, mods.withBait(bait));
     }
 
     @Override
