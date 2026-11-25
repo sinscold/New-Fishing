@@ -1,6 +1,7 @@
 {
   "replace": false,
   "entries": [
-    "newfishing:fishing_modifier"
+    "newfishing:fishing_modifier",
+    "newfishing:shipwreck_bait"
   ]
 }

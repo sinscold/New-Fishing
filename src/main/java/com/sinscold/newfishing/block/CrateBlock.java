@@ -122,7 +122,7 @@ public class CrateBlock extends BaseEntityBlock {
         if (state.getValue(LOCKED)) {
             if (!level.isClientSide) {
                 player.displayClientMessage(Component.translatable("message.newfishing.crate_locked"), true);
-                level.playSound(null, pos, SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.playSound(null, pos, com.sinscold.newfishing.registry.ModSounds.CRATE_LOCKED.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }

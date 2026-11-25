@@ -1,428 +1,416 @@
 {
- "type": "minecraft:chest",
- "pools": [
-  {
-   "rolls": 1,
-   "entries": [
+  "type": "minecraft:chest",
+  "pools": [
     {
-     "type": "minecraft:tag",
-     "name": "newfishing:crate_planks",
-     "expand": true,
-     "functions": [
-      {
-       "function": "minecraft:set_count",
-       "count": {
-        "type": "minecraft:uniform",
-        "min": 1,
-        "max": 10
-       }
-      }
-     ]
-    }
-   ],
-   "conditions": [
-    {
-     "condition": "newfishing:config_chance",
-     "key": "water.planks",
-     "default": 1.0
-    }
-   ]
-  },
-  {
-   "rolls": 1,
-   "entries": [
-    {
-     "type": "minecraft:item",
-     "name": "minecraft:rotten_flesh",
-     "weight": 1,
-     "functions": [
-      {
-       "function": "minecraft:set_count",
-       "count": {
-        "type": "minecraft:uniform",
-        "min": 1,
-        "max": 10
-       }
-      }
-     ]
-    }
-   ],
-   "conditions": [
-    {
-     "condition": "newfishing:config_chance",
-     "key": "water.rotten_flesh",
-     "default": 1.0
-    }
-   ]
-  },
-  {
-   "rolls": 2,
-   "entries": [
-    {
-     "type": "minecraft:item",
-     "name": "minecraft:kelp",
-     "weight": 1,
-     "functions": [
-      {
-       "function": "minecraft:set_count",
-       "count": {
-        "type": "minecraft:uniform",
-        "min": 1,
-        "max": 5
-       }
-      }
-     ]
-    },
-    {
-     "type": "minecraft:item",
-     "name": "minecraft:beetroot",
-     "weight": 1,
-     "functions": [
-      {
-       "function": "minecraft:set_count",
-       "count": {
-        "type": "minecraft:uniform",
-        "min": 1,
-        "max": 5
-       }
-      }
-     ]
-    },
-    {
-     "type": "minecraft:item",
-     "name": "minecraft:potato",
-     "weight": 1,
-     "functions": [
-      {
-       "function": "minecraft:set_count",
-       "count": {
-        "type": "minecraft:uniform",
-        "min": 1,
-        "max": 5
-       }
-      }
-     ]
-    },
-    {
-     "type": "minecraft:item",
-     "name": "minecraft:carrot",
-     "weight": 1,
-     "functions": [
-      {
-       "function": "minecraft:set_count",
-       "count": {
-        "type": "minecraft:uniform",
-        "min": 1,
-        "max": 5
-       }
-      }
-     ]
-    },
-    {
-     "type": "minecraft:item",
-     "name": "minecraft:poisonous_potato",
-     "weight": 1,
-     "functions": [
-      {
-       "function": "minecraft:set_count",
-       "count": {
-        "type": "minecraft:uniform",
-        "min": 1,
-        "max": 5
-       }
-      }
-     ]
-    },
-    {
-     "type": "minecraft:item",
-     "name": "minecraft:beetroot_seeds",
-     "weight": 1,
-     "functions": [
-      {
-       "function": "minecraft:set_count",
-       "count": {
-        "type": "minecraft:uniform",
-        "min": 1,
-        "max": 5
-       }
-      }
-     ]
-    }
-   ],
-   "conditions": [
-    {
-     "condition": "newfishing:config_chance",
-     "key": "water.produce",
-     "default": 1.0
-    }
-   ]
-  },
-  {
-   "rolls": {
-    "type": "minecraft:uniform",
-    "min": 1,
-    "max": 2
-   },
-   "entries": [
-    {
-     "type": "minecraft:item",
-     "name": "minecraft:fishing_rod",
-     "weight": 1,
-     "functions": [
-      {
-       "function": "minecraft:set_components",
-       "components": {
-        "newfishing:rod_mods": {
-         "line": { "id": "newfishing:fishing_line", "count": 1 },
-         "hook": { "id": "newfishing:fishing_hook", "count": 1 }
-        }
-       }
-      },
-      {
-       "function": "minecraft:set_damage",
-       "damage": {
-        "type": "minecraft:uniform",
-        "min": 0.0,
-        "max": 0.9
-       }
-      },
-      {
-       "function": "minecraft:enchant_with_levels",
-       "levels": {
-        "type": "minecraft:uniform",
-        "min": 15,
-        "max": 30
-       },
-       "options": "#minecraft:tradeable",
-       "conditions": [
+      "rolls": 1,
+      "entries": [
         {
-         "condition": "minecraft:random_chance",
-         "chance": 0.5
+          "type": "minecraft:tag",
+          "name": "newfishing:crate_planks",
+          "expand": true,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 10
+              }
+            }
+          ]
         }
-       ]
-      }
-     ]
-    },
-    {
-     "type": "minecraft:item",
-     "name": "minecraft:bow",
-     "weight": 1,
-     "functions": [
-      {
-       "function": "minecraft:set_damage",
-       "damage": {
-        "type": "minecraft:uniform",
-        "min": 0.0,
-        "max": 0.9
-       }
-      },
-      {
-       "function": "minecraft:enchant_with_levels",
-       "levels": {
-        "type": "minecraft:uniform",
-        "min": 15,
-        "max": 30
-       },
-       "options": "#minecraft:tradeable",
-       "conditions": [
+      ],
+      "conditions": [
         {
-         "condition": "minecraft:random_chance",
-         "chance": 0.5
+          "condition": "newfishing:config_chance",
+          "key": "water.planks",
+          "default": 1.0
         }
-       ]
-      }
-     ]
+      ]
     },
     {
-     "type": "minecraft:item",
-     "name": "minecraft:book",
-     "weight": 1
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:rotten_flesh",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 10
+              }
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "newfishing:config_chance",
+          "key": "water.rotten_flesh",
+          "default": 1.0
+        }
+      ]
     },
     {
-     "type": "minecraft:item",
-     "name": "minecraft:book",
-     "weight": 1,
-     "functions": [
-      {
-       "function": "minecraft:enchant_with_levels",
-       "levels": {
+      "rolls": 2,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:kelp",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 5
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:beetroot",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 5
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:potato",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 5
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:carrot",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 5
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:poisonous_potato",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 5
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:beetroot_seeds",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 5
+              }
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "newfishing:config_chance",
+          "key": "water.produce",
+          "default": 1.0
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:fishing_rod",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_components",
+              "components": {
+                "newfishing:rod_mods": {
+                  "line": {
+                    "id": "newfishing:fishing_line",
+                    "count": 1
+                  },
+                  "hook": {
+                    "id": "newfishing:fishing_hook",
+                    "count": 1
+                  }
+                }
+              }
+            },
+            {
+              "function": "minecraft:set_damage",
+              "damage": {
+                "type": "minecraft:uniform",
+                "min": 0.0,
+                "max": 0.9
+              }
+            },
+            {
+              "function": "minecraft:enchant_with_levels",
+              "levels": {
+                "type": "minecraft:uniform",
+                "min": 15,
+                "max": 30
+              },
+              "options": "#minecraft:tradeable",
+              "conditions": [
+                {
+                  "condition": "minecraft:random_chance",
+                  "chance": 0.5
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:bow",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_damage",
+              "damage": {
+                "type": "minecraft:uniform",
+                "min": 0.0,
+                "max": 0.9
+              }
+            },
+            {
+              "function": "minecraft:enchant_with_levels",
+              "levels": {
+                "type": "minecraft:uniform",
+                "min": 15,
+                "max": 30
+              },
+              "options": "#minecraft:tradeable",
+              "conditions": [
+                {
+                  "condition": "minecraft:random_chance",
+                  "chance": 0.5
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:book",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:book",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:enchant_with_levels",
+              "levels": {
+                "type": "minecraft:uniform",
+                "min": 15,
+                "max": 30
+              },
+              "options": "#minecraft:on_random_loot"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:saddle",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:name_tag",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nautilus_shell",
+          "weight": 1
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "newfishing:config_chance",
+          "key": "water.treasure",
+          "default": 1.0
+        }
+      ]
+    },
+    {
+      "rolls": {
         "type": "minecraft:uniform",
-        "min": 15,
-        "max": 30
-       },
-       "options": "#minecraft:on_random_loot"
-      }
-     ]
-    },
-    {
-     "type": "minecraft:item",
-     "name": "minecraft:saddle",
-     "weight": 1
-    },
-    {
-     "type": "minecraft:item",
-     "name": "minecraft:name_tag",
-     "weight": 1
-    },
-    {
-     "type": "minecraft:item",
-     "name": "minecraft:nautilus_shell",
-     "weight": 1
-    }
-   ],
-   "conditions": [
-    {
-     "condition": "newfishing:config_chance",
-     "key": "water.treasure_group",
-     "default": 0.16666666666666666
-    }
-   ]
-  },
-  {
-   "rolls": {
-    "type": "minecraft:uniform",
-    "min": 1,
-    "max": 2
-   },
-   "entries": [
-    {
-     "type": "minecraft:item",
-     "name": "minecraft:leather_helmet",
-     "weight": 1,
-     "functions": [
-      {
-       "function": "minecraft:set_damage",
-       "damage": {
-        "type": "minecraft:uniform",
-        "min": 0.0,
-        "max": 0.9
-       }
+        "min": 1,
+        "max": 2
       },
-      {
-       "function": "minecraft:enchant_with_levels",
-       "levels": {
-        "type": "minecraft:uniform",
-        "min": 15,
-        "max": 30
-       },
-       "options": "#minecraft:tradeable"
-      }
-     ]
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:leather_helmet",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_damage",
+              "damage": {
+                "type": "minecraft:uniform",
+                "min": 0.0,
+                "max": 0.9
+              }
+            },
+            {
+              "function": "minecraft:enchant_with_levels",
+              "levels": {
+                "type": "minecraft:uniform",
+                "min": 15,
+                "max": 30
+              },
+              "options": "#minecraft:tradeable"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:leather_chestplate",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_damage",
+              "damage": {
+                "type": "minecraft:uniform",
+                "min": 0.0,
+                "max": 0.9
+              }
+            },
+            {
+              "function": "minecraft:enchant_with_levels",
+              "levels": {
+                "type": "minecraft:uniform",
+                "min": 15,
+                "max": 30
+              },
+              "options": "#minecraft:tradeable"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:leather_leggings",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_damage",
+              "damage": {
+                "type": "minecraft:uniform",
+                "min": 0.0,
+                "max": 0.9
+              }
+            },
+            {
+              "function": "minecraft:enchant_with_levels",
+              "levels": {
+                "type": "minecraft:uniform",
+                "min": 15,
+                "max": 30
+              },
+              "options": "#minecraft:tradeable"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:leather_boots",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_damage",
+              "damage": {
+                "type": "minecraft:uniform",
+                "min": 0.0,
+                "max": 0.9
+              }
+            },
+            {
+              "function": "minecraft:enchant_with_levels",
+              "levels": {
+                "type": "minecraft:uniform",
+                "min": 15,
+                "max": 30
+              },
+              "options": "#minecraft:tradeable"
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "newfishing:config_chance",
+          "key": "water.leather_armor",
+          "default": 0.1
+        }
+      ]
     },
     {
-     "type": "minecraft:item",
-     "name": "minecraft:leather_chestplate",
-     "weight": 1,
-     "functions": [
-      {
-       "function": "minecraft:set_damage",
-       "damage": {
-        "type": "minecraft:uniform",
-        "min": 0.0,
-        "max": 0.9
-       }
-      },
-      {
-       "function": "minecraft:enchant_with_levels",
-       "levels": {
-        "type": "minecraft:uniform",
-        "min": 15,
-        "max": 30
-       },
-       "options": "#minecraft:tradeable"
-      }
-     ]
-    },
-    {
-     "type": "minecraft:item",
-     "name": "minecraft:leather_leggings",
-     "weight": 1,
-     "functions": [
-      {
-       "function": "minecraft:set_damage",
-       "damage": {
-        "type": "minecraft:uniform",
-        "min": 0.0,
-        "max": 0.9
-       }
-      },
-      {
-       "function": "minecraft:enchant_with_levels",
-       "levels": {
-        "type": "minecraft:uniform",
-        "min": 15,
-        "max": 30
-       },
-       "options": "#minecraft:tradeable"
-      }
-     ]
-    },
-    {
-     "type": "minecraft:item",
-     "name": "minecraft:leather_boots",
-     "weight": 1,
-     "functions": [
-      {
-       "function": "minecraft:set_damage",
-       "damage": {
-        "type": "minecraft:uniform",
-        "min": 0.0,
-        "max": 0.9
-       }
-      },
-      {
-       "function": "minecraft:enchant_with_levels",
-       "levels": {
-        "type": "minecraft:uniform",
-        "min": 15,
-        "max": 30
-       },
-       "options": "#minecraft:tradeable"
-      }
-     ]
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "newfishing:netherite_hook"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "newfishing:netherite_line"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "newfishing:config_chance",
+          "key": "water.rod_mod",
+          "default": 0.005
+        }
+      ]
     }
-   ],
-   "conditions": [
-    {
-     "condition": "newfishing:config_chance",
-     "key": "water.leather_armor",
-     "default": 0.1
-    }
-   ]
-  },
-  {
-   "rolls": 1,
-   "entries": [
-    {
-     "type": "minecraft:item",
-     "name": "newfishing:netherite_hook",
-     "weight": 1
-    }
-   ],
-   "conditions": [
-    {
-     "condition": "newfishing:config_chance",
-     "key": "water.netherite_hook",
-     "default": 0.005
-    }
-   ]
-  },
-  {
-   "rolls": 1,
-   "entries": [
-    {
-     "type": "minecraft:item",
-     "name": "newfishing:netherite_line",
-     "weight": 1
-    }
-   ],
-   "conditions": [
-    {
-     "condition": "newfishing:config_chance",
-     "key": "water.netherite_line",
-     "default": 0.005
-    }
-   ]
-  }
- ]
+  ]
 }

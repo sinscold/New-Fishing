@@ -29,6 +29,7 @@ public class NewFishing {
     public NewFishing(IEventBus modEventBus, ModContainer modContainer) {
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         ModLootConditions.CONDITIONS.register(modEventBus);
+        com.sinscold.newfishing.registry.ModLootFunctions.FUNCTIONS.register(modEventBus);
         ModDataComponents.COMPONENTS.register(modEventBus);
         ModEffects.EFFECTS.register(modEventBus);
         ModPotions.POTIONS.register(modEventBus);

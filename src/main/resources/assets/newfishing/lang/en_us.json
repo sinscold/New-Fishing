@@ -53,10 +53,7 @@
   "newfishing.configuration.planks": "Planks",
   "newfishing.configuration.rotten_flesh": "Rotten flesh",
   "newfishing.configuration.produce": "Produce and kelp",
-  "newfishing.configuration.treasure_group": "Treasure group",
   "newfishing.configuration.leather_armor": "Leather armor",
-  "newfishing.configuration.netherite_hook": "Netherite hook",
-  "newfishing.configuration.netherite_line": "Netherite line",
   "newfishing.configuration.materials_1": "Materials, subgroup 1",
   "newfishing.configuration.materials_2": "Materials, subgroup 2",
   "newfishing.configuration.materials_3": "Materials, subgroup 3",
@@ -105,5 +102,9 @@
   "block.newfishing.eaten_jungle_log": "Eaten Jungle Log",
   "message.newfishing.forgot_bait": "Maybe you forgot the bait",
   "message.newfishing.bait_wrong_dimension": "Nothing bites on this bait here",
-  "tooltip.newfishing.bait_points": "Fishing bait points: %s"
+  "tooltip.newfishing.bait_points": " Fishing power: +%s",
+  "subtitles.newfishing.crate_locked": "Crate is locked",
+  "newfishing.configuration.treasure": "Treasure (one guaranteed)",
+  "newfishing.configuration.rod_mod": "Rod modification (one of)",
+  "tooltip.newfishing.bait_when_on_hook": "When on hook:"
 }

@@ -19,8 +19,8 @@ public final class Config {
     /** Все настраиваемые шансы ящиков: «секция.название». Значения по умолчанию совпадают с JSON-таблицами. */
     public static final List<ChanceKey> CHANCES = List.of(
             new ChanceKey("water.planks", 1.0), new ChanceKey("water.rotten_flesh", 1.0), new ChanceKey("water.produce", 1.0),
-            new ChanceKey("water.treasure_group", 1.0 / 6.0), new ChanceKey("water.leather_armor", 0.1),
-            new ChanceKey("water.netherite_hook", 0.005), new ChanceKey("water.netherite_line", 0.005),
+            new ChanceKey("water.treasure", 1.0), new ChanceKey("water.leather_armor", 0.1),
+            new ChanceKey("water.rod_mod", 0.005),
             new ChanceKey("lava.materials_1", 0.5), new ChanceKey("lava.materials_2", 0.25),
             new ChanceKey("lava.materials_3", 0.125), new ChanceKey("lava.materials_4", 0.0625),
             new ChanceKey("lava.food", 0.75),

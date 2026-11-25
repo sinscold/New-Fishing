@@ -59,7 +59,6 @@ public final class FishingScore {
                     Map.entry(ModItems.FAT_GRUB.get(), 2.0),
                     Map.entry(ModItems.BEETLE.get(), 2.0),
                     Map.entry(Items.WARPED_FUNGUS, 2.0),
-                    Map.entry(Items.PORKCHOP, 2.0),
                     Map.entry(Items.CHORUS_FRUIT, 3.0),
                     Map.entry(Items.POPPED_CHORUS_FRUIT, 3.5),
                     Map.entry(ModItems.ENDERMITE.get(), 3.0));

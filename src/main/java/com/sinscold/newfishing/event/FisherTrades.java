@@ -34,8 +34,13 @@ public final class FisherTrades {
         if (event.getType() != VillagerProfession.FISHERMAN) return;
         event.getTrades().get(1).add(new BuyFish(ItemTags.FISHES, 8, 16, 1, 1, 4, 2));
         event.getTrades().get(5).add(new BuyFish(ModTags.NETHER_FISH, 2, 4, 3, 4, 3, 30));
-        // подмастерье (уровень 3) продаёт 4 наживки профи за 16 изумрудов
-        event.getTrades().get(3).add((trader, random) -> new MerchantOffer(new ItemCost(Items.EMERALD, 16),
+        // ученик (уровень 2) продаёт сумку для наживки за 12 изумрудов (только если стоит Curios)
+        if (com.sinscold.newfishing.registry.ModItems.BAIT_BAG != null) {
+            event.getTrades().get(2).add((trader, random) -> new MerchantOffer(new ItemCost(Items.EMERALD, 12),
+                    new ItemStack(com.sinscold.newfishing.registry.ModItems.BAIT_BAG.get()), 3, 10, 0.05F));
+        }
+        // эксперт (уровень 4) продаёт 4 наживки профи за 16 изумрудов
+        event.getTrades().get(4).add((trader, random) -> new MerchantOffer(new ItemCost(Items.EMERALD, 16),
                 new ItemStack(com.sinscold.newfishing.registry.ModItems.PRO_BAIT.get(), 4), 4, 10, 0.05F));
         // удочки, которые продаёт рыбак, приходят с обычной леской и обычным крючком
         event.getTrades().replaceAll((level, listings) -> {

@@ -19,9 +19,12 @@ public final class ClientGameEvents {
         if (!RodMods.isBait(event.getItemStack())) return;
         double points = com.sinscold.newfishing.item.FishingScore.pointsOf(event.getItemStack());
         String text = points == Math.rint(points) ? String.valueOf((int) points) : String.valueOf(points);
-        int index = Math.min(1, event.getToolTip().size());
-        event.getToolTip().add(index, net.minecraft.network.chat.Component.translatable("tooltip.newfishing.bait_points", text)
-                .withStyle(net.minecraft.ChatFormatting.GREEN));
+        // как у атрибутов в ванили: пустая строка, серый заголовок, зелёное значение
+        event.getToolTip().add(net.minecraft.network.chat.Component.empty());
+        event.getToolTip().add(net.minecraft.network.chat.Component.translatable("tooltip.newfishing.bait_when_on_hook")
+                .withStyle(net.minecraft.ChatFormatting.GRAY));
+        event.getToolTip().add(net.minecraft.network.chat.Component.translatable("tooltip.newfishing.bait_points", text)
+                .withStyle(net.minecraft.ChatFormatting.DARK_GREEN));
     }
 
     @SubscribeEvent

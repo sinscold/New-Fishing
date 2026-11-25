@@ -53,10 +53,7 @@
   "newfishing.configuration.planks": "Доски",
   "newfishing.configuration.rotten_flesh": "Гнилая плоть",
   "newfishing.configuration.produce": "Овощи и ламинария",
-  "newfishing.configuration.treasure_group": "Группа «сокровище»",
   "newfishing.configuration.leather_armor": "Кожаная броня",
-  "newfishing.configuration.netherite_hook": "Незеритовый крючок",
-  "newfishing.configuration.netherite_line": "Незеритовая леска",
   "newfishing.configuration.materials_1": "Материалы, подгруппа 1",
   "newfishing.configuration.materials_2": "Материалы, подгруппа 2",
   "newfishing.configuration.materials_3": "Материалы, подгруппа 3",
@@ -105,5 +102,9 @@
   "block.newfishing.eaten_jungle_log": "Выеденное тропическое бревно",
   "message.newfishing.forgot_bait": "Возможно, вы забыли наживку",
   "message.newfishing.bait_wrong_dimension": "Эта наживка здесь не клюёт",
-  "tooltip.newfishing.bait_points": "Очки приманки в рыбалке: %s"
+  "tooltip.newfishing.bait_points": " Сила рыбалки: +%s",
+  "subtitles.newfishing.crate_locked": "Ящик заперт",
+  "newfishing.configuration.treasure": "Сокровище (одно обязательно)",
+  "newfishing.configuration.rod_mod": "Модификация удочки (одна из)",
+  "tooltip.newfishing.bait_when_on_hook": "Когда на крючке:"
 }

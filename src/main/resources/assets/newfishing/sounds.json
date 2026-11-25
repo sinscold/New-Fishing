@@ -22,5 +22,13 @@
       }
     ],
     "subtitle": "subtitles.newfishing.lava_bulb"
+  },
+  "crate_locked": {
+    "sounds": [
+      {
+        "name": "newfishing:crate_locked"
+      }
+    ],
+    "subtitle": "subtitles.newfishing.crate_locked"
   }
 }
