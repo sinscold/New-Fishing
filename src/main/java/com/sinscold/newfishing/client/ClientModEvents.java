@@ -52,7 +52,7 @@ public final class ClientModEvents {
         // ванильный поплавок тоже рисуется нашей 3D-моделью
         event.registerEntityRenderer(net.minecraft.world.entity.EntityType.FISHING_BOBBER, BobberRenderer::new);
         event.registerEntityRenderer(ModEntities.BLIND_EYE.get(), net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
-        event.registerEntityRenderer(ModEntities.RETURN_PORTAL.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
+        event.registerEntityRenderer(ModEntities.RETURN_PORTAL.get(), ReturnPortalRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.CRATE.get(), CrateRenderer::new);
     }
 

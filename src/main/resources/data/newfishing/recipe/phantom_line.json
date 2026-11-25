@@ -1,4 +1,14 @@
 {
-  "type": "newfishing:phantom_line",
-  "category": "misc"
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "M": { "item": "minecraft:phantom_membrane" },
+    "D": { "item": "minecraft:diamond" }
+  },
+  "pattern": [
+    " M ",
+    "MDM",
+    " M "
+  ],
+  "result": { "count": 1, "id": "newfishing:phantom_line" }
 }

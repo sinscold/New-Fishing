@@ -6,14 +6,16 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-/** Портал от зелья возвращения: живёт 10 минут, пропускает одного игрока (любого) и исчезает. */
+/**
+ * Портал от зелья возвращения, живёт 10 минут. Рабочий портал стоит у точки возрождения: пропускает одного игрока
+ * (любого) обратно на место, где выпили зелье. Портал на месте, где выпили, только для вида (не телепортирует).
+ * Оба портала связаны общим `link`: когда через рабочий прошли, исчезают оба.
+ */
 public class ReturnPortal extends Entity {
     private static final int LIFETIME = 12000;
     /** Первые тики портал не срабатывает, чтобы не вернуть игрока сразу. */
@@ -35,6 +37,10 @@ public class ReturnPortal extends Entity {
     private ResourceKey<Level> targetDimension;
     private Vec3 target = Vec3.ZERO;
     private int age;
+    /** Рабочий портал (телепортирует) или только для вида. */
+    private boolean functional;
+    /** Общий номер пары порталов. */
+    private java.util.UUID link;
 
     public ReturnPortal(EntityType<? extends ReturnPortal> type, Level level) {
         super(type, level);
@@ -44,6 +50,17 @@ public class ReturnPortal extends Entity {
     public void setTarget(ResourceKey<Level> dimension, Vec3 target) {
         this.targetDimension = dimension;
         this.target = target;
+        this.functional = true;
+    }
+
+    public void setLink(java.util.UUID link) {
+        this.link = link;
+    }
+
+    /** Звук перехода между измерениями у игрока, который прибыл на место (как после ванильного портала). */
+    public static void playArrivalSound(ServerPlayer player) {
+        player.connection.send(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(
+                net.minecraft.world.level.block.LevelEvent.SOUND_PORTAL_TRAVEL, net.minecraft.core.BlockPos.ZERO, 0, false));
     }
 
     @Override
@@ -67,11 +84,11 @@ public class ReturnPortal extends Entity {
                     this.getY() + this.random.nextDouble() * 2.0, this.getZ() + (this.random.nextDouble() - 0.5) * 0.8, 0.0, 0.05, 0.0);
             return;
         }
-        if (this.age >= LIFETIME || this.targetDimension == null) {
+        if (this.age >= LIFETIME) {
             this.discard();
             return;
         }
-        if (this.age < ARMING) {
+        if (!this.functional || this.targetDimension == null || this.age < ARMING) {
             return;
         }
         ServerLevel serverLevel = (ServerLevel) this.level();
@@ -85,8 +102,16 @@ public class ReturnPortal extends Entity {
             }
             player.teleportTo(to, this.target.x, this.target.y, this.target.z, player.getYRot(), player.getXRot());
             markTeleported(player);
-            serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PORTAL_TRAVEL, SoundSource.PLAYERS, 0.3F, 1.2F);
+            playArrivalSound(player);
             this.discard();
+            // портал «для вида» стоит там, куда прибыл игрок: убираем и его
+            if (this.link != null) {
+                for (ReturnPortal other : to.getEntitiesOfClass(ReturnPortal.class, new net.minecraft.world.phys.AABB(this.target, this.target).inflate(4.0))) {
+                    if (this.link.equals(other.link)) {
+                        other.discard();
+                    }
+                }
+            }
             return;
         }
     }

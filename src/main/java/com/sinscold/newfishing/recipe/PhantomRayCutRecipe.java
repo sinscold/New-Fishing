@@ -29,6 +29,22 @@ public class PhantomRayCutRecipe extends AbstractKnifeCutRecipe {
         return new ItemStack(Items.PHANTOM_MEMBRANE, MEMBRANES);
     }
 
+    /** Не «особый» рецепт: JEI и книга рецептов показывают его по ингредиентам и результату. */
+    @Override
+    public boolean isSpecial() {
+        return false;
+    }
+
+    @Override
+    public net.minecraft.core.NonNullList<net.minecraft.world.item.crafting.Ingredient> getIngredients() {
+        return net.minecraft.core.NonNullList.of(net.minecraft.world.item.crafting.Ingredient.EMPTY, net.minecraft.world.item.crafting.Ingredient.of(ModItems.PHANTOM_RAY.get()), net.minecraft.world.item.crafting.Ingredient.of(com.sinscold.newfishing.registry.ModTags.KNIVES));
+    }
+
+    @Override
+    public ItemStack getResultItem(HolderLookup.Provider registries) {
+        return new ItemStack(Items.PHANTOM_MEMBRANE, MEMBRANES);
+    }
+
     @Override
     public RecipeSerializer<?> getSerializer() {
         return ModRecipeSerializers.PHANTOM_RAY_CUT.get();

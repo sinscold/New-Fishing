@@ -15,8 +15,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Эффект зелья возвращения: телепортирует выпившего на его точку возрождения. На месте, где выпили, остаётся портал на
- * точку возрождения, а у точки возрождения появляется портал обратно (каждый одноразовый и живёт 10 минут).
+ * Эффект зелья возвращения: телепортирует выпившего на его точку возрождения. У точки возрождения появляется рабочий портал
+ * обратно на место, где выпили, а на том месте — такой же портал только для вида; пройдёшь через рабочий — исчезают оба.
  */
 public class ReturnEffect extends InstantenousMobEffect {
     public ReturnEffect(MobEffectCategory category, int color) {
@@ -41,18 +41,23 @@ public class ReturnEffect extends InstantenousMobEffect {
         Vec3 destination = Vec3.atBottomCenterOf(respawn);
         Vec3 origin = player.position();
 
-        // портал на месте, где выпили: ведёт на точку возрождения
-        spawnPortal(from, origin, to.dimension(), destination);
+        java.util.UUID link = java.util.UUID.randomUUID();
+        // на месте, где выпили, портал только для вида
+        spawnPortal(from, origin, null, null, link);
         player.teleportTo(to, destination.x, destination.y, destination.z, player.getYRot(), player.getXRot());
         ReturnPortal.markTeleported(player);
-        // портал у точки возрождения: ведёт обратно на место, где выпили (чуть в стороне, чтобы не сработать сразу)
-        spawnPortal(to, destination.add(1.5, 0.0, 0.0), from.dimension(), origin);
+        ReturnPortal.playArrivalSound(player);
+        // рабочий портал у точки возрождения: ведёт обратно на место, где выпили (чуть в стороне, чтобы не сработать сразу)
+        spawnPortal(to, destination.add(1.5, 0.0, 0.0), from.dimension(), origin, link);
     }
 
-    private static void spawnPortal(ServerLevel level, Vec3 pos, ResourceKey<Level> targetDimension, Vec3 target) {
+    private static void spawnPortal(ServerLevel level, Vec3 pos, ResourceKey<Level> targetDimension, Vec3 target, java.util.UUID link) {
         ReturnPortal portal = new ReturnPortal(ModEntities.RETURN_PORTAL.get(), level);
         portal.setPos(pos.x, pos.y, pos.z);
-        portal.setTarget(targetDimension, target);
+        portal.setLink(link);
+        if (targetDimension != null) {
+            portal.setTarget(targetDimension, target);
+        }
         level.addFreshEntity(portal);
     }
 }

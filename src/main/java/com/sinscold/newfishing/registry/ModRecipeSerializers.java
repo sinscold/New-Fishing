@@ -4,7 +4,6 @@ import com.sinscold.newfishing.NewFishing;
 import com.sinscold.newfishing.recipe.CatfishCutRecipe;
 import com.sinscold.newfishing.recipe.GoldStringRecipe;
 import com.sinscold.newfishing.recipe.NetheriteDustRecipe;
-import com.sinscold.newfishing.recipe.PhantomLineRecipe;
 import com.sinscold.newfishing.recipe.PhantomRayCutRecipe;
 import com.sinscold.newfishing.recipe.VoidPikeCutRecipe;
 import com.sinscold.newfishing.recipe.NetheriteLineRecipe;
@@ -27,8 +26,6 @@ public final class ModRecipeSerializers {
             SERIALIZERS.register("netherite_dust", () -> new SimpleCraftingRecipeSerializer<>(NetheriteDustRecipe::new));
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<CatfishCutRecipe>> CATFISH_CUT =
             SERIALIZERS.register("catfish_cut", () -> new SimpleCraftingRecipeSerializer<>(CatfishCutRecipe::new));
-    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<PhantomLineRecipe>> PHANTOM_LINE =
-            SERIALIZERS.register("phantom_line", () -> new SimpleCraftingRecipeSerializer<>(PhantomLineRecipe::new));
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<PhantomRayCutRecipe>> PHANTOM_RAY_CUT =
             SERIALIZERS.register("phantom_ray_cut", () -> new SimpleCraftingRecipeSerializer<>(PhantomRayCutRecipe::new));
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<VoidPikeCutRecipe>> VOID_PIKE_CUT =

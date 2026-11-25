@@ -5,6 +5,7 @@ import com.sinscold.newfishing.registry.ModRecipeSerializers;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
@@ -40,6 +41,25 @@ public class NetheriteLineRecipe extends CustomRecipe {
     @Override
     public boolean canCraftInDimensions(int width, int height) {
         return width >= 3 && height >= 3;
+    }
+
+    /** Не «особый» рецепт: JEI и книга рецептов показывают его по ингредиентам и результату. */
+    @Override
+    public boolean isSpecial() {
+        return false;
+    }
+
+    @Override
+    public net.minecraft.core.NonNullList<net.minecraft.world.item.crafting.Ingredient> getIngredients() {
+        // для JEI: пыль в центре, нити крестом (в верстаке нити можно класть в любые 4 слота)
+        net.minecraft.world.item.crafting.Ingredient E = net.minecraft.world.item.crafting.Ingredient.EMPTY;
+        net.minecraft.world.item.crafting.Ingredient S = net.minecraft.world.item.crafting.Ingredient.of(ModItems.GOLD_STRING.get());
+        return net.minecraft.core.NonNullList.of(net.minecraft.world.item.crafting.Ingredient.EMPTY, E, S, E, S, net.minecraft.world.item.crafting.Ingredient.of(ModItems.NETHERITE_DUST.get()), S, E, S, E);
+    }
+
+    @Override
+    public ItemStack getResultItem(HolderLookup.Provider registries) {
+        return new ItemStack(ModItems.NETHERITE_LINE.get());
     }
 
     @Override

@@ -65,6 +65,22 @@ public class GoldStringRecipe extends CustomRecipe {
         return width * height >= 2;
     }
 
+    /** Не «особый» рецепт: JEI и книга рецептов показывают его по ингредиентам и результату. */
+    @Override
+    public boolean isSpecial() {
+        return false;
+    }
+
+    @Override
+    public net.minecraft.core.NonNullList<net.minecraft.world.item.crafting.Ingredient> getIngredients() {
+        return net.minecraft.core.NonNullList.of(net.minecraft.world.item.crafting.Ingredient.EMPTY, net.minecraft.world.item.crafting.Ingredient.of(Items.GOLD_INGOT), net.minecraft.world.item.crafting.Ingredient.of(Items.IRON_AXE, Items.DIAMOND_AXE, Items.NETHERITE_AXE));
+    }
+
+    @Override
+    public ItemStack getResultItem(HolderLookup.Provider registries) {
+        return new ItemStack(ModItems.GOLD_STRING.get(), 4);
+    }
+
     @Override
     public RecipeSerializer<?> getSerializer() {
         return ModRecipeSerializers.GOLD_STRING.get();
