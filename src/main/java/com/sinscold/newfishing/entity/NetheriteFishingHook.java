@@ -634,6 +634,7 @@ public class NetheriteFishingHook extends FishingHook {
         float difficulty = inVoid ? 1.6F : table == LAVA_FISHING ? 1.4F : 1.0F;
         this.fight = new FishFight(difficulty, inVoid ? FishFight.MAX_DISTANCE_VOID : FishFight.MAX_DISTANCE,
                 this.hasNetheriteHook() ? FishFight.SLACK_TICKS * BITE_MULTIPLIER : FishFight.SLACK_TICKS);
+        NewFishing.LOGGER.info("Мини-игра: рыба на крючке, бой начался (таблица {}, сложность {})", table.location(), difficulty);
         this.getEntityData().set(FIGHTING, true);
         this.getEntityData().set(TENSION, 0.0F);
         this.getEntityData().set(STAMINA, 1.0F);
@@ -669,6 +670,9 @@ public class NetheriteFishingHook extends FishingHook {
         this.setDeltaMovement(move.x, motion.y, move.z);
         this.updateFightData(f);
 
+        if (result != FishFight.Result.CONTINUE) {
+            NewFishing.LOGGER.info("Мини-игра: бой окончен ({}) через {} тиков", result, this.tickCount);
+        }
         switch (result) {
             case CAUGHT -> {
                 ItemStack rod = RodMods.heldRod(player);
