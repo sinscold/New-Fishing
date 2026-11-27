@@ -54,7 +54,8 @@ import net.minecraft.world.phys.Vec3;
  * вода — ванильная {@code gameplay/fishing}; лава — {@code newfishing:gameplay/lava_fishing} (только в Незере и только на
  * незеритовой леске); другая жидкость {@code ns:path} — {@code ns:gameplay/fishing/path} (если такая таблица есть).
  * Для пустоты (Край, Y от 10 до 50) нужны фантомная леска и эндер-поплавок (остальные поплавки тонут): ловит по таблице {@code newfishing:gameplay/void_fishing}.
- * Обычная леска рвётся 1 к 7 при вытаскивании поклёвки (LineBreak), незеритовая нет. Добыча держится втрое дольше.
+ * После поклёвки начинается мини-игра вытаскивания (FishFight, клиент — FishingFightClient): обычная леска рвётся от
+ * натяжения или расстояния, незеритовая и фантомная нет. На незеритовом крючке рыба втрое дольше не срывается с ослабленной лески.
  * Наследует FishingHook, чтобы игрок (player.fishing) и рендерер работали как с обычным.
  */
 public class NetheriteFishingHook extends FishingHook {
@@ -89,6 +90,13 @@ public class NetheriteFishingHook extends FishingHook {
     private static final int PART_ENDER_HOOK = 8;
     private static final EntityDataAccessor<Boolean> BITING =
             SynchedEntityData.defineId(NetheriteFishingHook.class, EntityDataSerializers.BOOLEAN);
+    /** Мини-игра вытаскивания (FishFight): идёт ли бой, натяжение лески 0…1 и силы рыбы 0…1 — для интерфейса и управления на клиенте. */
+    private static final EntityDataAccessor<Boolean> FIGHTING =
+            SynchedEntityData.defineId(NetheriteFishingHook.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Float> TENSION =
+            SynchedEntityData.defineId(NetheriteFishingHook.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> STAMINA =
+            SynchedEntityData.defineId(NetheriteFishingHook.class, EntityDataSerializers.FLOAT);
 
     private int outOfFluidTime;
     private int nibble;
@@ -114,6 +122,8 @@ public class NetheriteFishingHook extends FishingHook {
     private double dashDistance;
     private Vec3 dashDir = Vec3.ZERO;
     private boolean dashFast;
+    /** Состояние боя с рыбой (только на сервере); null — боя нет. */
+    private FishFight fight;
 
     public NetheriteFishingHook(EntityType<NetheriteFishingHook> type, Level level) {
         super(type, level);
@@ -163,6 +173,9 @@ public class NetheriteFishingHook extends FishingHook {
         super.defineSynchedData(builder);
         builder.define(BITING, false);
         builder.define(PARTS, 0);
+        builder.define(FIGHTING, false);
+        builder.define(TENSION, 0.0F);
+        builder.define(STAMINA, 1.0F);
     }
 
     /** Для рендерера: рисовать поплавок с текстурой незеритового крючка. */
@@ -178,6 +191,32 @@ public class NetheriteFishingHook extends FishingHook {
     /** Цвет лески для рендерера: 0 обычная, 1 незеритовая, 2 фантомная. */
     public int lineColorKind() {
         return this.hasPhantomLine() ? 2 : this.hasNetheriteLine() ? 1 : 0;
+    }
+
+    /** Идёт мини-игра вытаскивания (клиент: камера на поплавке, мышь водит удочку, ЛКМ тянет, ПКМ отпускает). */
+    public boolean isFighting() {
+        return this.getEntityData().get(FIGHTING);
+    }
+
+    public float fightTension() {
+        return this.getEntityData().get(TENSION);
+    }
+
+    public float fightStamina() {
+        return this.getEntityData().get(STAMINA);
+    }
+
+    /** Леска не рвётся от натяжения (незеритовая и фантомная): на пределе бой просто затягивается. */
+    public boolean hasUnbreakableLine() {
+        return this.hasNetheriteLine() || this.hasPhantomLine();
+    }
+
+    /** Ввод игрока из пакета FightInputPayload (сервер): action 0 ничего, 1 тянуть, 2 отпускать; rodX −1…1 — положение удочки на экране. */
+    public void setFightInput(int action, float rodX) {
+        if (this.fight != null) {
+            this.fight.input = Mth.clamp(action, 0, 2);
+            this.fight.rodX = Mth.clamp(rodX, -1.0F, 1.0F);
+        }
     }
 
     private boolean hasNetheriteLine() {
@@ -305,7 +344,7 @@ public class NetheriteFishingHook extends FishingHook {
             if (inVoid) {
                 // в пустоте нет поверхности: поплавок повисает и дёргается рывками на небольшое расстояние
                 this.setDeltaMovement(motion.x * 0.9, motion.y * 0.6, motion.z * 0.9);
-                if (!this.level().isClientSide) {
+                if (!this.level().isClientSide && this.fight == null) {
                     this.voidTick();
                 }
             } else if (!inFluid) {
@@ -330,7 +369,15 @@ public class NetheriteFishingHook extends FishingHook {
                 }
                 this.setDeltaMovement(motion.x * 0.9, vy, motion.z * 0.9);
             }
-            if (floating) {
+            if (this.fight != null && !this.level().isClientSide) {
+                // идёт бой: рыба водит поплавок, игрок тянет или отпускает (FishFight)
+                if (this.isBiting()) {
+                    this.setDeltaMovement(this.getDeltaMovement().add(0.0, -0.1 * this.random.nextFloat() * this.random.nextFloat(), 0.0));
+                }
+                if (!this.fightTick(player, inFluid, inVoid, fluid)) {
+                    return;
+                }
+            } else if (floating) {
                 this.outOfFluidTime = Math.max(0, this.outOfFluidTime - 1);
                 if (this.isBiting()) {
                     this.setDeltaMovement(this.getDeltaMovement().add(0.0, -0.1 * this.random.nextFloat() * this.random.nextFloat(), 0.0));
@@ -476,9 +523,14 @@ public class NetheriteFishingHook extends FishingHook {
                     serverLevel.sendParticles(ParticleTypes.BUBBLE, this.getX(), y, this.getZ(), count, this.getBbWidth(), 0.0, this.getBbWidth(), 0.2);
                     serverLevel.sendParticles(ParticleTypes.FISHING, this.getX(), y, this.getZ(), count, this.getBbWidth(), 0.0, this.getBbWidth(), 0.2);
                 }
-                this.nibble = Mth.nextInt(this.random, BITE_MIN, BITE_MAX) * BITE_MULTIPLIER;
                 this.biteTable = table;
-                this.setBiting(true);
+                if (table == LAVA_FISHING && this.level().dimension() != Level.NETHER) {
+                    // в лаве вне Незера рыба только клюёт (улова нет): старое окно поклёвки без боя
+                    this.nibble = Mth.nextInt(this.random, BITE_MIN, BITE_MAX) * BITE_MULTIPLIER;
+                    this.setBiting(true);
+                } else {
+                    this.startFight(table, inVoid);
+                }
             }
         } else if (this.timeUntilLured > 0) {
             this.timeUntilLured--;
@@ -514,44 +566,46 @@ public class NetheriteFishingHook extends FishingHook {
             damage = 5;
         } else if (this.nibble > 0 && this.biteTable == LAVA_FISHING && this.level().dimension() != Level.NETHER) {
             // в лаве вне Незера рыба клюёт, но улова нет
+        } else if (this.fight != null) {
+            return 0; // во время боя ПКМ — «отпустить», вытащить рыбу можно только вымотав её
         } else if (this.nibble > 0 && this.biteTable != null) {
-            if (LineBreak.shouldSnap(player)) {
-                // обычная леска порвалась: добыча потеряна, рыбалка окончена, удочка цела
-                LineBreak.announce(player, this);
-                this.discard();
-                return 0;
-            }
-            LootParams params = new LootParams.Builder((ServerLevel) this.level())
-                    .withParameter(LootContextParams.ORIGIN, this.position())
-                    .withParameter(LootContextParams.TOOL, rod)
-                    .withParameter(LootContextParams.THIS_ENTITY, this)
-                    .withParameter(LootContextParams.ATTACKING_ENTITY, this.getOwner())
-                    .withLuck(this.lootLuck)
-                    .create(LootContextParamSets.FISHING);
-            LootTable table = this.level().getServer().reloadableRegistries().getLootTable(this.biteTable);
-            List<ItemStack> items = table.getRandomItems(params);
-            // лавовый ящик: отдельный настраиваемый шанс (Config.LAVA_CRATE_CHANCE), заменяет обычный улов
-            if (this.biteTable == LAVA_FISHING && this.random.nextDouble() < com.sinscold.newfishing.Config.lavaCrateChance()) {
-                items = List.of(new ItemStack(com.sinscold.newfishing.registry.ModItems.LOCKED_LAVA_CRATE.get()));
-            }
-            for (ItemStack stack : items) {
-                ItemEntity itemEntity = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), stack);
-                itemEntity.setInvulnerable(true);
-                double dx = player.getX() - this.getX();
-                double dy = player.getY() - this.getY();
-                double dz = player.getZ() - this.getZ();
-                itemEntity.setDeltaMovement(dx * 0.1, dy * 0.1 + Math.sqrt(Math.sqrt(dx * dx + dy * dy + dz * dz)) * 0.08, dz * 0.1);
-                this.level().addFreshEntity(itemEntity);
-                this.level().addFreshEntity(new ExperienceOrb(this.level(), player.getX(), player.getY() + 0.5, player.getZ() + 0.5, this.random.nextInt(6) + 1));
-                if (stack.is(ItemTags.FISHES) || stack.is(ModTags.NETHER_FISH) || stack.is(ModTags.VOID_FISH)) {
-                    player.awardStat(Stats.FISH_CAUGHT, 1);
-                }
-            }
-            damage = this.onGround() ? 2 : 1;
-            this.useBait(rod);
-            com.sinscold.newfishing.item.BaitBag.refillRod(player, rod);
+            damage = this.giveCatch(player, rod);
         }
         this.discard();
+        return damage;
+    }
+
+    /** Выдаёт улов по таблице поклёвки (летит к игроку), тратит наживку. Возвращает урон удочке. */
+    private int giveCatch(Player player, ItemStack rod) {
+        LootParams params = new LootParams.Builder((ServerLevel) this.level())
+                .withParameter(LootContextParams.ORIGIN, this.position())
+                .withParameter(LootContextParams.TOOL, rod)
+                .withParameter(LootContextParams.THIS_ENTITY, this)
+                .withParameter(LootContextParams.ATTACKING_ENTITY, this.getOwner())
+                .withLuck(this.lootLuck)
+                .create(LootContextParamSets.FISHING);
+        LootTable table = this.level().getServer().reloadableRegistries().getLootTable(this.biteTable);
+        List<ItemStack> items = table.getRandomItems(params);
+        // лавовый ящик: отдельный настраиваемый шанс (Config.LAVA_CRATE_CHANCE), заменяет обычный улов
+        if (this.biteTable == LAVA_FISHING && this.random.nextDouble() < com.sinscold.newfishing.Config.lavaCrateChance()) {
+            items = List.of(new ItemStack(com.sinscold.newfishing.registry.ModItems.LOCKED_LAVA_CRATE.get()));
+        }
+        for (ItemStack stack : items) {
+            ItemEntity itemEntity = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), stack);
+            itemEntity.setInvulnerable(true);
+            double dx = player.getX() - this.getX();
+            double dy = player.getY() - this.getY();
+            double dz = player.getZ() - this.getZ();
+            itemEntity.setDeltaMovement(dx * 0.1, dy * 0.1 + Math.sqrt(Math.sqrt(dx * dx + dy * dy + dz * dz)) * 0.08, dz * 0.1);
+            this.level().addFreshEntity(itemEntity);
+            this.level().addFreshEntity(new ExperienceOrb(this.level(), player.getX(), player.getY() + 0.5, player.getZ() + 0.5, this.random.nextInt(6) + 1));
+            if (stack.is(ItemTags.FISHES) || stack.is(ModTags.NETHER_FISH) || stack.is(ModTags.VOID_FISH)) {
+                player.awardStat(Stats.FISH_CAUGHT, 1);
+            }
+        }
+        int damage = this.onGround() ? 2 : 1;
+        this.useBait(rod);
+        com.sinscold.newfishing.item.BaitBag.refillRod(player, rod);
         return damage;
     }
 
@@ -571,5 +625,86 @@ public class NetheriteFishingHook extends FishingHook {
             player.fishing = null;
         }
         super.remove(reason);
+    }
+
+    // ---------- мини-игра вытаскивания ----------
+
+    /** Поклёвка: рыба на крючке, начинается бой. Сложность зависит от того, где ловим. */
+    private void startFight(ResourceKey<LootTable> table, boolean inVoid) {
+        float difficulty = inVoid ? 1.6F : table == LAVA_FISHING ? 1.4F : 1.0F;
+        this.fight = new FishFight(difficulty, inVoid ? FishFight.MAX_DISTANCE_VOID : FishFight.MAX_DISTANCE,
+                this.hasNetheriteHook() ? FishFight.SLACK_TICKS * BITE_MULTIPLIER : FishFight.SLACK_TICKS);
+        this.getEntityData().set(FIGHTING, true);
+        this.getEntityData().set(TENSION, 0.0F);
+        this.getEntityData().set(STAMINA, 1.0F);
+        this.setBiting(true);
+    }
+
+    /**
+     * Один тик боя (сервер). Рыба водит поплавок (рывок → замедление → отдых), игрок тянет или отпускает.
+     * Возвращает false, если поплавок убран (улов, обрыв, рыба сорвалась).
+     */
+    private boolean fightTick(Player player, boolean inFluid, boolean inVoid, FluidState fluid) {
+        FishFight f = this.fight;
+        Vec3 toPlayer = new Vec3(player.getX() - this.getX(), 0.0, player.getZ() - this.getZ());
+        double distance = toPlayer.length();
+        Vec3 toPlayerDir = distance < 1.0E-3 ? Vec3.ZERO : toPlayer.scale(1.0 / distance);
+        FishFight.Result result = f.tick(this.random, toPlayerDir, distance, this.hasUnbreakableLine());
+
+        // рыба бежит — поплавок притапливается и брызгает; отдыхает — успокаивается
+        this.setBiting(f.running());
+        if (f.running() && this.tickCount % 3 == 0) {
+            ServerLevel level = (ServerLevel) this.level();
+            if (inVoid) {
+                level.sendParticles(ParticleTypes.PORTAL, this.getX(), this.getY(), this.getZ(), 2, 0.1, 0.1, 0.1, 0.2);
+            } else if (inFluid && fluid.is(FluidTags.LAVA)) {
+                level.sendParticles(ParticleTypes.LAVA, this.getX(), this.getY() + 0.2, this.getZ(), 1, 0.1, 0.0, 0.1, 0.0);
+            } else if (inFluid) {
+                level.sendParticles(ParticleTypes.FISHING, this.getX(), this.getY() + 0.2, this.getZ(), 2, 0.15, 0.0, 0.15, 0.02);
+            }
+        }
+
+        Vec3 move = f.velocity();
+        Vec3 motion = this.getDeltaMovement();
+        this.setDeltaMovement(move.x, motion.y, move.z);
+        this.updateFightData(f);
+
+        switch (result) {
+            case CAUGHT -> {
+                ItemStack rod = RodMods.heldRod(player);
+                int damage = this.giveCatch(player, rod);
+                if (!rod.isEmpty() && damage > 0) {
+                    rod.hurtAndBreak(damage, player, rod == player.getMainHandItem()
+                            ? net.minecraft.world.entity.EquipmentSlot.MAINHAND : net.minecraft.world.entity.EquipmentSlot.OFFHAND);
+                }
+                this.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.FISHING_BOBBER_RETRIEVE,
+                        net.minecraft.sounds.SoundSource.NEUTRAL, 1.0F, 0.4F / (this.random.nextFloat() * 0.4F + 0.8F));
+                this.discard();
+                return false;
+            }
+            case SNAPPED -> {
+                LineBreak.announce(player, this); // натяжение или расстояние больше, чем выдерживает обычная леска
+                this.discard();
+                return false;
+            }
+            case ESCAPED -> {
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.newfishing.fish_escaped"), true);
+                this.discard();
+                return false;
+            }
+            default -> {
+                return true;
+            }
+        }
+    }
+
+    /** Синхронизирует натяжение и силы рыбы с клиентом, только если значение заметно изменилось. */
+    private void updateFightData(FishFight f) {
+        if (Math.abs(this.getEntityData().get(TENSION) - f.tension) > 0.005F) {
+            this.getEntityData().set(TENSION, f.tension);
+        }
+        if (Math.abs(this.getEntityData().get(STAMINA) - f.stamina) > 0.005F) {
+            this.getEntityData().set(STAMINA, f.stamina);
+        }
     }
 }

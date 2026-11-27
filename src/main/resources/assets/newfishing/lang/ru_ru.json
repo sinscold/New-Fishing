@@ -108,5 +108,9 @@
   "newfishing.configuration.rod_mod": "Модификация удочки (одна из)",
   "tooltip.newfishing.bait_when_on_hook": "Когда на крючке:",
   "tooltip.newfishing.part_when_in_rod": "Когда в удочке:",
-  "tooltip.newfishing.rod_power": " Сила рыбалки: %s"
+  "tooltip.newfishing.rod_power": " Сила рыбалки: %s",
+  "message.newfishing.fish_escaped": "Рыба сорвалась!",
+  "hud.newfishing.tension": "Натяжение",
+  "hud.newfishing.fish_stamina": "Силы рыбы",
+  "hud.newfishing.fight_hint": "ЛКМ — тянуть, ПКМ — отпустить, мышь — водить удочку"
 }

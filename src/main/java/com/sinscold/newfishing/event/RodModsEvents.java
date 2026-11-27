@@ -88,6 +88,12 @@ public final class RodModsEvents {
         ItemStack stack = event.getItemStack();
         if (!stack.is(Items.FISHING_ROD)) return;
         Player player = event.getEntity();
+        if (player.fishing instanceof NetheriteFishingHook hook && hook.isFighting()) {
+            // во время вытаскивания ПКМ значит «отпустить леску» (FishingFightClient), смотать удочку нельзя
+            event.setCanceled(true);
+            event.setCancellationResult(InteractionResult.FAIL);
+            return;
+        }
         if (player.fishing != null) return;
 
         // морковка/искажённый гриб (приманка) в слоте крючка: ускорение свиньи/лавохода вместо заброса

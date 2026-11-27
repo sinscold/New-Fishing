@@ -171,7 +171,10 @@ public class BobberRenderer<T extends FishingHook> extends EntityRenderer<T> {
         Minecraft mc = Minecraft.getInstance();
         if (this.entityRenderDispatcher.options.getCameraType().isFirstPerson() && player == mc.player) {
             double fovScale = 960.0 / (double) this.entityRenderDispatcher.options.fov().get().intValue();
-            Vec3 offset = this.entityRenderDispatcher.camera.getNearPlane().getPointOnPlane((float) side * 0.525F, -0.1F)
+            // во время вытаскивания удочка ездит по экрану за мышью (FishingFightClient): начало лески следует за ней
+            float planeX = FishingFightClient.isActive() ? FishingFightClient.rodX() * 0.65F : (float) side * 0.525F;
+            float planeY = FishingFightClient.isActive() ? -0.1F + FishingFightClient.rodY() * 0.4F : -0.1F;
+            Vec3 offset = this.entityRenderDispatcher.camera.getNearPlane().getPointOnPlane(planeX, planeY)
                     .scale(fovScale).yRot(swing * 0.5F).xRot(-swing * 0.7F);
             var look = this.entityRenderDispatcher.camera.getLookVector();
             var up = this.entityRenderDispatcher.camera.getUpVector();
