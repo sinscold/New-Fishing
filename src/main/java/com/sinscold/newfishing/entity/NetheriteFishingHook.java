@@ -122,6 +122,9 @@ public class NetheriteFishingHook extends FishingHook {
     private boolean dashFast;
     /** Состояние боя с рыбой (только на сервере); null — боя нет. */
     private FishFight fight;
+    /** Где стоял игрок, когда клюнуло: отойдёт дальше FIGHT_LEASH блоков — бой отменяется. */
+    private Vec3 fightStart;
+    private static final double FIGHT_LEASH = 5.0;
 
     public NetheriteFishingHook(EntityType<NetheriteFishingHook> type, Level level) {
         super(type, level);
@@ -632,6 +635,8 @@ public class NetheriteFishingHook extends FishingHook {
         this.fight = new FishFight(difficulty, inVoid ? FishFight.MAX_DISTANCE_VOID : FishFight.MAX_DISTANCE,
                 this.hasNetheriteHook() ? FishFight.SLACK_TICKS * BITE_MULTIPLIER : FishFight.SLACK_TICKS);
         NewFishing.LOGGER.info("Мини-игра: рыба на крючке, бой начался (таблица {}, сложность {})", table.location(), difficulty);
+        Player owner = this.getPlayerOwner();
+        this.fightStart = owner == null ? null : owner.position();
         this.getEntityData().set(FIGHTING, true);
         this.getEntityData().set(TENSION, 0.0F);
         this.setBiting(true);
@@ -643,6 +648,13 @@ public class NetheriteFishingHook extends FishingHook {
      */
     private boolean fightTick(Player player, boolean inFluid, boolean inVoid, FluidState fluid) {
         FishFight f = this.fight;
+        // во время боя ходить можно, но отошёл от места поклёвки дальше 5 блоков — рыба сорвалась, бой отменён
+        if (this.fightStart != null && player.position().distanceToSqr(this.fightStart) > FIGHT_LEASH * FIGHT_LEASH) {
+            NewFishing.LOGGER.info("Мини-игра: бой отменён, игрок отошёл дальше {} блоков", FIGHT_LEASH);
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.newfishing.walked_away"), true);
+            this.discard();
+            return false;
+        }
         Vec3 toPlayer = new Vec3(player.getX() - this.getX(), 0.0, player.getZ() - this.getZ());
         double distance = toPlayer.length();
         Vec3 toPlayerDir = distance < 1.0E-3 ? Vec3.ZERO : toPlayer.scale(1.0 / distance);

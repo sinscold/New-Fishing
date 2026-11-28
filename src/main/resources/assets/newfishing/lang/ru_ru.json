@@ -110,5 +110,6 @@
   "tooltip.newfishing.part_when_in_rod": "Когда в удочке:",
   "tooltip.newfishing.rod_power": " Сила рыбалки: %s",
   "message.newfishing.fish_escaped": "Рыба сорвалась!",
-  "subtitles.newfishing.line_tension": "Леска скрипит"
+  "subtitles.newfishing.line_tension": "Леска скрипит",
+  "message.newfishing.walked_away": "Рыба сорвалась: вы отошли слишком далеко"
 }

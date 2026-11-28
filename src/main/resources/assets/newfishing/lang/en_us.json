@@ -110,5 +110,6 @@
   "tooltip.newfishing.part_when_in_rod": "When in rod:",
   "tooltip.newfishing.rod_power": " Fishing power: %s",
   "message.newfishing.fish_escaped": "The fish got away!",
-  "subtitles.newfishing.line_tension": "Fishing line creaks"
+  "subtitles.newfishing.line_tension": "Fishing line creaks",
+  "message.newfishing.walked_away": "The fish got away: you walked too far"
 }

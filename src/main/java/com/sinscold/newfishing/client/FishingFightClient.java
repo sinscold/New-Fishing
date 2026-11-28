@@ -22,14 +22,13 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
-import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.neoforged.neoforge.client.event.RenderFrameEvent;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * Клиентская часть мини-игры вытаскивания (сервер — FishFight в NetheriteFishingHook).
- * Пока рыба на крючке: камера следит за поплавком, ходьба отключена, мышь водит удочку по экрану (правая половина —
+ * Пока рыба на крючке: камера следит за поплавком, ходить можно (отошёл от места поклёвки дальше 5 блоков — бой отменяется на сервере), мышь водит удочку по экрану (правая половина —
  * удочка в правой руке, левая — как во второй руке), ЛКМ тянет, ПКМ отпускает. Натяжение лески слышно (скрип), шкал нет.
  * Активность проверяется раз в тик по полю player.fishing (дёшево); ввод шлётся на сервер только при изменении.
  */
@@ -113,21 +112,6 @@ public final class FishingFightClient {
             event.setCanceled(true);
             event.setSwingHand(false);
         }
-    }
-
-    /** Ходьба, прыжок и присед отключены. */
-    @SubscribeEvent
-    static void onMovementInput(MovementInputUpdateEvent event) {
-        if (!active) return;
-        var input = event.getInput();
-        input.forwardImpulse = 0.0F;
-        input.leftImpulse = 0.0F;
-        input.up = false;
-        input.down = false;
-        input.left = false;
-        input.right = false;
-        input.jumping = false;
-        input.shiftKeyDown = false;
     }
 
     /** Камера (взгляд игрока) плавно доворачивает на поплавок каждый кадр. */
