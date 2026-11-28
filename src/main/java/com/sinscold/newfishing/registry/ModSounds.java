@@ -26,5 +26,9 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> CRATE_LOCKED = SOUNDS.register("crate_locked",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "crate_locked")));
 
+    /** Скрип натянутой лески в мини-игре вытаскивания (частота, громкость и высота растут с натяжением). */
+    public static final DeferredHolder<SoundEvent, SoundEvent> LINE_TENSION = SOUNDS.register("line_tension",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "line_tension")));
+
     private ModSounds() {}
 }

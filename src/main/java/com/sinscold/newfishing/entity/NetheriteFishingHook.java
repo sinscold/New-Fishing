@@ -54,8 +54,8 @@ import net.minecraft.world.phys.Vec3;
  * вода — ванильная {@code gameplay/fishing}; лава — {@code newfishing:gameplay/lava_fishing} (только в Незере и только на
  * незеритовой леске); другая жидкость {@code ns:path} — {@code ns:gameplay/fishing/path} (если такая таблица есть).
  * Для пустоты (Край, Y от 10 до 50) нужны фантомная леска и эндер-поплавок (остальные поплавки тонут): ловит по таблице {@code newfishing:gameplay/void_fishing}.
- * После поклёвки начинается мини-игра вытаскивания (FishFight, клиент — FishingFightClient): обычная леска рвётся от
- * натяжения или расстояния, незеритовая и фантомная нет. На незеритовом крючке рыба втрое дольше не срывается с ослабленной лески.
+ * После поклёвки начинается мини-игра вытаскивания (FishFight, клиент — FishingFightClient): выдохшуюся рыбу подтягивают
+ * до твёрдого блока; обычная леска рвётся от натяжения или расстояния, незеритовая и фантомная нет. На незеритовом крючке рыба втрое дольше не срывается с ослабленной лески.
  * Наследует FishingHook, чтобы игрок (player.fishing) и рендерер работали как с обычным.
  */
 public class NetheriteFishingHook extends FishingHook {
@@ -90,12 +90,10 @@ public class NetheriteFishingHook extends FishingHook {
     private static final int PART_ENDER_HOOK = 8;
     private static final EntityDataAccessor<Boolean> BITING =
             SynchedEntityData.defineId(NetheriteFishingHook.class, EntityDataSerializers.BOOLEAN);
-    /** Мини-игра вытаскивания (FishFight): идёт ли бой, натяжение лески 0…1 и силы рыбы 0…1 — для интерфейса и управления на клиенте. */
+    /** Мини-игра вытаскивания (FishFight): идёт ли бой и натяжение лески 0…1 — для управления и звука натяжения на клиенте. */
     private static final EntityDataAccessor<Boolean> FIGHTING =
             SynchedEntityData.defineId(NetheriteFishingHook.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Float> TENSION =
-            SynchedEntityData.defineId(NetheriteFishingHook.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> STAMINA =
             SynchedEntityData.defineId(NetheriteFishingHook.class, EntityDataSerializers.FLOAT);
 
     private int outOfFluidTime;
@@ -175,7 +173,6 @@ public class NetheriteFishingHook extends FishingHook {
         builder.define(PARTS, 0);
         builder.define(FIGHTING, false);
         builder.define(TENSION, 0.0F);
-        builder.define(STAMINA, 1.0F);
     }
 
     /** Для рендерера: рисовать поплавок с текстурой незеритового крючка. */
@@ -200,10 +197,6 @@ public class NetheriteFishingHook extends FishingHook {
 
     public float fightTension() {
         return this.getEntityData().get(TENSION);
-    }
-
-    public float fightStamina() {
-        return this.getEntityData().get(STAMINA);
     }
 
     /** Леска не рвётся от натяжения (незеритовая и фантомная): на пределе бой просто затягивается. */
@@ -397,6 +390,10 @@ public class NetheriteFishingHook extends FishingHook {
             this.setDeltaMovement(this.getDeltaMovement().add(0.0, -0.03, 0.0));
         }
         this.move(MoverType.SELF, this.getDeltaMovement());
+        if (this.fight != null && !this.level().isClientSide) {
+            this.landFishIfAshore(player);
+            if (this.isRemoved()) return;
+        }
         this.updateRotation();
         if (this.flying && (this.onGround() || this.horizontalCollision)) {
             this.setDeltaMovement(Vec3.ZERO);
@@ -637,13 +634,12 @@ public class NetheriteFishingHook extends FishingHook {
         NewFishing.LOGGER.info("Мини-игра: рыба на крючке, бой начался (таблица {}, сложность {})", table.location(), difficulty);
         this.getEntityData().set(FIGHTING, true);
         this.getEntityData().set(TENSION, 0.0F);
-        this.getEntityData().set(STAMINA, 1.0F);
         this.setBiting(true);
     }
 
     /**
-     * Один тик боя (сервер). Рыба водит поплавок (рывок → замедление → отдых), игрок тянет или отпускает.
-     * Возвращает false, если поплавок убран (улов, обрыв, рыба сорвалась).
+     * Один тик боя (сервер). Рыба мечется или отдыхает (FishFight), игрок тянет, отпускает и водит удочкой.
+     * Возвращает false, если поплавок убран (обрыв, рыба сорвалась). Улов — в landFishIfAshore после движения.
      */
     private boolean fightTick(Player player, boolean inFluid, boolean inVoid, FluidState fluid) {
         FishFight f = this.fight;
@@ -652,9 +648,9 @@ public class NetheriteFishingHook extends FishingHook {
         Vec3 toPlayerDir = distance < 1.0E-3 ? Vec3.ZERO : toPlayer.scale(1.0 / distance);
         FishFight.Result result = f.tick(this.random, toPlayerDir, distance, this.hasUnbreakableLine());
 
-        // рыба бежит — поплавок притапливается и брызгает; отдыхает — успокаивается
-        this.setBiting(f.running());
-        if (f.running() && this.tickCount % 3 == 0) {
+        // рыба мечется — поплавок притапливается и брызгает; выдохлась — успокаивается
+        this.setBiting(f.thrashing());
+        if (f.thrashing() && this.tickCount % 3 == 0) {
             ServerLevel level = (ServerLevel) this.level();
             if (inVoid) {
                 level.sendParticles(ParticleTypes.PORTAL, this.getX(), this.getY(), this.getZ(), 2, 0.1, 0.1, 0.1, 0.2);
@@ -674,18 +670,6 @@ public class NetheriteFishingHook extends FishingHook {
             NewFishing.LOGGER.info("Мини-игра: бой окончен ({}) через {} тиков", result, this.tickCount);
         }
         switch (result) {
-            case CAUGHT -> {
-                ItemStack rod = RodMods.heldRod(player);
-                int damage = this.giveCatch(player, rod);
-                if (!rod.isEmpty() && damage > 0) {
-                    rod.hurtAndBreak(damage, player, rod == player.getMainHandItem()
-                            ? net.minecraft.world.entity.EquipmentSlot.MAINHAND : net.minecraft.world.entity.EquipmentSlot.OFFHAND);
-                }
-                this.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.FISHING_BOBBER_RETRIEVE,
-                        net.minecraft.sounds.SoundSource.NEUTRAL, 1.0F, 0.4F / (this.random.nextFloat() * 0.4F + 0.8F));
-                this.discard();
-                return false;
-            }
             case SNAPPED -> {
                 LineBreak.announce(player, this); // натяжение или расстояние больше, чем выдерживает обычная леска
                 this.discard();
@@ -702,13 +686,31 @@ public class NetheriteFishingHook extends FishingHook {
         }
     }
 
-    /** Синхронизирует натяжение и силы рыбы с клиентом, только если значение заметно изменилось. */
+    /**
+     * Улов: выдохшуюся рыбу подтянули так, что поплавок коснулся твёрдого блока (берег) или дошёл до игрока.
+     * Мечущаяся рыба, ударившись о стенку, не ловится. Вызывается после движения поплавка.
+     */
+    private void landFishIfAshore(Player player) {
+        if (this.fight == null || this.fight.thrashing()) return;
+        boolean touching = this.horizontalCollision || this.onGround();
+        boolean atPlayer = Math.hypot(player.getX() - this.getX(), player.getZ() - this.getZ()) < 1.5;
+        if (!touching && !atPlayer) return;
+        NewFishing.LOGGER.info("Мини-игра: рыба вытащена (касание блока: {}) через {} тиков", touching, this.tickCount);
+        ItemStack rod = RodMods.heldRod(player);
+        int damage = this.giveCatch(player, rod);
+        if (!rod.isEmpty() && damage > 0) {
+            rod.hurtAndBreak(damage, player, rod == player.getMainHandItem()
+                    ? net.minecraft.world.entity.EquipmentSlot.MAINHAND : net.minecraft.world.entity.EquipmentSlot.OFFHAND);
+        }
+        this.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.FISHING_BOBBER_RETRIEVE,
+                net.minecraft.sounds.SoundSource.NEUTRAL, 1.0F, 0.4F / (this.random.nextFloat() * 0.4F + 0.8F));
+        this.discard();
+    }
+
+    /** Синхронизирует натяжение с клиентом (для звука), только если значение заметно изменилось. */
     private void updateFightData(FishFight f) {
         if (Math.abs(this.getEntityData().get(TENSION) - f.tension) > 0.005F) {
             this.getEntityData().set(TENSION, f.tension);
-        }
-        if (Math.abs(this.getEntityData().get(STAMINA) - f.stamina) > 0.005F) {
-            this.getEntityData().set(STAMINA, f.stamina);
         }
     }
 }

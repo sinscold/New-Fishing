@@ -23,13 +23,6 @@ import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactori
 /** Клиентские события мод-шины. */
 @EventBusSubscriber(modid = NewFishing.MODID, value = Dist.CLIENT)
 public final class ClientModEvents {
-    /** Шкалы мини-игры вытаскивания над хотбаром (FishingFightClient). */
-    @SubscribeEvent
-    static void onRegisterGuiLayers(net.neoforged.neoforge.client.event.RegisterGuiLayersEvent event) {
-        event.registerAbove(net.neoforged.neoforge.client.gui.VanillaGuiLayers.HOTBAR,
-                ResourceLocation.fromNamespaceAndPath(NewFishing.MODID, "fish_fight"), FishingFightClient::renderHud);
-    }
-
     @SubscribeEvent
     static void onRegisterTooltips(RegisterClientTooltipComponentFactoriesEvent event) {
         event.register(RodMods.class, ClientRodModsTooltip::new);

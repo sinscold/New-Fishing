@@ -30,5 +30,22 @@
       }
     ],
     "subtitle": "subtitles.newfishing.crate_locked"
+  },
+  "line_tension": {
+    "sounds": [
+      {
+        "name": "minecraft:item/crossbow/loading_middle1"
+      },
+      {
+        "name": "minecraft:item/crossbow/loading_middle2"
+      },
+      {
+        "name": "minecraft:item/crossbow/loading_middle3"
+      },
+      {
+        "name": "minecraft:item/crossbow/loading_middle4"
+      }
+    ],
+    "subtitle": "subtitles.newfishing.line_tension"
   }
 }

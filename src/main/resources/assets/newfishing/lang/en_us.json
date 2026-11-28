@@ -110,7 +110,5 @@
   "tooltip.newfishing.part_when_in_rod": "When in rod:",
   "tooltip.newfishing.rod_power": " Fishing power: %s",
   "message.newfishing.fish_escaped": "The fish got away!",
-  "hud.newfishing.tension": "Tension",
-  "hud.newfishing.fish_stamina": "Fish stamina",
-  "hud.newfishing.fight_hint": "LMB — reel in, RMB — let out, mouse — move the rod"
+  "subtitles.newfishing.line_tension": "Fishing line creaks"
 }

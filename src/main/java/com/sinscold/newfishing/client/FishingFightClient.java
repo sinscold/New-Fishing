@@ -6,12 +6,11 @@ import com.sinscold.newfishing.NewFishing;
 import com.sinscold.newfishing.entity.FishFight;
 import com.sinscold.newfishing.entity.NetheriteFishingHook;
 import com.sinscold.newfishing.network.FightInputPayload;
+import com.sinscold.newfishing.registry.ModSounds;
 
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -31,7 +30,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 /**
  * Клиентская часть мини-игры вытаскивания (сервер — FishFight в NetheriteFishingHook).
  * Пока рыба на крючке: камера следит за поплавком, ходьба отключена, мышь водит удочку по экрану (правая половина —
- * удочка в правой руке, левая — как во второй руке), ЛКМ тянет, ПКМ отпускает. Внизу шкалы натяжения и сил рыбы.
+ * удочка в правой руке, левая — как во второй руке), ЛКМ тянет, ПКМ отпускает. Натяжение лески слышно (скрип), шкал нет.
  * Активность проверяется раз в тик по полю player.fishing (дёшево); ввод шлётся на сервер только при изменении.
  */
 @EventBusSubscriber(modid = NewFishing.MODID, value = Dist.CLIENT)
@@ -48,6 +47,7 @@ public final class FishingFightClient {
     /** Плавный наклон удочки от ввода (тянешь — удочка задирается). */
     private static float pullAnim;
     private static int sentAction = -1;
+    private static int soundCooldown;
     private static float sentRodX = Float.NaN;
 
     /** Идёт ли бой с рыбой у этого игрока (для миксина мыши, рендера лески и т.п.). */
@@ -89,6 +89,10 @@ public final class FishingFightClient {
             }
         }
         if (!active) return;
+        NetheriteFishingHook hook = fightingHook();
+        if (hook != null) {
+            playTensionSound(hook);
+        }
         Minecraft mc = Minecraft.getInstance();
         boolean pull = mc.screen == null && mc.options.keyAttack.isDown();
         boolean release = mc.screen == null && mc.options.keyUse.isDown();
@@ -182,33 +186,22 @@ public final class FishingFightClient {
         pose.popPose();
     }
 
-    /** Шкалы над хотбаром: натяжение лески (зелёная → красная) и силы рыбы (синяя), подсказка по кнопкам. */
-    static void renderHud(GuiGraphics graphics, DeltaTracker delta) {
-        if (!active) return;
-        NetheriteFishingHook hook = fightingHook();
-        Minecraft mc = Minecraft.getInstance();
-        if (hook == null || mc.options.hideGui) return;
-        int width = 120;
-        int x = (graphics.guiWidth() - width) / 2;
-        int y = graphics.guiHeight() - 72;
-
+    /**
+     * Звук натяжения вместо шкал: от 0,15 натяжения леска скрипит, чем сильнее натяжение — тем чаще, громче и выше.
+     * Звук {@code newfishing:line_tension} (пока ванильный скрип натяжения арбалета, Синс может заменить своим .ogg).
+     */
+    private static void playTensionSound(NetheriteFishingHook hook) {
         float tension = hook.fightTension();
-        int tensionColor = tension < 0.5F ? 0xFF4CC34C : tension < 0.8F ? 0xFFE0C030 : 0xFFE04030;
-        if (tension >= 0.999F && hook.hasUnbreakableLine()) {
-            tensionColor = 0xFFB05AE0; // неразрывная леска на пределе: рыба отдыхает, тянуть бесполезно
+        if (tension < 0.15F) {
+            soundCooldown = 0;
+            return;
         }
-        bar(graphics, x, y, width, tension, tensionColor);
-        bar(graphics, x, y + 12, width, hook.fightStamina(), 0xFF4A90E0);
-        graphics.drawString(mc.font, Component.translatable("hud.newfishing.tension"), x - 2 - mc.font.width(Component.translatable("hud.newfishing.tension")), y - 1, 0xFFFFFFFF, true);
-        graphics.drawString(mc.font, Component.translatable("hud.newfishing.fish_stamina"), x - 2 - mc.font.width(Component.translatable("hud.newfishing.fish_stamina")), y + 11, 0xFFFFFFFF, true);
-        Component hint = Component.translatable("hud.newfishing.fight_hint");
-        graphics.drawString(mc.font, hint, (graphics.guiWidth() - mc.font.width(hint)) / 2, y - 14, 0xFFD0D0D0, true);
-    }
-
-    private static void bar(GuiGraphics graphics, int x, int y, int width, float value, int color) {
-        graphics.fill(x - 1, y - 1, x + width + 1, y + 7, 0xFF000000);
-        graphics.fill(x, y, x + width, y + 6, 0xFF303030);
-        graphics.fill(x, y, x + Math.round(width * Mth.clamp(value, 0.0F, 1.0F)), y + 6, color);
+        if (--soundCooldown > 0) return;
+        soundCooldown = Math.round(Mth.lerp(tension, 16.0F, 3.0F));
+        float pitch = 0.7F + tension * 0.9F;
+        float volume = 0.25F + tension * 0.5F;
+        Minecraft.getInstance().getSoundManager().play(
+                net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(ModSounds.LINE_TENSION.get(), pitch, volume));
     }
 
     private FishingFightClient() {}
