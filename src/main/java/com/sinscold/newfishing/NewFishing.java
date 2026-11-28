@@ -28,6 +28,7 @@ public class NewFishing {
 
     public NewFishing(IEventBus modEventBus, ModContainer modContainer) {
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        LOGGER.info("New Fishing: сборка с мини-игрой вытаскивания (ветка claude/great-pasteur-5zsawy)"); // убрать при слиянии в main
         ModLootConditions.CONDITIONS.register(modEventBus);
         com.sinscold.newfishing.registry.ModLootFunctions.FUNCTIONS.register(modEventBus);
         ModDataComponents.COMPONENTS.register(modEventBus);
